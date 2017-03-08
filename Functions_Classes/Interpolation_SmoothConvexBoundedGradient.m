@@ -10,7 +10,7 @@ if ~(pt1.x.isEqual(pt2.x) && pt1.g.isEqual(pt2.g) && pt1.f.isEqual(pt2.f))
         cons=cons+((pt1.g-pt2.g)^2-M1^2<=0);
     end
 else
-    if M2~=Inf
+    if M2~=Inf 
         cons=((pt1.g)^2-M2^2<=0);
     else
         cons=[];

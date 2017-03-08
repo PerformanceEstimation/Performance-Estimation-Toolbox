@@ -13,7 +13,7 @@ F=my_pep.AddComponentObjective('SmoothStronglyConvex',param);
 x0=my_pep.GenStartingPoint();		 % x0 is some starting point
 [xs,fs]=F.GetOptimalPoint(); 		 % xs is an optimal point, and fs=F(xs)
 [g0, f0]=F.oracle(x0);               
-my_pep.AddInitialCondition(f0-fs,1); % Add an initial condition f0-fs<= 1
+my_pep.AddInitialCondition(f0-fs-1<=0); % Add an initial condition f0-fs<= 1
 
 % (3) Algorithm
 N=1;
@@ -26,7 +26,7 @@ for i=1:N
 end
 
 % (4) Set up the performance measure
-my_pep.AddPerformanceConstraint(f-fs); % Worst-case evaluated as F(x)-F(xs)
+my_pep.AddPerformanceConstraint(f-fs); % Worst-case evaluated as ||g||^2
 
 % (5) Solve the PEP
 my_pep.solve()

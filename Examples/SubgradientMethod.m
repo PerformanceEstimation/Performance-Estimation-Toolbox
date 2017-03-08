@@ -12,7 +12,9 @@ F=my_pep.AddComponentObjective('SmoothConvexBoundedGradient',param); % F is the 
 % (2) Set up the starting point and initial condition
 x0=my_pep.GenStartingPoint();		 % x0 is some starting point
 [xs,fs]=F.GetOptimalPoint(); 		 % xs is an optimal point, and fs=F(xs)
-my_pep.AddInitialCondition(x0-xs,1); % Add an initial condition ||x0-xs||^2<= 1
+% my_pep.AddInitialCondition(x0-xs,1); % Add an initial condition ||x0-xs||^2<= 1
+
+my_pep.AddConstraint((x0-xs)*(x0-xs)<=1);
 
 % (3) Algorithm
 N=1;		% number of iterations

@@ -11,11 +11,11 @@ F=my_pep.AddComponentObjective('SmoothStronglyConvex',param); % F is the objecti
 % (2) Set up the starting point and initial condition
 x0=my_pep.GenStartingPoint();		 % x0 is some starting point
 [xs,fs]=F.GetOptimalPoint(); 		 % xs is an optimal point, and fs=F(xs)
-my_pep.AddInitialCondition(x0-xs,1); % Add an initial condition ||x0-xs||^2<= 1
+my_pep.AddInitialCondition((x0-xs)^2<=1); % Add an initial condition ||x0-xs||^2<= 1
 
 % (3) Algorithm
 gam=1/param.L;		% step size
-N=3;		% number of iterations
+N=1;		% number of iterations
 
 x=cell(N+1,1);
 x{1}=x0;

@@ -13,7 +13,7 @@ F=f1+f2;
 % (2) Set up the starting point and initial condition
 x0=my_pep.GenStartingPoint();		 % x0 is some starting point
 [xs,fs]=F.GetOptimalPoint(); 		 % xs is an optimal point, and fs=F(xs)
-my_pep.AddInitialCondition(x0-xs,1); % Add an initial condition ||x0-xs||^2<= 1
+my_pep.AddInitialCondition((x0-xs).*(x0-xs)<=1); % Add an initial condition ||x0-xs||^2<= 1
 
 % (3) Algorithm
 gam=1/param.L;		% step size

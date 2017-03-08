@@ -17,7 +17,7 @@ F=f1+f2; % F is the objective function
 % (2) Set up the starting point and initial condition
 x0=my_pep.GenStartingPoint();		 % x0 is some starting point
 [xs,fs]=F.GetOptimalPoint(); 		 % xs is an optimal point, and fs=F(xs)
-my_pep.AddInitialCondition(x0-xs,1); % Add an initial condition ||x0-xs||^2<= 1
+my_pep.AddInitialCondition((x0-xs)^2<=1); % Add an initial condition ||x0-xs||^2<= 1
 
 % (3) Algorithm
 gam=1/paramf1.L;		% step size
@@ -27,11 +27,11 @@ x=cell(N+1,1);
 x{1}=x0;
 for i=1:N
     xint=gradient_step(x{i},f1,gam);
-    x{i+1}=proximal_step(xint,f2,gam);
+    x{i+1}=projection_step(xint,f2);
 end
 
 % (4) Set up the performance measure
-my_pep.AddPerformanceConstraint(x{N+1}-xs);
+my_pep.AddPerformanceConstraint((x{N+1}-xs)^2);
 
 % (5) Solve the PEP
 my_pep.solve()

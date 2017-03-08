@@ -1,6 +1,5 @@
 classdef Point < Evaluable
     properties (GetAccess=private)
-        type;
         number;
         expression;
         expr_saved;
@@ -36,11 +35,14 @@ classdef Point < Evaluable
                     vec=zeros(dim,1);
                     vec(obj.number,1)=1;
                     if strcmp(obj.type,'Function value')
-                        F=ExpressionWrapper.SetGetFunc();
+                        F=Evaluable.SetGetFunc();
                         vec=vec.'*F;
                     end
                 elseif obj.expression==0
-                    dim=Point.SetGetPts(obj.type,0);
+                    dim=1;
+                    if strcmp(obj.type,'Point')
+                        dim=Point.SetGetPts(obj.type,0);
+                    end
                     vec=zeros(dim,1);
                 else
                     vec=obj.expression.Eval();
@@ -50,43 +52,6 @@ classdef Point < Evaluable
             else
                 vec=obj.expr_saved;
             end
-        end
-        function expr=getType(obj)
-            expr=obj.type;
-        end
-        function obj3=plus(obj1,obj2)
-            assert((isa(obj1,'Evaluable') | isa(obj1,'double')) & (isa(obj2,'Evaluable') | isa(obj2,'double')),'Invalid use of PLUS - elements are not compatible (PET class: Point)');
-            if isa(obj2,'Evaluable') && isa(obj1,'Evaluable')
-                obj1.getType()
-                obj2.getType()
-                assert(strcmp(obj1.getType(),obj2.getType()),'Invalid use of PLUS - elements are not compatible (PET class: Point)');
-                obj3=Expression(obj1,1,obj2,1);
-            elseif isa(obj1,'double')
-                obj3=Expression(obj2,1,0,0,obj1);
-            else %isa(obj1,'double')
-                obj3=Expression(obj1,1,0,0,obj2);               
-            end            
-        end
-        function obj3=minus(obj1,obj2)
-            assert(strcmp(obj1.getType(),obj2.getType()),'Invalid use of MINUS - elements are not compatible (PET class: Point)');
-            obj3=Expression(obj1,1,obj2,-1);
-        end
-        function obj3=uminus(obj1)
-            obj3=Expression(obj1,-1,Point(obj1.getType(),0),0);
-        end
-        function obj3=mtimes(a,b)
-            assert((isa(a,'double') || isa(a,'Point')) & (isa(b,'double') || isa(b,'Point')),'Invalid use of MTIMES - elements are not compatible (PET class: Point)');
-            if isa(a,'double') && isa(b,'Point')
-                obj3=Expression(b,a,Point(b.getType(),0),0);
-            elseif isa(b,'double') && isa(a,'Point')
-                obj3=Expression(a,b,Point(a.getType(),0),0);
-            else
-                obj3=PrExpression(a,b,1);
-            end
-        end
-        function obj3=mpower(a,b)
-            assert(b==2,'Only squares are accepted in expressions (PET class: Point)');
-            obj3=mtimes(a,a);
         end
     end
     methods (Access=private, Static)

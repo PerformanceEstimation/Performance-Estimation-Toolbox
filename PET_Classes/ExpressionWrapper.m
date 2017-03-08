@@ -104,23 +104,6 @@ classdef ExpressionWrapper < handle
         end
     end
     methods (Static)
-        function G=SetGetGram(G)
-            persistent Gram;
-            if nargin == 1
-                Gram=G;
-            else
-                assert(~isempty(Gram),'Warning, the YALMIP variables were not initialized: impossible to evaluate expressions (Eval was probably called outside a PET instance)')
-                G=Gram;
-            end
-        end
-        function F=SetGetFunc(F)
-            persistent Func;
-            if nargin == 1
-                Func=F;
-            else
-                assert(~isempty(Func),'Warning, the YALMIP variables were not initialized: impossible to evaluate expressions (Eval was probably called outside a PET instance)')
-                F=Func;
-            end
-        end
+
     end
 end

@@ -17,7 +17,7 @@ w0=my_pep.GenStartingPoint();		 % x0 is some starting point
 bs=-as;
 lambda=0.9; ws=xs+lambda*bs;
 
-my_pep.AddInitialCondition(w0-ws,1); % Add an initial condition ||x0-xs||^2<= 1
+my_pep.AddInitialCondition((w0-ws)^2-1<=0); % Add an initial condition ||x0-xs||^2<= 1
 
 % (3) Algorithm
 N=5;            % number of iterations
@@ -33,7 +33,7 @@ for i=1:N
 end
 
 % (5) Set up the performance measure
-my_pep.AddPerformanceConstraint(w{i+1}-ws);
+my_pep.AddPerformanceConstraint((w{i+1}-ws)^2);
 
 % (5) Solve the PEP
 my_pep.solve()

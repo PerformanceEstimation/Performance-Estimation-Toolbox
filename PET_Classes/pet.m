@@ -39,23 +39,20 @@ classdef pet < handle
             pt=Point('Point');
         end
         function obj=AddConstraint(obj,expr)
-            assert(isa(expr,'Evaluable'),'Invalid initial condition');
-            assert(strcmp(expr.getType(),'Point') || strcmp(expr.getType(),'Function value'),'Invalid initial condition');
+            assert(isa(expr,'Constraint'),'Invalid constraint');
             obj.list_size_others=obj.list_size_others+1;
             obj.expr_list_others{obj.list_size_others,1}=expr;
         end
         function obj=AddPerformanceConstraint(obj,expr)
-            assert(isa(expr,'Evaluable'),'Invalid initial condition');
-            assert(strcmp(expr.getType(),'Point') || strcmp(expr.getType(),'Function value'),'Invalid initial condition');
+            assert(isa(expr,'Evaluable'),'Perfomance measures should be scalar values');
+            assert(strcmp(expr.getType(),'Function value'),'Perfomance measures should be scalar values');
             obj.list_size_perf=obj.list_size_perf+1;
             obj.expr_list_perf{obj.list_size_perf,1}=expr;
         end
-        function AddInitialCondition(obj,expr,value)
-            assert(isa(expr,'Evaluable') && isa(value,'double'),'Invalid initial condition');
-            assert(strcmp(expr.getType(),'Point') || strcmp(expr.getType(),'Function value'),'Invalid initial condition');
+        function AddInitialCondition(obj,expr)
+            assert(isa(expr,'Constraint'),'Invalid constraint');
             obj.list_size_init=obj.list_size_init+1;
             obj.expr_list_init{obj.list_size_init,1}=expr;
-            obj.expr_list_init{obj.list_size_init,2}=value;
         end
         function out=AddComponentObjective(obj,InterpEval,param)
             assert(isa(InterpEval,'function_handle') | isa(InterpEval,'char'),'Invalid component added to the objective function');
@@ -103,13 +100,8 @@ classdef pet < handle
             if obj.list_size_perf>0
                 fprintf(' PET: Setting up the problem: performance measure');
                 for i=1:obj.list_size_perf
-                    lexpr=ExpressionWrapper(obj.expr_list_perf{i,1}.Eval(),obj.expr_list_perf{i,1}.getType());
-                    if ~strcmp(lexpr.getType(),'Scalar')
-                        lexpr2=lexpr^2;
-                        cons=cons+(tau<=lexpr2.Eval());
-                    else
-                        cons=cons+(tau<=lexpr.Eval());
-                    end
+                    lexpr=obj.expr_list_perf{i,1};
+                    cons=cons+(tau<=lexpr.Eval());
                 end
                 perf_size=length(cons);
                 fprintf(' (done, %d constraint(s) added) \n',perf_size);
@@ -118,12 +110,8 @@ classdef pet < handle
             if obj.list_size_init>0
                 fprintf(' PET: Setting up the problem: initial conditions');
                 for i=1:obj.list_size_init
-                    lexpr=ExpressionWrapper(obj.expr_list_init{i,1}.Eval(),obj.expr_list_init{i,1}.getType());
-                    if ~strcmp(lexpr.getType(),'Scalar')
-                        cons=cons+(lexpr^2-obj.expr_list_init{i,2}<=0);
-                    else
-                        cons=cons+(lexpr-obj.expr_list_init{i,2}<=0);
-                    end
+                    lexpr=obj.expr_list_init{i,1}.Eval();
+                    cons=cons+lexpr;
                 end
                 init_size=length(cons)-count;
                 fprintf(' (done, %d constraint(s) added) \n',init_size);
@@ -132,8 +120,7 @@ classdef pet < handle
             fprintf(' PET: Setting up the problem: other constraints');
             if obj.list_size_others>0
                 for i=1:obj.list_size_others
-                    lexpr=ExpressionWrapper(obj.expr_list_others{i,1}.Eval(),obj.expr_list_others{i,1}.getType());
-                    cons=cons+(lexpr<=0);
+                    cons=cons+obj.expr_list_others{i,1}.Eval();
                 end
             end
             
@@ -158,7 +145,7 @@ classdef pet < handle
             tau=sdpvar(1,1);
             obj_func=tau;
             cons=(G>=0);
-            ExpressionWrapper.SetGetFunc(F);ExpressionWrapper.SetGetGram(G);
+            Evaluable.SetGetFunc(F);Evaluable.SetGetGram(G);
             msg = sprintf(' PET: Setting up the problem: interpolation constraints (component %d out of %d done)\n', 0,obj.list_size_func);
             fprintf(msg);
             prevlength = numel(msg);

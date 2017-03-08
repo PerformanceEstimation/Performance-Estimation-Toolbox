@@ -15,7 +15,7 @@ x0=my_pep.GenStartingPoint();		 % x0 is some starting point
 [xs,fs]=F.GetOptimalPoint(); 		 % xs is an optimal point, and fs=F(xs)
 [g0,f10]=f1.oracle(x0);
 [s0,f20]=f2.oracle(x0);
-my_pep.AddInitialCondition(g0+s0,1); % Add an initial condition ||x0-xs||^2<= 1
+my_pep.AddInitialCondition((g0+s0)^2<=1); % Add an initial condition ||x0-xs||^2<= 1
 
 % (3) Algorithm
 gam=1/paramf1.L;		% step size
@@ -31,7 +31,7 @@ end
 
 % (4) Set up the performance measure
 [gN,f1N]=f1.oracle(x{N+1});
-my_pep.AddPerformanceConstraint(gN+s);
+my_pep.AddPerformanceConstraint((gN+s)^2);
 
 % (5) Solve the PEP
 my_pep.solve()

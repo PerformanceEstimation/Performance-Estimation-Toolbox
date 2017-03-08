@@ -33,7 +33,7 @@ classdef functionClass < functionHandler
             if nargin > 2
                 if reuse
                     for i=1:obj.list_size
-                        if x==obj.interp_list{i}.x
+                        if isEqual(x,obj.interp_list{i}.x)
                             g=obj.interp_list{i}.g;
                             f=obj.interp_list{i}.f;
                             found=1;
@@ -54,20 +54,10 @@ classdef functionClass < functionHandler
         function cons=GetInterp(obj)
             cons=[];
             for i=1:obj.list_size
-                clear pt1;
-                pt1.x=ExpressionWrapper(obj.interp_list{i}.x.Eval(),obj.interp_list{i}.x.getType());
-                pt1.g=ExpressionWrapper(obj.interp_list{i}.g.Eval(),obj.interp_list{i}.g.getType());
-                pt1.f=ExpressionWrapper(obj.interp_list{i}.f.Eval(),obj.interp_list{i}.f.getType());
-                pt1.spec=obj.interp_list{i}.spec;
                 for j=1:obj.list_size
-                    clear pt2;
-                    pt2.x=ExpressionWrapper(obj.interp_list{j}.x.Eval(),obj.interp_list{j}.x.getType());
-                    pt2.g=ExpressionWrapper(obj.interp_list{j}.g.Eval(),obj.interp_list{j}.g.getType());
-                    pt2.f=ExpressionWrapper(obj.interp_list{j}.f.Eval(),obj.interp_list{j}.f.getType());
-                    pt2.spec=obj.interp_list{j}.spec;
-                    new_cons=obj.interp_handler(pt1,pt2);
+                    new_cons=obj.interp_handler(obj.interp_list{i},obj.interp_list{j});
                     if ~isempty(new_cons)
-                        cons=cons+new_cons;
+                        cons=cons+new_cons.Eval();
                     end
                 end
             end

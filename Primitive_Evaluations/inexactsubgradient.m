@@ -8,9 +8,9 @@ if nargin < 4 % relative accuracy
 end
 
 if abs==1 % absolute accuracy
-    f.AddConstraint((g-d)^2-eps^2);
+    f.AddConstraint((g-d)^2-eps^2<=0);
 else
-    f.AddConstraint((g-d)^2-eps^2*g^2);
+    f.AddConstraint((g-d)^2-eps^2*g^2<=0);
 end
 
 % Another possibility:
@@ -23,9 +23,9 @@ end
 % end
 % 
 % if abs==1
-%     f.AddConstraint(err^2-eps^2);
+%     f.AddConstraint(err^2-eps^2<=0);
 % else
-%     f.AddConstraint(err^2-eps^2*g^2);
+%     f.AddConstraint(err^2-eps^2*g^2<=0);
 % end
 
 end
