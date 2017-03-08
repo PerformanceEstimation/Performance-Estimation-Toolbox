@@ -23,33 +23,30 @@ classdef functionClass < functionHandler
             obj.interp_list{obj.list_size}.g=g;
             obj.interp_list{obj.list_size}.f=f;
         end
-        function [x,f,g]=GetOptimalPoint(obj)
+        function [x,f,g]=GetOptimalPoint(obj,tag)
             x=Point('Point');
             g=Point('Point',0);
             f=Point('Function value');
-            obj.AddComponent(x,g,f,'optimum');
+            if nargin < 2
+                tag='optimum';
+            end
+            obj.AddComponent(x,g,f,tag);
         end
-        function [g, f]=oracle(obj,x,reuse)
-            if nargin > 2
-                if reuse
-                    for i=1:obj.list_size
-                        if isEqual(x,obj.interp_list{i}.x)
-                            g=obj.interp_list{i}.g;
-                            f=obj.interp_list{i}.f;
-                            found=1;
-                            break;
-                        end
+        function [g, f]=oracle(obj,x)
+            assert(isa(x,'char') | isa(x,'Evaluable'),'Oracle call: x must either be a tag or a point');
+            if isa(x,'char')
+                for i=1:obj.list_size
+                    if strcmp(x,obj.interp_list{i}.spec)
+                        g=obj.interp_list{i}.g;
+                        f=obj.interp_list{i}.f;
+                        break;
                     end
                 end
             else
-                found=0;
-            end
-            if ~found
                 g=Point('Point');
                 f=Point('Function value');
                 obj.AddComponent(x,g,f);
             end
-            
         end
         function cons=GetInterp(obj)
             cons=[];

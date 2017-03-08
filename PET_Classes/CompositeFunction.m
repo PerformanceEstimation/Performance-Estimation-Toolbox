@@ -27,14 +27,17 @@ classdef CompositeFunction < functionHandler
             cons=cons+obj.func1.GetInterp();
             cons=cons+obj.func2.GetInterp();
         end
-        function [x,f]=GetOptimalPoint(obj)
+        function [x,f]=GetOptimalPoint(obj,tag)
             x=Point('Point');
             g1=Point('Point');
             f1=Point('Function value');
             f2=Point('Function value');
             g2=-g1;
-            obj.func1.AddComponent(x,g1,f1,'');
-            obj.func2.AddComponent(x,g2,f2,'');
+            if nargin < 2
+                tag='';
+            end
+            obj.func1.AddComponent(x,g1,f1,tag);
+            obj.func2.AddComponent(x,g2,f2,tag);
             f=f1+f2;
         end
         function [g, f]=oracle(obj,x)

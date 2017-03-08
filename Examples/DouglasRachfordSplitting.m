@@ -12,8 +12,8 @@ F=f1+f2; % F is the objective function
 
 % (2) Set up the starting point and initial condition
 w0=my_pep.GenStartingPoint();		 % x0 is some starting point
-[xs,fs]=F.GetOptimalPoint(); 		 % xs is an optimal point, and fs=F(xs)
-[as,~]=f1.oracle(xs,1);
+[xs,fs]=F.GetOptimalPoint('opt'); 		 % xs is an optimal point, and fs=F(xs)
+[as,~]=f1.oracle('opt');
 bs=-as;
 lambda=0.9; ws=xs+lambda*bs;
 
