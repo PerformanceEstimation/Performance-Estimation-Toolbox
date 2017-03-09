@@ -1,4 +1,5 @@
 clear all; clc;
+tic
 % (0) Initialize an empty PEP
 my_pep=pet();
 
@@ -15,7 +16,7 @@ my_pep.AddInitialCondition(-(x0-xs)*(x0-xs)+1>=0); % Add an initial condition ||
 
 % (3) Algorithm
 gam=1/param.L;		% step size
-N=20;		% number of iterations
+N=10;		% number of iterations
 
 x=x0;
 for i=1:N
@@ -31,3 +32,4 @@ my_pep.AddPerformanceConstraint(f-fs); % Worst-case evaluated as F(x)-F(xs)
 
 % (5) Solve the PEP
 my_pep.solve()
+toc
