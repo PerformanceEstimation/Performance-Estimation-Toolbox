@@ -8,6 +8,10 @@ classdef (Abstract) functionHandler < handle
         function obj=functionHandler()
             obj.list_size_others=0;
             obj.expr_list_others=cell(0,1);
+            functionHandler.CountActive(1);
+        end
+        function delete(obj)
+            functionHandler.CountActive(-1);
         end
         function obj=AddConstraint(obj,expr)
             assert(isa(expr,'Constraint'),'Invalid initial condition');
@@ -20,6 +24,18 @@ classdef (Abstract) functionHandler < handle
                 lexpr=obj.expr_list_others{i,1}.Eval();
                 cons=cons+lexpr;
             end
+        end
+    end
+    methods (Static)
+        function out=CountActive(add)
+            persistent nbEval;
+            if isempty(nbEval)
+                nbEval=0;
+            end
+            if nbEval+add>=0
+                nbEval=nbEval+add;
+            end
+            out=nbEval;
         end
     end
 end

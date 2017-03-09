@@ -31,6 +31,7 @@ end
 
 % (4) Set up the performance measure
 [gN,f1N]=f1.oracle(x{N+1});
+[sN,f2N]=f1.oracle(x{N+1});
 my_pep.AddPerformanceConstraint((gN+s)^2);
 
 % (5) Solve the PEP

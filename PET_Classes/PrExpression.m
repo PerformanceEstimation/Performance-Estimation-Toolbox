@@ -34,5 +34,17 @@ classdef PrExpression < Evaluable
                 vec=obj.expr_saved;
             end
         end
+        function value=double(obj)
+            sol=Evaluable.Solved();
+            assert(sol.status==1,'This PEP has not been solved yet');
+            dim_when_solved=length(sol.P);
+            assert(dim_when_solved==Point.GetSize('Point'),'This PEP was modified after being solved: solve the new PEP before evaluating its solution');
+            dim_when_solved=length(sol.F);
+            assert(dim_when_solved==Point.GetSize('Function value'),'This PEP was modified after being solved: solve the new PEP before evaluating its solution');
+            if obj.when_saved==0
+                obj.Eval();
+            end
+            value=double(obj.expr_saved);
+        end
     end
 end

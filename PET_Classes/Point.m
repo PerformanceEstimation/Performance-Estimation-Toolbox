@@ -53,6 +53,22 @@ classdef Point < Evaluable
                 vec=obj.expr_saved;
             end
         end
+        function value=double(obj)
+            sol=Evaluable.Solved();
+            assert(sol.status==1,'This PEP has not been solved yet');
+            dim_when_solved=length(sol.P);
+            assert(dim_when_solved==Point.GetSize('Point'),'This PEP was modified after being solved: solve the new PEP before evaluating its solution');
+            dim_when_solved=length(sol.F);
+            assert(dim_when_solved==Point.GetSize('Function value'),'This PEP was modified after being solved: solve the new PEP before evaluating its solution');
+            if obj.when_saved==0
+                obj.Eval();
+            end
+            if strcmp(obj.type,'Function value')
+                value=double(obj.expr_saved);
+            else
+                value=sol.P*obj.expr_saved;
+            end
+        end
     end
     methods (Access=private, Static)
         function out=SetGetPts(type,add)
@@ -78,6 +94,20 @@ classdef Point < Evaluable
         function out=GetSize(type)
             assert(strcmp(type,'Point') | strcmp(type,'Function value'),'Type must be Point or Function value (PET class: Point)');
             out=Point.SetGetPts(type,0);
+        end
+        function out=Reset(time)
+            persistent reset_time;
+            if nargin==1
+                type='Point';
+                out=Point.SetGetPts(type,0);
+                Point.SetGetPts(type,-out);
+                type='Function value';
+                out=Point.SetGetPts(type,0);
+                Point.SetGetPts(type,-out);
+                reset_time=time;
+            end
+            out=reset_time;
+            
         end
     end
 end

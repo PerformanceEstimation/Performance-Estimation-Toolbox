@@ -6,8 +6,11 @@ classdef (Abstract) Evaluable < handle
     methods
         function obj=Evaluable()
             Evaluable.update(1);
+            Evaluable.CountActive(1);
         end
-        
+        function delete(obj)
+            Evaluable.CountActive(-1);
+        end
         function expr=getType(obj)
             expr=obj.type;
         end
@@ -102,7 +105,21 @@ classdef (Abstract) Evaluable < handle
             obj3=a;
         end
     end
+    methods (Abstract)
+        double(obj)
+        Eval(obj)
+    end
     methods (Static)
+        function out=CountActive(add)
+            persistent nbEval;
+            if isempty(nbEval)
+                nbEval=0;
+            end
+            if nbEval+add>=0
+                nbEval=nbEval+add;
+            end
+            out=nbEval;
+        end
         function out=update(upd)
             persistent last_update;
             if upd
@@ -141,6 +158,19 @@ classdef (Abstract) Evaluable < handle
                 assert(~isempty(Func),'Warning, the YALMIP variables were not initialized: impossible to evaluate expressions (Eval was probably called outside a PET instance)')
                 F=Func;
             end
+        end
+        function out=Solved(in,F,P)
+            persistent isSolved;
+            if nargin>=1
+                isSolved.status=in;
+            elseif isempty(isSolved)
+                isSolved.status=0;
+            end
+            if nargin>=3
+                isSolved.F=F;
+                isSolved.P=P;
+            end
+            out=isSolved;
         end
     end
     

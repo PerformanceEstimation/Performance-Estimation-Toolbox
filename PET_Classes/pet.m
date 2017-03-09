@@ -8,8 +8,12 @@ classdef pet < handle
     %       Direct help: help pet
     %       Examples available in the directory pet/examples
     %
+    %       Demo's available by typing:
+    %       >> demo1 % demo of PET for the gradient descent
+    %       >> demo2 % demo of PET for subgradient methods
+    %       >> demo3 % demo of PET for FISTA
     %
-    %
+    
     properties (GetAccess=private)
         expr_list_perf;
         list_size_perf;
@@ -19,6 +23,7 @@ classdef pet < handle
         list_size_others;
         list_func;
         list_size_func;
+        t_reset;
     end
     methods
         function obj=pet()
@@ -30,6 +35,12 @@ classdef pet < handle
             obj.list_size_others=0;
             obj.list_func=cell(0,1);
             obj.list_size_func=0;
+            obj.t_reset=now;
+            Point.Reset(obj.t_reset);
+            pet.CountActive(1);
+        end
+        function delete(obj)
+            pet.CountActive(-1);
         end
         function disp(obj)
             fprintf('Instance of Performance Estimation Problem (PEP) \n');
@@ -95,29 +106,29 @@ classdef pet < handle
                 end
             end
         end
-        function cons=collect(obj,tau)
+        function cons=collect(obj,tau,verbose_pet)
             cons=[];
             if obj.list_size_perf>0
-                fprintf(' PET: Setting up the problem: performance measure');
+                if verbose_pet, fprintf(' PET: Setting up the problem: performance measure'), end;
                 for i=1:obj.list_size_perf
                     lexpr=obj.expr_list_perf{i,1};
                     cons=cons+(tau<=lexpr.Eval());
                 end
                 perf_size=length(cons);
-                fprintf(' (done, %d constraint(s) added) \n',perf_size);
+                if verbose_pet, fprintf(' (done, %d constraint(s) added) \n',perf_size), end;
             end
             count=length(cons);
             if obj.list_size_init>0
-                fprintf(' PET: Setting up the problem: initial conditions');
+                if verbose_pet, fprintf(' PET: Setting up the problem: initial conditions'), end;
                 for i=1:obj.list_size_init
                     lexpr=obj.expr_list_init{i,1}.Eval();
                     cons=cons+lexpr;
                 end
                 init_size=length(cons)-count;
-                fprintf(' (done, %d constraint(s) added) \n',init_size);
+                if verbose_pet, fprintf(' (done, %d constraint(s) added) \n',init_size), end;
             end
             count=length(cons);
-            fprintf(' PET: Setting up the problem: other constraints');
+            if verbose_pet, fprintf(' PET: Setting up the problem: other constraints'), end;
             if obj.list_size_others>0
                 for i=1:obj.list_size_others
                     cons=cons+obj.expr_list_others{i,1}.Eval();
@@ -128,17 +139,25 @@ classdef pet < handle
                 cons=cons+obj.list_func{i,1}.collect();
             end
             others_size=length(cons)-count;
-            fprintf(' (done, %d constraint(s) added) \n',others_size);
+            if verbose_pet, fprintf(' (done, %d constraint(s) added) \n',others_size), end;
         end
-        function out=solve(obj,solver_opt)
+        function out=clean()
             
+        end
+        function out=solve(obj,verbose_pet,solver_opt)
+            
+            assert(obj.t_reset==Point.Reset(),'Another PET environment has been initialized, re-generate this PEP before solving it')
             if nargin < 2
-                verbose=0;
-                solver_opt = sdpsettings('verbose',verbose);%,'solver','mosek','mosek.MSK_DPAR_INTPNT_CO_TOL_PFEAS',1e-10);
+                verbose_pet=0;
+                verbose_solver=0;
+                solver_opt = sdpsettings('verbose',verbose_solver);%,'solver','mosek','mosek.MSK_DPAR_INTPNT_CO_TOL_PFEAS',1e-10);
+            elseif nargin < 3
+                verbose_solver=0;
+                solver_opt = sdpsettings('verbose',verbose_solver);%,'solver','mosek','mosek.MSK_DPAR_INTPNT_CO_TOL_PFEAS',1e-10);
             end
             
             dim1=Point.GetSize('Point');
-            fprintf(' PET: Setting up the problem, size of the main PSD matrix: %d x %d\n',dim1,dim1);
+            if verbose_pet, fprintf(' PET: Setting up the problem, size of the main PSD matrix: %d x %d\n',dim1,dim1), end
             G=sdpvar(dim1);
             dim2=Point.GetSize('Function value');
             F=sdpvar(dim2,1);
@@ -147,25 +166,49 @@ classdef pet < handle
             cons=(G>=0);
             Evaluable.SetGetFunc(F);Evaluable.SetGetGram(G);
             msg = sprintf(' PET: Setting up the problem: interpolation constraints (component %d out of %d done)\n', 0,obj.list_size_func);
-            fprintf(msg);
+            if verbose_pet, fprintf(msg), end;
             prevlength = numel(msg);
             for i=1:obj.list_size_func
                 cons=cons+obj.list_func{i,1}.GetInterp();
-                msg = sprintf(' PET: Setting up the problem: interpolation constraints (component %d out of %d done)\n', i,obj.list_size_func);
-                fprintf(repmat('\b', 1, prevlength));
-                fprintf(msg);
-                prevlength = numel(msg);
+                if verbose_pet
+                    msg = sprintf(' PET: Setting up the problem: interpolation constraints (component %d out of %d done)\n', i,obj.list_size_func);
+                    fprintf(repmat('\b', 1, prevlength));
+                    fprintf(msg);
+                    prevlength = numel(msg);
+                end
             end
             interp_cons=length(cons)-1;
-            fprintf('      Total interpolation constraints:  %d \n',interp_cons);
+            if verbose_pet, fprintf('      Total interpolation constraints:  %d \n',interp_cons), end;
             
-            cons=cons+obj.collect(tau);
+            cons=cons+obj.collect(tau,verbose_pet);
             
             
-            fprintf(' PET: Calling SDP solver\n');
+            if verbose_pet, fprintf(' PET: Calling SDP solver\n'), end;
             out.solverDetails=optimize(cons,-obj_func,solver_opt);
             out.WCperformance=double(obj_func);
-            fprintf(' PET: Solver output: %7.5e, solution status: %s\n',out.WCperformance,out.solverDetails.info);
+            
+            if verbose_pet, fprintf(' PET: Solver output: %7.5e, solution status: %s\n',out.WCperformance,out.solverDetails.info), end;
+            if verbose_pet, fprintf(' PET: Post-processing\n'), end;
+            
+            % Approximating P=[x0 ... gN] from G using Cholesky
+            % Decomposition
+            [V,D]=eig(double(G));%
+            tol=1e-9;%We throw away eigenvalues smaller that 1e-9
+            eigenV=diag(D); eigenV(eigenV < tol)=0;
+            new_D=diag(eigenV); [~,P]=qr(sqrt(new_D)*V.');
+            Evaluable.Solved(1,double(F),double(P));
+        end
+    end
+    methods (Static)
+        function out=CountActive(add)
+            persistent nbEval;
+            if isempty(nbEval)
+                nbEval=0;
+            end
+            if nbEval+add>=0
+                nbEval=nbEval+add;
+            end
+            out=nbEval;
         end
     end
 end

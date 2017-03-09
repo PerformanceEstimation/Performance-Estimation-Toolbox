@@ -32,20 +32,31 @@ classdef functionClass < functionHandler
             end
             obj.AddComponent(x,g,f,tag);
         end
-        function [g, f]=oracle(obj,x)
+        function [g, f]=oracle(obj,x,tag)
             assert(isa(x,'char') | isa(x,'Evaluable'),'Oracle call: x must either be a tag or a point');
+            if nargin>=3
+                assert(isa(tag,'char'),'Oracle call: second argument must be a tag (string)');
+                spec=tag;
+            else
+                spec='';
+            end
+            found=0;
             if isa(x,'char')
                 for i=1:obj.list_size
                     if strcmp(x,obj.interp_list{i}.spec)
                         g=obj.interp_list{i}.g;
                         f=obj.interp_list{i}.f;
+                        found=1;
                         break;
                     end
+                end
+                if found~=1
+                    assert(false,'Oracle: this tag does not match any previously evaluated point.')
                 end
             else
                 g=Point('Point');
                 f=Point('Function value');
-                obj.AddComponent(x,g,f);
+                obj.AddComponent(x,g,f,spec);
             end
         end
         function cons=GetInterp(obj)
