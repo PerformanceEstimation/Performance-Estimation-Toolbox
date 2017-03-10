@@ -9,9 +9,7 @@ classdef pet < handle
     %       Examples available in the directory pet/examples
     %
     %       Demo's available by typing:
-    %       >> demo1 % demo of PET for the gradient descent
-    %       >> demo2 % demo of PET for subgradient methods
-    %       >> demo3 % demo of PET for FISTA
+    %       >> demo
     %
     
     properties (GetAccess=private)
@@ -83,50 +81,57 @@ classdef pet < handle
         end
         function out=AddObjective(obj,InterpEval,param)
             assert(isa(InterpEval,'function_handle') | isa(InterpEval,'char'),'Invalid component added to the objective function');
-            if ~isfield(param,'L')
-                param.L=Inf;
-            end
-            if ~isfield(param,'mu')
-                param.mu=0;
-            end
-            if ~isfield(param,'D')
-                param.D=Inf;
-            end
-            if ~isfield(param,'R')
-                param.R=Inf;
-            end
             if isa(InterpEval,'function_handle')
                 out=functionClass(InterpEval);
                 obj.list_size_func=obj.list_size_func+1;
                 obj.list_func{obj.list_size_func,1}=out;
             else
+                if nargin>=3
+                    if ~isfield(param,'L')
+                        param.L=Inf;
+                    end
+                    if ~isfield(param,'mu')
+                        param.mu=0;
+                    end
+                    if ~isfield(param,'D')
+                        param.D=Inf;
+                    end
+                    if ~isfield(param,'R')
+                        param.R=Inf;
+                    end
+                else
+                    param.L=Inf;
+                    param.mu=0;
+                    param.D=Inf;
+                    param.R=Inf;
+                end
                 switch InterpEval
                     case 'Convex'
-                        out=functionClass(@(pt1,pt2)Interpolation_Convex(pt1,pt2));
+                        out=functionClass(@(pt1,pt2)Convex(pt1,pt2));
                         obj.list_size_func=obj.list_size_func+1;
                         obj.list_func{obj.list_size_func,1}=out;
                     case 'SmoothStronglyConvex'
-                        out=functionClass(@(pt1,pt2)Interpolation_SmoothStronglyConvex(pt1,pt2,param.mu,param.L));
+                        out=functionClass(@(pt1,pt2)SmoothStronglyConvex(pt1,pt2,param.mu,param.L));
                         obj.list_size_func=obj.list_size_func+1;
                         obj.list_func{obj.list_size_func,1}=out;
                     case 'ConvexIndicator'
-                        out=functionClass(@(pt1,pt2)Interpolation_ConvexIndicator(pt1,pt2,param.D,param.R));
+                        out=functionClass(@(pt1,pt2)ConvexIndicator(pt1,pt2,param.D,param.R));
                         obj.list_size_func=obj.list_size_func+1;
                         obj.list_func{obj.list_size_func,1}=out;
                     case 'ConvexSupport'
-                        out=functionClass(@(pt1,pt2)Interpolation_ConvexSupport(pt1,pt2,param.D,param.R));
+                        out=functionClass(@(pt1,pt2)ConvexSupport(pt1,pt2,param.D,param.R));
                         obj.list_size_func=obj.list_size_func+1;
                         obj.list_func{obj.list_size_func,1}=out;
                     case 'Smooth'
-                        out=functionClass(@(pt1,pt2)Interpolation_Smooth(pt1,pt2,param.L));
+                        out=functionClass(@(pt1,pt2)Smooth(pt1,pt2,param.L));
                         obj.list_size_func=obj.list_size_func+1;
                         obj.list_func{obj.list_size_func,1}=out;
                     case 'StronglyConvexBoundedDomain'
-                        out=functionClass(@(pt1,pt2)Interpolation_StronglyConvexBoundedDomain(pt1,pt2,param.D,param.R,param.mu));
+                        out=functionClass(@(pt1,pt2)StronglyConvexBoundedDomain(pt1,pt2,param.D,param.R,param.mu));
                         obj.list_size_func=obj.list_size_func+1;
                         obj.list_func{obj.list_size_func,1}=out;
                     case 'SmoothConvexBoundedGradient'
-                        out=functionClass(@(pt1,pt2)Interpolation_SmoothConvexBoundedGradient(pt1,pt2,param.D,param.R,param.L));
+                        out=functionClass(@(pt1,pt2)SmoothConvexBoundedGradient(pt1,pt2,param.D,param.R,param.L));
                         obj.list_size_func=obj.list_size_func+1;
                         obj.list_func{obj.list_size_func,1}=out;
                     otherwise

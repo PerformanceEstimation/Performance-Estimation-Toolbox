@@ -1,41 +1,48 @@
 clear all; clc;
+% In this example, we use a proximal gradient method for
+% solving the composite convex minimization problem
+%   min_x F(x)=f_1(x)+f_2(x); 
+%   for notational convenience we denote xs=argmin_x F(x);
+% where f_1(x) is L-smooth and mu-strongly convex and where f_2(x) is
+% convex.
+%
+% We show how to compute the worst-case value of ||xN-xs||^2 when xN is
+% obtained by doing N steps of the method starting with an initial
+% iterate satisfying ||x0-xs||<=1.
 
 % (0) Initialize an empty PEP
-my_pep=pet();
+P=pet();
 
 % (1) Set up the objective function
 paramf1.mu=.1;	% Strong convexity parameter
 paramf1.L=1;      % Smoothness parameter
-f1=my_pep.AddComponentObjective('SmoothStronglyConvex',paramf1);
-f2=my_pep.AddComponentObjective('Convex');
+f1=P.AddObjective('SmoothStronglyConvex',paramf1);
+f2=P.AddObjective('Convex');
 F=f1+f2; % F is the objective function
 
 % (2) Set up the starting point and initial condition
-x0=my_pep.GenStartingPoint();		 % x0 is some starting point
-[xs,fs]=F.GetOptimalPoint(); 		 % xs is an optimal point, and fs=F(xs)
-[g0,f10]=f1.oracle(x0);
-[s0,f20]=f2.oracle(x0);
-my_pep.AddInitialCondition((g0+s0)^2<=1); % Add an initial condition ||x0-xs||^2<= 1
+x0=P.StartingPoint();		 % x0 is some starting point
+[xs,fs]=F.OptimalPoint(); 	 % xs is an optimal point, and fs=F(xs)
+P.InitialCondition((x0-xs)^2<=1); % Add an initial condition ||x0-xs||^2<= 1
 
 % (3) Algorithm
 gam=1/paramf1.L;		% step size
 N=1;		% number of iterations
 
-x=cell(N+1,1);
-x{1}=x0;
+x=x0;
 for i=1:N
-    xint=gradient_step(x{i},f1,gam);
-    x{i+1}=proximal_step(xint,f2,gam);
-    s=(xint-x{i+1})/gam;
+    xint=gradient_step(x,f1,gam);
+    x=proximal_step(xint,f2,gam);
 end
+xN=x;
 
 % (4) Set up the performance measure
-[gN,f1N]=f1.oracle(x{N+1});
-[sN,f2N]=f1.oracle(x{N+1});
-my_pep.AddPerformanceConstraint((gN+s)^2);
+P.PerformanceMetric((xN-xs)^2);
 
 % (5) Solve the PEP
-my_pep.solve()
+P.solve()
+
+% Result should be (and is) max((1-paramf1.mu*gam)^2,(1-paramf1.L*gam)^2)
 
 
 

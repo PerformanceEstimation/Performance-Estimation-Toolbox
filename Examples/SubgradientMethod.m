@@ -1,4 +1,14 @@
 clear all; clc;
+% In this example, we use a subgradient method for
+% solving the non-smooth convex minimization problem
+%   min_x F(x); for notational convenience we denote xs=argmin_x F(x);
+% where F(x) satisfies a Lipschitz condition; i.e., it has a bounded
+% gradient ||g||<=R for all g being a subgradient of F at some point.
+%
+% We show how to compute the worst-case value of F(xN)-F(xs) when xN is
+% obtained by doing N steps of a subgradient method starting with an initial
+% iterate satisfying ||x0-xs||<=1.
+
 % (0) Initialize an empty PEP
 P=pet();
 
@@ -28,10 +38,12 @@ for i=1:N
     P.PerformanceMetric(f-fs);
     x=x-h(i)*g;
 end
+xN=x;
 
-[g,f]=F.oracle(x);
+[g,f]=F.oracle(xN);
 P.PerformanceMetric(f-fs);
 
 % (5) Solve the PEP
 P.solve()
 
+% The result should be (and is) 1/sqrt(N+1).

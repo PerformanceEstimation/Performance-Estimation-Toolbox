@@ -1,41 +1,39 @@
 function demo2
 clear all; clc;
-msg_length=90;
-maketitle('Performance Estimation Toolbox (PET) -- DEMO 2 (Subgradient Method)',msg_length,2)
-fprintf('In this demo, we illustrate the use of the PET toolbox for performing\na worst-case analysis of a subgradient method (Examples/SubgradientMethod.m)')
+msg_length=90; Nmax=10;
+maketitle('Performance Estimation Toolbox (PET) -- EXAMPLE 2: comparing subgradient methods',msg_length,2)
+fprintf('In this demo, we illustrate the use of the PET toolbox for performing a worst-case\nanalysis of a subgradient method (Examples/SubgradientMethod.m).\n')
 waitfor;
-fprintf('\nConsider the problem of minimizing a function F:\n\n min F(x),\n\nwhich is convex with bounded subgradients (Lipschitz): ||g||<=L (with L=1).');
+fprintf('After that, we show how to use this worst-case computation problem to compare different\nsimple standard step size policies (for N=1,...,%d).\n',Nmax);
+waitfor;
+fprintf('\nConsider the problem of minimizing a function F:\n\n min F(x),\n\nwhich is convex with bounded subgradients (Lipschitz): ||g||<=L (say, with L=1).\n');
 waitfor;
 fprintf('We use a subgradient method with step size policy h \n\n x_{k+1}=x_k-h_k g_k (g_k is a subgradient of F at x_k).\n\n');
 waitfor;
 fprintf('The next lines show how to compute the worst-case objective function accuracy of the\nbest iterate min_{0<=i<=N} (F(x_i)-F(xs)) (xs is the optimum) assuming we start at some\nx_0, satisfying the condition\n\n ||x_0-xs||^2<=1.\n');
 waitfor;
-
-Nmax=5;
-fprintf('After that, we show how to use this worst-case computation problem to compare different\nsimple standard step size policies (for N=1,...,%d).\n',Nmax)
-waitfor;
-
 maketitle('Embedding the PEP within a function',msg_length,1)
 waitfor;
 fprintf('For comparing the different policies, we embed the PEP within the following function.\n\n');
 disp('>> function WCPerformance=PEPforSubgradient(h)');
 disp('>>  ... % PEP code here (described hereafter)');
 disp('>> end');
-fprintf('\nwhere h is a vector of size N containing all the step sizes.\n');
+fprintf('\nwhere h is a vector of size N (number of iterations) containing all the step sizes.\n');
 waitfor;
-
 maketitle('Initializing an empty performance estimation problem',msg_length,1)
 waitfor;
 disp('% (0) Initialize an empty PEP');
 disp('>> P=pet();');
 waitfor;
-maketitle('Setting up the objective function',msg_length,1)
+maketitle('Setting up the objective function F(x)',msg_length,1)
 waitfor;
 fprintf('%% (1) Set up the objective function \n%%     We set the Lipschitz constant within a structure ''param'' :\n');
 disp('>> param.R=1;	% ''radius''-type constraint on the subgradient norms: ||g||<=1');
 waitfor;
 fprintf('%% F is the objective function:\n');
 disp('>> F=P.AddObjective(''SmoothConvexBoundedGradient'',param);');
+waitfor;
+fprintf('Details on convex functions with bounded subgradients, ''help SmoothConvexBoundedGradient''.\nFor other functional classes, see User''s Manual or ''help pet''.\n');
 waitfor;
 maketitle('Setting up the starting point and initial condition',msg_length,1)
 waitfor;
@@ -47,31 +45,36 @@ waitfor;
 disp('>> P.InitialCondition((x0-xs)^2<=1); %  ||x0-xs||^2<= 1');
 
 waitfor;
-maketitle('Setting up the algorithm',msg_length,1);
+maketitle('Setting up the algorithm and performance measure',msg_length,1);
 waitfor;
-disp('% (3) Algorithm');
-disp('N=length(h);		% number of iterations');
+fprintf('As in the previous example, the idea is to write the algorithm is the same way as we would\nimplement it.\n\n');
+waitfor;
+disp('% (3) Algorithm and (4) performance measure');
+disp('>> N=length(h); % number of iterations (remember: h is the input containing all step sizes)');
+fprintf('\n');
+disp('% Note: the worst-case performance measure used in the PEP is the');
+disp('%       min_i (PerformanceMetric_i) (i.e., the best value among all');
+disp('%       performance metrics added into the problem). Here, we use it');
+disp('%       in order to find the worst-case value for min_i [F(x_i)-F(xs)].');
+waitfor;
+fprintf('\n');
 disp('>> x=x0;');
 disp('>> for i=1:N');
 disp('>>     [g,f]=F.oracle(x);		% g=grad F(x), f=F(x)');
-disp('>>     x=x-gam/param.L*g;');
+disp('>>     P.PerformanceMetric(f-fs);');
+disp('>>     x=x-h(i)*g;');
 disp('>> end');
+disp('>> xN=x;');
+disp('>> ');
+disp('>> [~,f]=F.oracle(xN);');
+disp('>> P.PerformanceMetric(f-fs);');
+waitfor;
 
-waitfor;
-fprintf('Note that only simple arithmetic operations are for generating the algorithm:\n')
-fprintf('(a) sums and difference of elements of the same natures:\n   - elements of the decision space on the one hand: x''s and g''s, and\n   - scalar values on the other hand (e.g.,f''s);\nand (b) scalar products between elements of the decision space: e.g., x*x, x*g, g*g.\n');
-waitfor;
-maketitle('Setting up the performance measure',msg_length,1);
-waitfor
-disp('% (4) Set up the performance measure');
-disp('>> [g,f]=F.oracle(x);                % g=grad F(x), f=F(x)');
-disp('>> P.AddPerformanceConstraint(f-fs); % Worst-case evaluated as F(x)-F(xs)');
-
-waitfor;
 maketitle('Solve the PEP',msg_length,1);
 waitfor;
 disp('% (5) Solve the PEP');
-disp('>> out=P.solve();');
+disp('>> verbose=0;');
+disp('>> sol=P.solve(verbose); % solves the PEP and disables the verbose mode.');
 disp('>> WCPerformance=sol.WCperformance;');
 disp('');
 
@@ -127,7 +130,7 @@ end
 plot(1:Nmax,perf_policy3,'--r','linewidth',2);
 
 waitfor;
-fprintf('End of DEMO 2: for further details, we refer to demo3 and to the User Manual.\n');
+fprintf('End of DEMO 2: for further details, we refer to demo3 and to the User''s Manual.\n');
 end
 
 
@@ -181,7 +184,7 @@ N=length(h); % number of iterations
 
 % Note: the worst-case performance measure used in the PEP is the 
 %       min_i (PerformanceMetric_i) (i.e., the best value among all
-%       performance metrics added into the problem. Here, we use it
+%       performance metrics added into the problem). Here, we use it
 %       in order to find the worst-case value for min_i [F(x_i)-F(xs)]
 x=x0;
 for i=1:N
@@ -189,9 +192,9 @@ for i=1:N
     P.PerformanceMetric(f-fs);
     x=x-h(i)*g;
 end
+xN=x;
 
-
-[~,f]=F.oracle(x);
+[~,f]=F.oracle(xN);
 P.PerformanceMetric(f-fs);
 
 % (5) Solve the PEP
