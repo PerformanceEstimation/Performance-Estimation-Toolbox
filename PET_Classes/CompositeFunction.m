@@ -27,7 +27,7 @@ classdef CompositeFunction < functionHandler
             cons=cons+obj.func1.GetInterp();
             cons=cons+obj.func2.GetInterp();
         end
-        function [x,f]=GetOptimalPoint(obj,tag)
+        function [x,f]=OptimalPoint(obj,tag)
             x=Point('Point');
             g1=Point('Point');
             f1=Point('Function value');
@@ -39,6 +39,14 @@ classdef CompositeFunction < functionHandler
             obj.func1.AddComponent(x,g1,f1,tag);
             obj.func2.AddComponent(x,g2,f2,tag);
             f=f1+f2;
+        end
+        function [x,f]=GetOptimalPoint(obj,tag)
+            fprintf('GetOptimalPoint is deprecated, consider using OptimalPoint instead\n');
+            if nargin ==2
+                [x,f]=obj.OptimalPoint(tag);
+            else
+                [x,f]=obj.OptimalPoint();
+            end
         end
         function [g, f]=oracle(obj,x,tag)
             assert(isa(x,'char') | isa(x,'Evaluable'),'Oracle call: x must either be a tag or a point');

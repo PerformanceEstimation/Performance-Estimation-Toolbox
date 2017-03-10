@@ -23,7 +23,7 @@ classdef functionClass < functionHandler
             obj.interp_list{obj.list_size}.g=g;
             obj.interp_list{obj.list_size}.f=f;
         end
-        function [x,f,g]=GetOptimalPoint(obj,tag)
+        function [x,f]=OptimalPoint(obj,tag)
             x=Point('Point');
             g=Point('Point',0);
             f=Point('Function value');
@@ -31,6 +31,14 @@ classdef functionClass < functionHandler
                 tag='optimum';
             end
             obj.AddComponent(x,g,f,tag);
+        end
+        function [x,f]=GetOptimalPoint(obj,tag)
+            fprintf('GetOptimalPoint is deprecated, consider using OptimalPoint instead\n');
+            if nargin ==2
+                [x,f]=obj.OptimalPoint(tag);
+            else
+                [x,f]=obj.OptimalPoint();
+            end
         end
         function [g, f]=oracle(obj,x,tag)
             assert(isa(x,'char') | isa(x,'Evaluable'),'Oracle call: x must either be a tag or a point');

@@ -46,27 +46,55 @@ classdef pet < handle
             fprintf('Instance of Performance Estimation Problem (PEP) \n');
             fprintf('Current status: %d component functions, %d initial conditions, %d performance constraints.\n',obj.list_size_func,obj.list_size_init,obj.list_size_perf)
         end
-        function pt=GenStartingPoint(obj)
+        function pt=StartingPoint(obj)
             pt=Point('Point');
+        end
+        function pt=GenStartingPoint(obj)
+            fprintf('GenStartingPoint is deprecated, consider using StartingPoint instead\n');
+            pt=obj.StartingPoint();
         end
         function obj=AddConstraint(obj,expr)
             assert(isa(expr,'Constraint'),'Invalid constraint');
             obj.list_size_others=obj.list_size_others+1;
             obj.expr_list_others{obj.list_size_others,1}=expr;
         end
-        function obj=AddPerformanceConstraint(obj,expr)
+        function obj=PerformanceMetric(obj,expr)
             assert(isa(expr,'Evaluable'),'Perfomance measures should be scalar values');
             assert(strcmp(expr.getType(),'Function value'),'Perfomance measures should be scalar values');
             obj.list_size_perf=obj.list_size_perf+1;
             obj.expr_list_perf{obj.list_size_perf,1}=expr;
         end
-        function AddInitialCondition(obj,expr)
+        function obj=AddPerformanceConstraint(obj,expr)
+            fprintf('AddPerformanceConstraint is deprecated, consider using PerformanceMetric instead\n');
+            obj.PerformanceMetric(expr);
+        end
+        function InitialCondition(obj,expr)
             assert(isa(expr,'Constraint'),'Invalid constraint');
             obj.list_size_init=obj.list_size_init+1;
             obj.expr_list_init{obj.list_size_init,1}=expr;
         end
+        function AddInitialCondition(obj,expr)
+            fprintf('AddInitialCondition is deprecated, consider using InitialCondition instead\n');
+            obj.InitialCondition(expr);
+        end
         function out=AddComponentObjective(obj,InterpEval,param)
+            fprintf('AddComponentObjective is deprecated, consider using AddObjective instead\n');
+            out=obj.AddObjective(InterpEval,param);
+        end
+        function out=AddObjective(obj,InterpEval,param)
             assert(isa(InterpEval,'function_handle') | isa(InterpEval,'char'),'Invalid component added to the objective function');
+            if ~isfield(param,'L')
+                param.L=Inf;
+            end
+            if ~isfield(param,'mu')
+                param.mu=0;
+            end
+            if ~isfield(param,'D')
+                param.D=Inf;
+            end
+            if ~isfield(param,'R')
+                param.R=Inf;
+            end
             if isa(InterpEval,'function_handle')
                 out=functionClass(InterpEval);
                 obj.list_size_func=obj.list_size_func+1;
@@ -82,11 +110,11 @@ classdef pet < handle
                         obj.list_size_func=obj.list_size_func+1;
                         obj.list_func{obj.list_size_func,1}=out;
                     case 'ConvexIndicator'
-                        out=functionClass(@(pt1,pt2)Interpolation_ConvexIndicator(pt1,pt2,param.M1,param.M2));
+                        out=functionClass(@(pt1,pt2)Interpolation_ConvexIndicator(pt1,pt2,param.D,param.R));
                         obj.list_size_func=obj.list_size_func+1;
                         obj.list_func{obj.list_size_func,1}=out;
                     case 'ConvexSupport'
-                        out=functionClass(@(pt1,pt2)Interpolation_ConvexSupport(pt1,pt2,param.M1,param.M2));
+                        out=functionClass(@(pt1,pt2)Interpolation_ConvexSupport(pt1,pt2,param.D,param.R));
                         obj.list_size_func=obj.list_size_func+1;
                         obj.list_func{obj.list_size_func,1}=out;
                     case 'Smooth'
@@ -94,11 +122,11 @@ classdef pet < handle
                         obj.list_size_func=obj.list_size_func+1;
                         obj.list_func{obj.list_size_func,1}=out;
                     case 'StronglyConvexBoundedDomain'
-                        out=functionClass(@(pt1,pt2)Interpolation_StronglyConvexBoundedDomain(pt1,pt2,param.M1,param.M2,param.mu));
+                        out=functionClass(@(pt1,pt2)Interpolation_StronglyConvexBoundedDomain(pt1,pt2,param.D,param.R,param.mu));
                         obj.list_size_func=obj.list_size_func+1;
                         obj.list_func{obj.list_size_func,1}=out;
                     case 'SmoothConvexBoundedGradient'
-                        out=functionClass(@(pt1,pt2)Interpolation_SmoothConvexBoundedGradient(pt1,pt2,param.M1,param.M2,param.L));
+                        out=functionClass(@(pt1,pt2)Interpolation_SmoothConvexBoundedGradient(pt1,pt2,param.D,param.R,param.L));
                         obj.list_size_func=obj.list_size_func+1;
                         obj.list_func{obj.list_size_func,1}=out;
                     otherwise
@@ -141,14 +169,11 @@ classdef pet < handle
             others_size=length(cons)-count;
             if verbose_pet, fprintf(' (done, %d constraint(s) added) \n',others_size), end;
         end
-        function out=clean()
-            
-        end
         function out=solve(obj,verbose_pet,solver_opt)
             
             assert(obj.t_reset==Point.Reset(),'Another PET environment has been initialized, re-generate this PEP before solving it')
             if nargin < 2
-                verbose_pet=0;
+                verbose_pet=1;
                 verbose_solver=0;
                 solver_opt = sdpsettings('verbose',verbose_solver);%,'solver','mosek','mosek.MSK_DPAR_INTPNT_CO_TOL_PFEAS',1e-10);
             elseif nargin < 3

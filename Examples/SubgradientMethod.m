@@ -1,35 +1,37 @@
 clear all; clc;
 % (0) Initialize an empty PEP
-my_pep=pet();
+P=pet();
 
 % (1) Set up the objective function
-param.M1=Inf;	% 
-param.M2=1;	% 
-param.L=Inf;      % Smoothness parameter
+param.R=1;	% 'radius'-type constraint on the subgradient norms: ||g||<=1
 
-F=my_pep.AddComponentObjective('SmoothConvexBoundedGradient',param); % F is the objective function
+% F is the objective function
+F=P.AddObjective('SmoothConvexBoundedGradient',param); 
 
 % (2) Set up the starting point and initial condition
-x0=my_pep.GenStartingPoint();		 % x0 is some starting point
-[xs,fs]=F.GetOptimalPoint(); 		 % xs is an optimal point, and fs=F(xs)
+x0=P.StartingPoint();            % x0 is some starting point
+[xs,fs]=F.OptimalPoint();        % xs is an optimal point, and fs=F(xs)
+P.InitialCondition((x0-xs)^2<=1);% Add an initial condition ||x0-xs||^2<= 1
 
-my_pep.AddConstraint((x0-xs)^2<=1);
+% (3) Algorithm and (4) performance measure
+N=3; % number of iterations
+h=ones(N,1)*1/sqrt(N+1); % step sizes
 
-% (3) Algorithm
-N=3;		% number of iterations
-gam=1/sqrt(N+1);		% step size
+x=x0;
 
-x=cell(N+1,1);
-x{1}=x0;
+% Note: the worst-case performance measure used in the PEP is the 
+%       min_i (PerformanceMetric_i) (i.e., the best value among all
+%       performance metrics added into the problem. Here, we use it
+%       in order to find the worst-case value for min_i [F(x_i)-F(xs)]
 for i=1:N
-    [g,f]=F.oracle(x{i});
-    my_pep.AddPerformanceConstraint(f-fs);
-    x{i+1}=x{i}-1/sqrt(i+1)*g;
+    [g,f]=F.oracle(x);
+    P.PerformanceMetric(f-fs);
+    x=x-h(i)*g;
 end
 
-[g,f]=F.oracle(x{N+1});
-my_pep.AddPerformanceConstraint(f-fs);
+[g,f]=F.oracle(x);
+P.PerformanceMetric(f-fs);
 
 % (5) Solve the PEP
-my_pep.solve()
+P.solve()
 
