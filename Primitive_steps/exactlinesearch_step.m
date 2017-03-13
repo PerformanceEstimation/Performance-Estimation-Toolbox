@@ -1,4 +1,6 @@
 function [ x ] = exactlinesearch_step(x0,f,dirs)
+% [ x ] = exactlinesearch_step(x0,f,dirs)
+%
 % This routine MIMICS an exact line search.
 %
 % Input: - starting point x0

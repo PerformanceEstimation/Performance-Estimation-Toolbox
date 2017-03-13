@@ -2,7 +2,7 @@ function demo
 clear all; clc;
 msg_length=90;
 maketitle('Performance Estimation Toolbox (PET) -- DEMONSTRATION MODULES',msg_length,2)
-fprintf('Five demonstration modules are provided within the toolbox:\n\n')
+fprintf('Eight demonstration modules are provided within the toolbox:\n\n')
 fprintf('(1) demo1 provides the most basic example on how to use the toolbox for evaluating the\nworst-case performance of a gradient method for smooth strongly convex minimization\n(focus: basic use of the toolbox).\n\n');
 fprintf('(2) demo2 provides an example on how to use the toolbox for comparing the worst-case\nperformances of different step size policies for subgradient methods in non-smooth \nconvex minimization (focus: advanced performance measure, embed PEP within a function).\n\n');
 fprintf('(3) demo3 provides an example on how to use the toolbox for comparing the worst-case\nperformances of FISTA with the best corresponding theoretical guarantee\n(focus: composite convex problems; projected and proximal methods).\n(NOT AVAILABLE YET)\n\n');

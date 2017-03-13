@@ -1,4 +1,5 @@
 function [ d ] = inexactsubgradient( x,f,eps,abs )
+% [ d ] = inexactsubgradient( x,f,eps,abs )
 %
 % This routine allows to evaluate an inexact (sub)gradient. 
 %

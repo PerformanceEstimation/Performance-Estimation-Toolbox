@@ -1,4 +1,6 @@
 function [x] = gradient_step(x0,f,gamma)
+% [x] = gradient_step(x0,f,gamma)
+%
 % This routine performs a gradient step of step size gamma, starting from
 % x0, and on function f. That is, it performs:
 %       x=x0-gamma*g0, where g0 is a (sub)gradient of f at x0.

@@ -1,4 +1,6 @@
 function x = projection_step(x0,ind)
+% [x] = projection_step(x0,ind)
+%
 % This routine performs a projection step of step size gamma, starting from
 % x0, and on function f. That is, it performs:
 %       x=Proj_ind(x0).

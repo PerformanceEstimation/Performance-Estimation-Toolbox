@@ -1,4 +1,5 @@
 function [ g ] = subgradient( x,f )
+% [ g ] = subgradient( x,f )
 %
 % This routine allows to evaluate a (sub)gradient. 
 %

@@ -1,4 +1,6 @@
 function [x] = proximal_step(x0,func,gamma)
+% [x] = proximal_step(x0,func,gamma)
+%
 % This routine performs a proximal step of step size gamma, starting from
 % x0, and on function f. That is, it performs:
 %       x=x0-gamma*g, where g is a (sub)gradient of f at x.
