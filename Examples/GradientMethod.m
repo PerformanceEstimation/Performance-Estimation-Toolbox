@@ -28,15 +28,14 @@ N=10;		% number of iterations
 
 x=x0;
 for i=1:N
-    [g,f]=F.oracle(x);  % g=grad F(x), f=F(x)
-    x=x-h*g;
+    x=x-h*F.gradient(x);
     % % Alternate - shorter - form:
     % x=gradient_step(x,F,gam);
 end
 xN=x;
 
 % (4) Set up the performance measure
-[g,f]=F.oracle(x);                % g=grad F(x), f=F(x)
+f=F.value(x);                % g=grad F(x), f=F(x)
 P.PerformanceMetric(f-fs); % Worst-case evaluated as F(x)-F(xs)
 
 % (5) Solve the PEP
