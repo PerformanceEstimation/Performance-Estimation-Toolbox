@@ -47,11 +47,10 @@ x=x0;
 for i=1:N
     d=inexactsubgradient(x,F,eps,0);
     x=exactlinesearch_step(x,F,d);
-    [g,f]=F.oracle(x);
 end
-
+fN=F.value(x);
 % (4) Set up the performance measure
-P.PerformanceMetric(f-fs); % Worst-case evaluated as ||g||^2
+P.PerformanceMetric(fN-fs); % Worst-case evaluated as ||g||^2
 
 % (5) Solve the PEP
 P.solve()

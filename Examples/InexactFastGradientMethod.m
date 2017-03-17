@@ -48,7 +48,7 @@ P.PerformanceMetric(f-fs); % Worst-case evaluated as F(x)-F(xs)
 % (5) Solve the PEP
 P.solve()
 
-% Result should be better than 2/(N^2+5*N+6)
+% Result should be worse than 2/(N^2+5*N+6)
 % see Taylor, Adrien B., Julien M. Hendrickx, and François Glineur.
 %     "Exact Worst-case Performance of First-order Methods for Composite
 %     Convex Optimization." to appear in SIAM Journal on Optimization

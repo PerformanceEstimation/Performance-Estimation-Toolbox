@@ -36,7 +36,7 @@ for i=1:N
     x=projection_step(xint,f2);
 end
 xN=x;
-[gN,fN]=F.oracle(xN);
+fN=F.value(xN);
 
 % (4) Set up the performance measure
 P.PerformanceMetric(fN-fs);

@@ -31,14 +31,14 @@ x0=P.StartingPoint();		% x0 is some starting point
 x=x0;
 N=10;
 for i=1:N
-    [dir,~]=f1.oracle(x);
-    y=linearoptimization_step(dir,f2);
+    g=f1.gradient(x);
+    y=linearoptimization_step(g,f2);
     lambda=2/(1+i);
     x=(1-lambda)*x+lambda*y;
 end
 
 % (4) Set up the performance measure
-[g,f]=F.oracle(x);         % g=grad F(x), f=F(x)
+f=F.value(x);         % g=grad F(x), f=F(x)
 P.PerformanceMetric(f-fs); % Worst-case evaluated as F(x)-F(xs)
 
 % (5) Solve the PEP

@@ -29,8 +29,8 @@ end
 xN=x;
 
 % (4) Set up the performance measure
-[g,f]=F.oracle(xN);
-P.PerformanceMetric(f-fs);
+fN=F.value(xN);
+P.PerformanceMetric(fN-fs);
 
 % (5) Solve the PEP
 P.solve()

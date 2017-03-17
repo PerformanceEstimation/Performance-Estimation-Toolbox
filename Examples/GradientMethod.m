@@ -35,8 +35,8 @@ end
 xN=x;
 
 % (4) Set up the performance measure
-f=F.value(x);                % g=grad F(x), f=F(x)
-P.PerformanceMetric(f-fs); % Worst-case evaluated as F(x)-F(xs)
+fN=F.value(xN);                % g=grad F(x), f=F(x)
+P.PerformanceMetric(fN-fs); % Worst-case evaluated as F(x)-F(xs)
 
 % (5) Solve the PEP
 P.solve()

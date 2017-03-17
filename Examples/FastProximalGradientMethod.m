@@ -37,8 +37,8 @@ for i=1:N
 end
 
 % (4) Set up the performance measure
-[g,f]=F.oracle(x{N+1});                % g=grad F(x), f=F(x)
-P.PerformanceMetric(f-fs); % Worst-case evaluated as F(x)-F(xs)
+fN=F.value(x{N+1});                % g=grad F(x), f=F(x)
+P.PerformanceMetric(fN-fs); % Worst-case evaluated as F(x)-F(xs)
 
 % (5) Solve the PEP
 P.solve()
