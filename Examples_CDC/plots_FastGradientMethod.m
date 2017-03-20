@@ -1,6 +1,6 @@
 
 
-Nmax=30; eps_values=[.1 .2 .5];
+Nmax=30; eps_values=[.1 .3 .5];
 N=1:Nmax;
 performance=zeros(length(eps_values)+1,Nmax);
 performance(1,:)=2./(N.^2+5*N+6);%eps=0:
@@ -21,3 +21,7 @@ xlabel('Iteration count (log scale)','Fontsize',14);
 ylabel('Objective function accuracy (log scale)','Fontsize',14);
 % legend('N=2','N=5','N=10');
 print -depsc InexactFGM_WC.eps
+
+%%
+
+N=30; [2./(N.^2+5*N+6) ans]

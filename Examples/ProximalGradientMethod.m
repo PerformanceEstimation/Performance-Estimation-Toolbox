@@ -11,7 +11,7 @@ clear all; clc;
 % iterate satisfying ||x0-xs||<=1.
 
 % (0) Initialize an empty PEP
-P=pet();
+P=pep();
 
 % (1) Set up the objective function
 paramf1.mu=.1;	% Strong convexity parameter

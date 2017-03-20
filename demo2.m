@@ -1,8 +1,8 @@
 function demo2
 clear all; clc;
 msg_length=90; Nmax=10;
-maketitle('Performance Estimation Toolbox (PET) -- EXAMPLE 2: comparing subgradient methods',msg_length,2)
-fprintf('In this demo, we illustrate the use of the PET toolbox for performing a worst-case\nanalysis of a subgradient method (Examples/SubgradientMethod.m).\n')
+maketitle('Performance Estimation Toolbox (PEsTo) -- EXAMPLE 2: comparing subgradient methods',msg_length,2)
+fprintf('In this demo, we illustrate the use of PEsTo for performing a worst-case\nanalysis of a subgradient method (Examples/SubgradientMethod.m).\n')
 waitfor;
 fprintf('After that, we show how to use this worst-case computation problem to compare different\nsimple standard step size policies (for N=1,...,%d).\n',Nmax);
 waitfor;
@@ -23,7 +23,7 @@ waitfor;
 maketitle('Initializing an empty performance estimation problem',msg_length,1)
 waitfor;
 disp('% (0) Initialize an empty PEP');
-disp('>> P=pet();');
+disp('>> P=pep();');
 waitfor;
 maketitle('Setting up the objective function F(x)',msg_length,1)
 waitfor;
@@ -33,7 +33,7 @@ waitfor;
 fprintf('%% F is the objective function:\n');
 disp('>> F=P.AddObjective(''SmoothConvexBoundedGradient'',param);');
 waitfor;
-fprintf('Details on convex functions with bounded subgradients, ''help SmoothConvexBoundedGradient''.\nFor other functional classes, see User''s Manual or ''help pet''.\n');
+fprintf('Details on convex functions with bounded subgradients, ''help SmoothConvexBoundedGradient''.\nFor other functional classes, see User''s Manual, ''help pep'' or ''help pesto''.\n');
 waitfor;
 maketitle('Setting up the starting point and initial condition',msg_length,1)
 waitfor;
@@ -167,7 +167,7 @@ fprintf('\n');
 end
 function WCPerformance=PEPforSubgradient(h)
 % (0) Initialize an empty PEP
-P=pet();
+P=pep();
 
 % (1) Set up the objective function
 param.R=1;     % Lipschitz constant (radius-style)

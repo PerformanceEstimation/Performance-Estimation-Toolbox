@@ -10,13 +10,13 @@ classdef Expression < Evaluable
     end
     methods
         function obj=Expression(expr1,coef1,expr2,coef2,pcoef)
-            assert(isa(expr1,'Evaluable') && isa(expr2,'Evaluable'),'Must be expression objects (PET class: Expression)');
-            assert(strcmp(expr1.getType(),expr2.getType()),'Wrong type combination - incompatible for sum expression (PET class: Expression)');
+            assert(isa(expr1,'Evaluable') && isa(expr2,'Evaluable'),'Must be expression objects (PEsTo class: Expression)');
+            assert(strcmp(expr1.getType(),expr2.getType()),'Wrong type combination - incompatible for sum expression (PEsTo class: Expression)');
             
             if nargin < 5
                 obj.pcoef=0;
             else
-                assert(pcoef==0 | strcmp(expr1.getType(),'Function value'),'Wrong type combination (PET class: PrExpression)');
+                assert(pcoef==0 | strcmp(expr1.getType(),'Function value'),'Wrong type combination (PEsTo class: PrExpression)');
                 obj.pcoef=pcoef;
             end
             obj.type=expr1.getType();

@@ -16,7 +16,7 @@ clear all; clc;
 % the step size used in DRS).
 
 % (0) Initialize an empty PEP
-P=pet();
+P=pep();
 
 % (1) Set up the objective function
 paramf1.mu=.1;	% Strong convexity parameter

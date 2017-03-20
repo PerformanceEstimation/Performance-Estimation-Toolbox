@@ -6,9 +6,9 @@ classdef Constraint < handle
     end
     methods
         function obj=Constraint(expr,signtype)
-            assert(isa(expr,'Evaluable'),'Constraints must involve scalar values only (PET class: Constraint)');
-            assert(strcmp(expr.getType(),'Function value'),'Constraints must involve scalar values only (PET class: Constraint)');
-            assert(strcmp(signtype,'le') || strcmp(signtype,'ge') || strcmp(signtype,'eq'), 'This is not a valid constraint (PET class: Constraint)');
+            assert(isa(expr,'Evaluable'),'Constraints must involve scalar values only (PEsTo class: Constraint)');
+            assert(strcmp(expr.getType(),'Function value'),'Constraints must involve scalar values only (PEsTo class: Constraint)');
+            assert(strcmp(signtype,'le') || strcmp(signtype,'ge') || strcmp(signtype,'eq'), 'This is not a valid constraint (PEsTo class: Constraint)');
             obj.signtype=signtype;
             obj.expr=expr;
             obj.next=[];
@@ -35,12 +35,12 @@ classdef Constraint < handle
             end
         end
         function cons=plus(a,b)
-            assert(isa(a,'Constraint') & isa(b,'Constraint'),'Concatenation must involve constraints only (PET class: Constraint)');
+            assert(isa(a,'Constraint') & isa(b,'Constraint'),'Concatenation must involve constraints only (PEsTo class: Constraint)');
             cons=a;
             a.next=b;
         end
         function disp(obj)
-            fprintf('PET Constraint\n');
+            fprintf('PEsTo Constraint\n');
         end
     end
 end

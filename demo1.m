@@ -1,8 +1,8 @@
 function demo1
 clc;
 msg_length=90;
-maketitle('Performance Estimation Toolbox (PET) -- EXAMPLE 1: a simple gradient method',msg_length,2)
-fprintf('In this demo, we illustrate the use of the PET toolbox for performing a worst-case \nanalysis of a gradient method (Examples/GradientMethod.m)\n')
+maketitle('Performance Estimation Toolbox (PEsTo) -- EXAMPLE 1: a simple gradient method',msg_length,2)
+fprintf('In this demo, we illustrate the use of PEsTo for performing a worst-case \nanalysis of a gradient method (Examples/GradientMethod.m)\n')
 waitfor;
 fprintf('Consider the problem of minimizing a function F:\n\n min F(x),\n\nwhich is L-smooth and mu-strongly convex (say: L=1, mu=0.1).\n');
 waitfor;
@@ -10,15 +10,15 @@ fprintf('We use the standard fixed-step gradient method\n\n x_{k+1}=x_k-h*g_k (g
 waitfor;
 fprintf('The next lines show how to compute the worst-case objective function accuracy F(x_N)-F(xs) \n(xs is the optimum) assuming we start at some x_0, satisfying the condition\n\n||x_0-xs||^2<=1.\n');
 waitfor;
-maketitle('PET''s philosophy',msg_length,1)
+maketitle('PEsTo''s philosophy',msg_length,1)
 waitfor;
 fprintf('The goal is to provide the researchers an easy access to the performance estimation \nmethodology. The toolbox allows computing worst-case performances of simple first-order \nmethods by writing the algorithms (nearly) as if we were implementing them.\n');
 waitfor;
 maketitle('Initializing an empty performance estimation problem',msg_length,1)
 waitfor;
 disp('% (0) Initialize an empty PEP: P');
-disp('>> P=pet();');
-P=pet();
+disp('>> P=pep();');
+P=pep();
 waitfor;
 maketitle('Setting up the objective function F(x)',msg_length,1)
 waitfor;
@@ -31,7 +31,7 @@ waitfor;
 fprintf('%% F is the L-smooth mu-strongly convex objective function:\n');
 disp('>> F=P.AddObjective(''SmoothStronglyConvex'',param);');
 waitfor;
-fprintf('For more details about smooth strongly convex function, ''help SmoothStronglyConvex''.\nFor other functional classes, see User''s Manual or ''help pet''.\n');
+fprintf('For more details about smooth strongly convex function, ''help SmoothStronglyConvex''.\nFor other functional classes, see User''s Manual, ''help pep'' or ''help pesto''.\n');
 F=P.AddObjective('SmoothStronglyConvex',param);
 waitfor;
 maketitle('Setting up the starting point and initial condition',msg_length,1)

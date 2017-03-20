@@ -1,8 +1,8 @@
 function demo3
 clear all; clc;
 msg_length=90;
-maketitle('Performance Estimation Toolbox (PET) -- DEMO 3 (FISTA)',msg_length,2)
-fprintf('In this demo, we illustrate the use of the PET toolbox for performing\na worst-case analysis of a subgradient method (Examples/SubgradientMethod.m)')
+maketitle('Performance Estimation Toolbox (PEsTo) -- DEMO 3 (FISTA)',msg_length,2)
+fprintf('In this demo, we illustrate the use of PEsTo for performing\na worst-case analysis of a subgradient method (Examples/SubgradientMethod.m)')
 waitfor;
 fprintf('Consider the problem of minimizing a function F:\n\n min F(x),\n\nwhich is convex with bounded subgradients (Lipschitz): ||g||<=L (with L=1).');
 waitfor;

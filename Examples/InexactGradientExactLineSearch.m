@@ -25,7 +25,7 @@ clear all; clc;
 
 
 % (0) Initialize an empty PEP
-P=pet();
+P=pep();
 
 % (1) Set up the objective function
 param.mu=.1;	% Strong convexity parameter

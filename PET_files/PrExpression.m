@@ -9,12 +9,12 @@ classdef PrExpression < Evaluable
     end
     methods
         function obj=PrExpression(expr1,expr2,coef,pcoef)
-            assert(isa(expr1,'Evaluable') && isa(expr2,'Evaluable') && isa(coef,'double'),'Must be expression objects (PET class: PrExpression)');
-            assert(strcmp(expr1.getType(),expr2.getType()) && strcmp('Point',expr1.getType()),'Wrong type combination - incompatible for product expression (PET class: PrExpression)');
+            assert(isa(expr1,'Evaluable') && isa(expr2,'Evaluable') && isa(coef,'double'),'Must be expression objects (PEsTo class: PrExpression)');
+            assert(strcmp(expr1.getType(),expr2.getType()) && strcmp('Point',expr1.getType()),'Wrong type combination - incompatible for product expression (PEsTo class: PrExpression)');
             if nargin < 4
                 obj.pcoef=0;
             else
-                assert(isa(pcoef,'double'),'Wrong type combination (PET class: PrExpression)');
+                assert(isa(pcoef,'double'),'Wrong type combination (PEsTo class: PrExpression)');
                 obj.pcoef=pcoef;
             end
             obj.type='Function value';%scalar!
