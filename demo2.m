@@ -1,8 +1,8 @@
 function demo2
 clear all; clc;
 msg_length=90; Nmax=10;
-maketitle('Performance Estimation Toolbox (PEsTo) -- EXAMPLE 2: comparing subgradient methods',msg_length,2)
-fprintf('In this demo, we illustrate the use of PEsTo for performing a worst-case\nanalysis of a subgradient method (Examples/SubgradientMethod.m).\n')
+maketitle('Performance Estimation Toolbox (PESTO) -- EXAMPLE 2: comparing subgradient methods',msg_length,2)
+fprintf('In this demo, we illustrate the use of PESTO for performing a worst-case\nanalysis of a subgradient method (Examples/SubgradientMethod.m).\n')
 waitfor;
 fprintf('After that, we show how to use this worst-case computation problem to compare different\nsimple standard step size policies (for N=1,...,%d).\n',Nmax);
 waitfor;
@@ -31,7 +31,7 @@ fprintf('%% (1) Set up the objective function \n%%     We set the Lipschitz cons
 disp('>> param.R=1;	% ''radius''-type constraint on the subgradient norms: ||g||<=1');
 waitfor;
 fprintf('%% F is the objective function:\n');
-disp('>> F=P.AddObjective(''SmoothConvexBoundedGradient'',param);');
+disp('>> F=P.DeclareFunction(''SmoothConvexBoundedGradient'',param);');
 waitfor;
 fprintf('Details on convex functions with bounded subgradients, ''help SmoothConvexBoundedGradient''.\nFor other functional classes, see User''s Manual, ''help pep'' or ''help pesto''.\n');
 waitfor;
@@ -172,7 +172,7 @@ P=pep();
 % (1) Set up the objective function
 param.R=1;     % Lipschitz constant (radius-style)
 
-F=P.AddObjective('SmoothConvexBoundedGradient',param); % F is the objective function
+F=P.DeclareFunction('SmoothConvexBoundedGradient',param); % F is the objective function
 
 % (2) Set up the starting point and initial condition
 x0=P.StartingPoint();		 % x0 is some starting point

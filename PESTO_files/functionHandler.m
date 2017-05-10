@@ -18,14 +18,32 @@ classdef (Abstract) functionHandler < handle
             obj.list_size_others=obj.list_size_others+1;
             obj.expr_list_others{obj.list_size_others,1}=expr;
         end
-        function g=gradient(obj,expr)
-            [g,~]=obj.oracle(expr);
+        function g=gradient(obj,expr,tag)
+            if nargin>=3
+                assert(isa(tag,'char'),'Value call: second argument must be a tag (string)');
+                spec=tag;
+            else
+                spec='';
+            end
+            [g,~]=obj.oracle(expr,spec);
         end
-        function g=subgradient(obj,expr)
-            [g,~]=obj.oracle(expr);
+        function g=subgradient(obj,expr,tag)
+            if nargin>=3
+                assert(isa(tag,'char'),'Value call: second argument must be a tag (string)');
+                spec=tag;
+            else
+                spec='';
+            end
+            [g,~]=obj.oracle(expr,spec);
         end
-        function f=value(obj,expr)
-            [~,f]=obj.oracle(expr);
+        function f=value(obj,expr,tag)
+            if nargin>=3
+                assert(isa(tag,'char'),'Value call: second argument must be a tag (string)');
+                spec=tag;
+            else
+                spec='';
+            end
+            [~,f]=obj.oracle(expr,spec);
         end
         function cons=collect(obj)
             cons=[];

@@ -1,7 +1,7 @@
 function wc=CDC_gradientmethod(N,gamma)
 
 % Initialize an empty PEP:
-P=pet();
+P=pep();
 
 param.mu=0.1;	% Strong convexity parameter
 param.L=1;  % Smoothness parameter

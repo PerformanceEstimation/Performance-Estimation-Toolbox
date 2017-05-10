@@ -7,22 +7,25 @@ classdef Point < Evaluable
     end
     methods
         function obj=Point(type,expr)
-            assert((strcmp(type,'Point') | strcmp(type,'Function value')),'Type must be Point or Function value (PEsTo class: Point)');
+            assert((strcmp(type,'Point') | strcmp(type,'Function value') | strcmp(type,'Scalar')),'Type must be Point or Function value (PESTO class: Point)');
             obj.type=type;
             obj.expr_saved=[];
             obj.when_saved=0;
             if nargin >= 2
-                assert((isa(expr,'Evaluable') | isa(expr,'double')) & (strcmp(type,'Point') | strcmp(type,'Function value')),'Assignment is not valid (PEsTo class: Point)');
+                assert((isa(expr,'Evaluable') | isa(expr,'double')) & (strcmp(type,'Point') | strcmp(type,'Function value')),'Assignment is not valid (PESTO class: Point)');
                 if isa(expr,'Evaluable')
                     obj.expression=expr;
                 else
-                    assert(expr==0,'Assignment is not valid (PEsTo class: Point)');
+                    assert(expr==0,'Assignment is not valid (PESTO class: Point)');
                     obj.expression=0;
                 end
             else
                 if (strcmp(type,'Point'))
                     obj.number=Point.SetGetPts(obj.type,1);
                 elseif strcmp(type,'Function value')
+                    obj.number=Point.SetGetPts(obj.type,1);
+                elseif strcmp(type,'Scalar')
+                    obj.type='Function value';
                     obj.number=Point.SetGetPts(obj.type,1);
                 end
                 obj.expression=[];
@@ -92,7 +95,7 @@ classdef Point < Evaluable
     end
     methods (Static)
         function out=GetSize(type)
-            assert(strcmp(type,'Point') | strcmp(type,'Function value'),'Type must be Point or Function value (PEsTo class: Point)');
+            assert(strcmp(type,'Point') | strcmp(type,'Function value'),'Type must be Point or Function value (PESTO class: Point)');
             out=Point.SetGetPts(type,0);
         end
         function out=Reset(time)

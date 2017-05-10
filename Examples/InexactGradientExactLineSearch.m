@@ -31,7 +31,7 @@ P=pep();
 param.mu=.1;	% Strong convexity parameter
 param.L=1;      % Smoothness parameter
 
-F=P.AddObjective('SmoothStronglyConvex',param); 
+F=P.DeclareFunction('SmoothStronglyConvex',param); 
 % F is the objective function
 
 % (2) Set up the starting point and initial condition
@@ -54,6 +54,9 @@ P.PerformanceMetric(fN-fs); % Worst-case evaluated as ||g||^2
 
 % (5) Solve the PEP
 P.solve()
+
+% (6) Evaluate the output
+double(fN-fs)   % worst-case objective function accuracy
 
 % The result should be
 %((param.L*(1+eps)-param.mu*(1-eps))/(param.L*(1+eps)+param.mu*(1-eps)))^(2*N)

@@ -16,7 +16,7 @@ P=pep();
 param.R=1;	% 'radius'-type constraint on the subgradient norms: ||g||<=1
 
 % F is the objective function
-F=P.AddObjective('SmoothConvexBoundedGradient',param); 
+F=P.DeclareFunction('ConvexBoundedGradient',param); 
 
 % (2) Set up the starting point and initial condition
 x0=P.StartingPoint();            % x0 is some starting point
@@ -24,7 +24,7 @@ x0=P.StartingPoint();            % x0 is some starting point
 P.InitialCondition((x0-xs)^2<=1);% Add an initial condition ||x0-xs||^2<= 1
 
 % (3) Algorithm and (4) performance measure
-N=3; % number of iterations
+N=5; % number of iterations
 h=ones(N,1)*1/sqrt(N+1); % step sizes
 
 x=x0;
@@ -33,17 +33,27 @@ x=x0;
 %       min_i (PerformanceMetric_i) (i.e., the best value among all
 %       performance metrics added into the problem. Here, we use it
 %       in order to find the worst-case value for min_i [F(x_i)-F(xs)]
+
+% we create an array to save all function values (so that we can evaluate
+% them afterwards)
+f_saved=cell(N+1,1);
 for i=1:N
     [g,f]=F.oracle(x);
+    f_saved{i}=f;
     P.PerformanceMetric(f-fs);
     x=x-h(i)*g;
 end
-xN=x;
 
-[g,f]=F.oracle(xN);
+[g,f]=F.oracle(x);
+f_saved{N+1}=f;
 P.PerformanceMetric(f-fs);
 
 % (5) Solve the PEP
 P.solve()
 
+% (6) Evaluate the output
+for i=1:N+1
+    f_saved{i}=double(f_saved{i});
+end
+f_saved
 % The result should be (and is) 1/sqrt(N+1).

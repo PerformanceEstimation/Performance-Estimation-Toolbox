@@ -15,8 +15,8 @@ P=pep();
 % (1) Set up the objective function
 param.L=1;      % Smoothness parameter
 
-f1=P.AddObjective('SmoothStronglyConvex',param); 
-f2=P.AddObjective('Convex'); 
+f1=P.DeclareFunction('SmoothStronglyConvex',param); 
+f2=P.DeclareFunction('Convex'); 
 F=f1+f2;
 
 % (2) Set up the starting point and initial condition
@@ -25,7 +25,7 @@ x0=P.StartingPoint();		 % x0 is some starting point
 P.InitialCondition((x0-xs).*(x0-xs)<=1); % Add an initial condition ||x0-xs||^2<= 1
 
 % (3) Algorithm
-N=10;		% number of iterations
+N=5;		% number of iterations
 
 x=cell(N+1,1); % we store the iterate in a cell for convenience
 x{1}=x0;
@@ -42,6 +42,9 @@ P.PerformanceMetric(fN-fs); % Worst-case evaluated as F(x)-F(xs)
 
 % (5) Solve the PEP
 P.solve()
+
+% (6) Evaluate the output
+double(fN-fs)   % worst-case objective function accuracy
 
 % Result should be 2/(N^2+5*N+2)
 % see Taylor, Adrien B., Julien M. Hendrickx, and François Glineur.

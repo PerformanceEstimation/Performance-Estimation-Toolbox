@@ -23,7 +23,7 @@ P=pep();
 % (1) Set up the objective function
 param.L=1;      % Smoothness parameter
 
-F=P.AddObjective('SmoothStronglyConvex',param); % F is the objective function
+F=P.DeclareFunction('SmoothStronglyConvex',param); % F is the objective function
 
 % (2) Set up the starting point and initial condition
 x0=P.StartingPoint();		 % x0 is some starting point
@@ -55,6 +55,9 @@ P.PerformanceMetric(fN-fs); % Worst-case evaluated as F(x)-F(xs)
 
 % (5) Solve the PEP
 P.solve()
+
+% (6) Evaluate the output
+double(fN-fs)   % worst-case objective function accuracy
 
 % The result should be 1/2/theta^2
 % see: Kim, Donghwan, and Jeffrey A. Fessler. 

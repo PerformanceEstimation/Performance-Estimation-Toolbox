@@ -26,13 +26,13 @@ P=pep();
 param.mu=.1;	% Strong convexity parameter
 param.L=1;      % Smoothness parameter
 
-F=P.AddObjective('SmoothStronglyConvex',param); 
+F=P.DeclareFunction('SmoothStronglyConvex',param); 
 % F is the objective function
 
 % (2) Set up the starting point and initial condition
 x0=P.StartingPoint();		 % x0 is some starting point
 [xs,fs]=F.OptimalPoint(); 		 % xs is an optimal point, and fs=F(xs)
-[g0, f0]=F.oracle(x0);
+[g0,f0]=F.oracle(x0);
 P.InitialCondition(f0-fs<=1); % Add an initial condition f0-fs<= 1
 
 % (3) Algorithm
@@ -49,6 +49,9 @@ P.PerformanceMetric(f-fs); % Worst-case evaluated as F(x)-F(xs)
 
 % (5) Solve the PEP
 P.solve()
+
+% (6) Evaluate the output
+double(f-fs)   % worst-case objective function accuracy
 
 % The result should be
 %((param.L-param.mu)/(param.L+param.mu))^(2*N)

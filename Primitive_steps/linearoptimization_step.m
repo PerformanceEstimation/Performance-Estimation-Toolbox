@@ -1,4 +1,7 @@
 function [x] = linearoptimization_step(dir,ind)
+%
+% [x] = linearoptimization_step(dir,ind)
+%
 % This routine performs a linear optimization step with objective function
 % given by dir*x on the indicator function ind. That is, it evaluates
 %   x=argmin_{ind(x)=0} [dir*x].

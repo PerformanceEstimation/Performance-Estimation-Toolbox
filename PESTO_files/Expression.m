@@ -1,33 +1,39 @@
-classdef PrExpression < Evaluable
+classdef Expression < Evaluable
     properties (GetAccess=private)
-        expression1;
+        expression1; % containing its dependence??
+        coef1;
         expression2;
-        coef;
+        coef2;
         pcoef;
         expr_saved;
         when_saved;
     end
     methods
-        function obj=PrExpression(expr1,expr2,coef,pcoef)
-            assert(isa(expr1,'Evaluable') && isa(expr2,'Evaluable') && isa(coef,'double'),'Must be expression objects (PEsTo class: PrExpression)');
-            assert(strcmp(expr1.getType(),expr2.getType()) && strcmp('Point',expr1.getType()),'Wrong type combination - incompatible for product expression (PEsTo class: PrExpression)');
-            if nargin < 4
+        function obj=Expression(expr1,coef1,expr2,coef2,pcoef)
+            assert(isa(expr1,'Evaluable') && isa(expr2,'Evaluable'),'Must be expression objects (PESTO class: Expression)');
+            assert(strcmp(expr1.getType(),expr2.getType()),'Wrong type combination - incompatible for sum expression (PESTO class: Expression)');
+            
+            if nargin < 5
                 obj.pcoef=0;
             else
-                assert(isa(pcoef,'double'),'Wrong type combination (PEsTo class: PrExpression)');
+                assert(pcoef==0 | strcmp(expr1.getType(),'Function value'),'Wrong type combination (PESTO class: PrExpression)');
                 obj.pcoef=pcoef;
             end
-            obj.type='Function value';%scalar!
+            obj.type=expr1.getType();
             obj.expression1=expr1;
+            obj.coef1=coef1;
             obj.expression2=expr2;
-            obj.coef=coef;
-            obj.when_saved=0;
+            obj.coef2=coef2;
             obj.expr_saved=[];
+            obj.when_saved=0;
         end
         function vec=Eval(obj)
             if isempty(obj.expr_saved) || (obj.when_saved<=Evaluable.update(0))
-                G=Evaluable.SetGetGram();
-                vec=obj.coef*(obj.expression1.Eval().'*G*obj.expression2.Eval())+obj.pcoef;
+                if strcmp(obj.type,'Function value')
+                    vec=obj.expression1.Eval()*obj.coef1+obj.expression2.Eval()*obj.coef2+obj.pcoef;
+                else
+                    vec=obj.expression1.Eval()*obj.coef1+obj.expression2.Eval()*obj.coef2;
+                end
                 obj.expr_saved=vec;
                 obj.when_saved=now;
             else
@@ -44,7 +50,11 @@ classdef PrExpression < Evaluable
             if obj.when_saved==0
                 obj.Eval();
             end
-            value=double(obj.expr_saved);
+            if strcmp(obj.type,'Function value')
+                value=double(obj.expr_saved);
+            else
+                value=sol.P*obj.expr_saved;
+            end
         end
     end
 end

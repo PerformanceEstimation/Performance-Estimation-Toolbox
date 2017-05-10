@@ -17,8 +17,8 @@ P=pep();
 paramf1.L=1;      % Smoothness parameter
 paramf2.D=1;      % Diameter of the indicator function
 
-f1=P.AddObjective('SmoothStronglyConvex',paramf1); 
-f2=P.AddObjective('ConvexIndicator',paramf2);
+f1=P.DeclareFunction('SmoothStronglyConvex',paramf1); 
+f2=P.DeclareFunction('ConvexIndicator',paramf2);
 F=f1+f2;
 
 % (2) Set up the starting point and initial condition
@@ -36,13 +36,18 @@ for i=1:N
     lambda=2/(1+i);
     x=(1-lambda)*x+lambda*y;
 end
-
+xN=x;
 % (4) Set up the performance measure
-f=F.value(x);         % g=grad F(x), f=F(x)
-P.PerformanceMetric(f-fs); % Worst-case evaluated as F(x)-F(xs)
+fN=F.value(xN);         % fN=F(xN)
+P.PerformanceMetric(fN-fs); % Worst-case evaluated as F(xN)-F(xs)
 
 % (5) Solve the PEP
-P.solve()
+P.solve();
+
+% (6) Evaluate the output
+double(fN-fs)   % worst-case objective function accuracy
+double(x0-xs)   % vector x0-xs on the worst-case computed with PEP
+double(xN-xs)   % vector xN-xs on the worst-case computed with PEP
 
 % Should be better than the standard guarantee from Conditional Gradient:
 % 2*paramf1.L*paramf2.D^2/(N+2)
@@ -50,3 +55,4 @@ P.solve()
 % See Jaggi, Martin. "Revisiting Frank-Wolfe: Projection-free sparse 
 %     convex optimization." In: Proceedings of the 30th International
 %     Conference on Machine Learning (ICML-13), pp. 427–435 (2013)
+

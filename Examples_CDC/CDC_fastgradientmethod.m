@@ -1,6 +1,6 @@
 function wc=CDC_fastgradientmethod(N,eps)
 % (0) Initialize an empty PEP
-P=pet();
+P=pep();
 
 % (1) Set up the objective function
 param.L=1;      % Smoothness parameter

@@ -11,7 +11,7 @@ clear all; clc;
 P=pep();
 
 % (1) Set up the objective function
-F=P.AddObjective('Convex'); % F is the objective function
+F=P.DeclareFunction('Convex'); % F is the objective function
 
 % (2) Set up the starting point and initial condition
 x0=P.StartingPoint();		 % x0 is some starting point
@@ -34,6 +34,9 @@ P.PerformanceMetric(fN-fs);
 
 % (5) Solve the PEP
 P.solve()
+
+% (6) Evaluate the output
+double(fN-fs)   % worst-case objective function accuracy
 
 % The result should be (and is) 1/(4*N*gam)
 % see Taylor, Adrien B., Julien M. Hendrickx, and François Glineur.

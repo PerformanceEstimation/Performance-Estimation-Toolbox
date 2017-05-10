@@ -1,10 +1,10 @@
 Authors: A. Taylor 		Universite catholique de Louvain,
          F. Glineur		Universite catholique de Louvain,
-         J. Hendrickx		Universite catholique de Louvain.
+         J. Hendrickx	Universite catholique de Louvain.
 
-Date:   March 20, 2017
+Date:   May 09, 2017
 
-Version: March 20, 2017
+Version: May 09, 2017
 
 ----- Setup
 
@@ -31,4 +31,8 @@ The toolbox implements the performance estimation approach as developped in the 
  Note that the approach of using semidefinite programming for obtaining worst-case guarantees was originally introduced in
  - Drori, Yoel, and Marc Teboulle. "Performance of first-order methods for smooth convex minimization: a novel approach." Mathematical Programming 145.1-2 (2014): 451-482.
  
+----- Acknowledgments
+
+In any case, the authors would like to thank Francois Gonze from UCLouvain and Yoel Drori from Google Inc. for their feedbacks on preliminary versions of the toolbox.
+
 

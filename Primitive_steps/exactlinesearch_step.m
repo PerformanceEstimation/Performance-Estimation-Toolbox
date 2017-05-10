@@ -1,4 +1,4 @@
-function [ x ] = exactlinesearch_step(x0,f,dirs)
+function [ x,g ] = exactlinesearch_step(x0,f,dirs)
 % [ x ] = exactlinesearch_step(x0,f,dirs)
 %
 % This routine MIMICS an exact line search.
@@ -10,8 +10,10 @@ function [ x ] = exactlinesearch_step(x0,f,dirs)
 %        automatically constrained to be orthogonal to the subgradient of f
 %        at x.
 %
-% Output: x such that all vectors in dirs are orthogonal to the gradient of
+% Output: - x such that all vectors in dirs are orthogonal to the gradient of
 %         f at x.
+%         - g is a subgradient of f at x (the one satisfying optimality
+%         conditions)
 %
 % Example of its use in Examples/GradientExactLineSearch.m.
 %

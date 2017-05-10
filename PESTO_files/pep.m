@@ -1,21 +1,21 @@
 classdef pep < handle
     
     %
-    %       Performance Estimation Toolbox (PEsTo) version 20170320
+    %       Performance Estimation Toolbox (PESTO) version 20170410
     %
     %       Authors: A. Taylor, J. Hendrickx, F. Glineur
     %       User Manual available at http://perso.uclouvain.be/adrien.taylor
     %       Direct help: help pesto, help pep
     %       Examples available in the directory Examples/
     %
-    %       Demo's available by typing:
+    %       Demos are available by typing:
     %       >> demo
     %
     %
     %   Content: 
     %       - Classes of functions: Convex, ConvexIndicator, ConvexSupport,
     %       Smooth, SmoothConvexBoundedGradient, SmoothStronglyConvex,
-    %       StronglyConvexBoundedDomain.
+    %       StronglyConvexBoundedDomain, ConvexBoundedGradient.
     %           Help is available for all functional classes (example: type
     %           'help Convex')
     %       - Primitive steps available: exactlinesearch_step,
@@ -23,12 +23,12 @@ classdef pep < handle
     %       proximal_step.
     %           Help is available for all primitive steps (example: type
     %           'help linearoptimization_step')
-    %       - Primitive evaluations available: inexactsubgradient,
+    %       - Primitive oracles available: inexactsubgradient,
     %       subgradient.
     %           Help is available for all primitive evaluations (example:
     %           type 'help inexactsubgradient')
     %
-     
+    
     properties (GetAccess=private)
         expr_list_perf;
         list_size_perf;
@@ -96,6 +96,13 @@ classdef pep < handle
             fprintf('AddComponentObjective is deprecated, consider using AddObjective instead\n');
             out=obj.AddObjective(InterpEval,param);
         end
+        function out=DeclareFunction(obj,InterpEval,param)
+            if nargin == 3
+                out=obj.AddObjective(InterpEval,param);
+            else
+                out=obj.AddObjective(InterpEval);
+            end
+        end
         function out=AddObjective(obj,InterpEval,param)
             assert(isa(InterpEval,'function_handle') | isa(InterpEval,'char'),'Invalid component added to the objective function');
             if isa(InterpEval,'function_handle')
@@ -151,6 +158,10 @@ classdef pep < handle
                         out=functionClass(@(pt1,pt2)SmoothConvexBoundedGradient(pt1,pt2,param.D,param.R,param.L));
                         obj.list_size_func=obj.list_size_func+1;
                         obj.list_func{obj.list_size_func,1}=out;
+                    case 'ConvexBoundedGradient'
+                        out=functionClass(@(pt1,pt2)ConvexBoundedGradient(pt1,pt2,param.D,param.R));
+                        obj.list_size_func=obj.list_size_func+1;
+                        obj.list_func{obj.list_size_func,1}=out;                      
                     otherwise
                         assert(0,'Invalid component added to the objective function');
                 end
@@ -159,7 +170,7 @@ classdef pep < handle
         function cons=collect(obj,tau,verbose_pet)
             cons=[];
             if obj.list_size_perf>0
-                if verbose_pet, fprintf(' PEsTo: Setting up the problem: performance measure'), end;
+                if verbose_pet, fprintf(' PESTO: Setting up the problem: performance measure'), end;
                 for i=1:obj.list_size_perf
                     lexpr=obj.expr_list_perf{i,1};
                     cons=cons+(tau<=lexpr.Eval());
@@ -169,7 +180,7 @@ classdef pep < handle
             end
             count=length(cons);
             if obj.list_size_init>0
-                if verbose_pet, fprintf(' PEsTo: Setting up the problem: initial conditions'), end;
+                if verbose_pet, fprintf(' PESTO: Setting up the problem: initial conditions'), end;
                 for i=1:obj.list_size_init
                     lexpr=obj.expr_list_init{i,1}.Eval();
                     cons=cons+lexpr;
@@ -178,7 +189,7 @@ classdef pep < handle
                 if verbose_pet, fprintf(' (done, %d constraint(s) added) \n',init_size), end;
             end
             count=length(cons);
-            if verbose_pet, fprintf(' PEsTo: Setting up the problem: other constraints'), end;
+            if verbose_pet, fprintf(' PESTO: Setting up the problem: other constraints'), end;
             if obj.list_size_others>0
                 for i=1:obj.list_size_others
                     cons=cons+obj.expr_list_others{i,1}.Eval();
@@ -204,7 +215,7 @@ classdef pep < handle
             end
             
             dim1=Point.GetSize('Point');
-            if verbose_pet, fprintf(' PEsTo: Setting up the problem, size of the main PSD matrix: %d x %d\n',dim1,dim1), end
+            if verbose_pet, fprintf(' PESTO: Setting up the problem, size of the main PSD matrix: %d x %d\n',dim1,dim1), end
             G=sdpvar(dim1);
             dim2=Point.GetSize('Function value');
             F=sdpvar(dim2,1);
@@ -212,13 +223,13 @@ classdef pep < handle
             obj_func=tau;
             cons=(G>=0);
             Evaluable.SetGetFunc(F);Evaluable.SetGetGram(G);
-            msg = sprintf(' PEsTo: Setting up the problem: interpolation constraints (component %d out of %d done)\n', 0,obj.list_size_func);
+            msg = sprintf(' PESTO: Setting up the problem: interpolation constraints (component %d out of %d done)\n', 0,obj.list_size_func);
             if verbose_pet, fprintf(msg), end;
             prevlength = numel(msg);
             for i=1:obj.list_size_func
                 cons=cons+obj.list_func{i,1}.GetInterp();
                 if verbose_pet
-                    msg = sprintf(' PEsTo: Setting up the problem: interpolation constraints (component %d out of %d done)\n', i,obj.list_size_func);
+                    msg = sprintf(' PESTO: Setting up the problem: interpolation constraints (component %d out of %d done)\n', i,obj.list_size_func);
                     fprintf(repmat('\b', 1, prevlength));
                     fprintf(msg);
                     prevlength = numel(msg);
@@ -230,12 +241,12 @@ classdef pep < handle
             cons=cons+obj.collect(tau,verbose_pet);
             
             
-            if verbose_pet, fprintf(' PEsTo: Calling SDP solver\n'), end;
+            if verbose_pet, fprintf(' PESTO: Calling SDP solver\n'), end;
             out.solverDetails=optimize(cons,-obj_func,solver_opt);
             out.WCperformance=double(obj_func);
             
-            if verbose_pet, fprintf(' PEsTo: Solver output: %7.5e, solution status: %s\n',out.WCperformance,out.solverDetails.info), end;
-            if verbose_pet, fprintf(' PEsTo: Post-processing\n'), end;
+            if verbose_pet, fprintf(' PESTO: Solver output: %7.5e, solution status: %s\n',out.WCperformance,out.solverDetails.info), end;
+            if verbose_pet, fprintf(' PESTO: Post-processing\n'), end;
             
             % Approximating P=[x0 ... gN] from G using Cholesky
             % Decomposition
