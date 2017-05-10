@@ -2,9 +2,9 @@ Authors: A. Taylor 		Universite catholique de Louvain,
          F. Glineur		Universite catholique de Louvain,
          J. Hendrickx	Universite catholique de Louvain.
 
-Date:   May 09, 2017
+Date:   May 10, 2017
 
-Version: May 09, 2017
+Version: May 10, 2017
 
 ----- Setup
 
@@ -33,6 +33,6 @@ The toolbox implements the performance estimation approach as developped in the 
  
 ----- Acknowledgments
 
-In any case, the authors would like to thank Francois Gonze from UCLouvain and Yoel Drori from Google Inc. for their feedbacks on preliminary versions of the toolbox.
+The authors would like to thank Francois Gonze from UCLouvain and Yoel Drori from Google Inc. for their feedbacks on preliminary versions of the toolbox.
 
 
