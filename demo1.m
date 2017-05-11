@@ -25,7 +25,7 @@ waitfor;
 fprintf('%% (1) Setting up the objective function \n%%     We set the values of mu and L within a structure ''param'' :\n');
 disp('>> param.mu=.1;   % Strong convexity parameter');
 disp('>> param.L=1;     % Smoothness parameter');
-param.mu=0;
+param.mu=.1;
 param.L=1;
 waitfor;
 fprintf('%% F is the L-smooth mu-strongly convex objective function:\n');
