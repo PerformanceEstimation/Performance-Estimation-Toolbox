@@ -1,6 +1,6 @@
 Authors: A. Taylor 		Universite catholique de Louvain,
          F. Glineur		Universite catholique de Louvain,
-         J. Hendrickx	Universite catholique de Louvain.
+         J. Hendrickx	         Universite catholique de Louvain.
 
 Date:   May 10, 2017
 
