@@ -7,7 +7,7 @@ function cons=ConvexSupport(pt1,pt2,D,R)
 %       subgradients of the function at (respectively) some x_1 and x_2)
 %       (D is nonnegative, and possibly infinite).
 %       - a bound R on the maximum norm of any subgradient
-%       (radius-type bound: ||g||<= D for any g being a
+%       (radius-type bound: ||g||<= R for any g being a
 %       subgradient of the function at some x)
 %       (R is nonnegative, and possibly infinite).
 %
