@@ -24,7 +24,7 @@ clear all; clc;
 P=pep();
 
 % (1) Set up the objective function
-paramf1.mu=.1;	% Strong convexity parameter
+paramf1.mu=.3;	% Strong convexity parameter
 paramf1.L=1;    % Smoothness parameter
 f1=P.DeclareFunction('SmoothStronglyConvex',paramf1);
 f2=P.DeclareFunction('Convex');
@@ -49,9 +49,9 @@ lambda=1; ws=xs+lambda*g2s;
 P.InitialCondition((w0-ws)^2-1<=0); 
 
 % (3) Algorithm
-N=5;            % number of iterations
+N=1;            % number of iterations
 gam=lambda;		% step size
-alpha=1.05;      % relaxation parameter
+alpha=1.3;      % relaxation parameter
 
 w=w0;
 for i=1:N
