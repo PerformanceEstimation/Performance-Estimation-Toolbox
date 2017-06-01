@@ -10,6 +10,11 @@ clear all; clc;
 % satisfying ||w0-ws||<=1, and ws is some point to which the iterates of
 % DRS converge.
 %
+% The algorithm is as follows:
+%       x_{k+1}=prox_{\lambda f}(w_k)
+%       y_{k+1}=prox_{\lambda g}(2*x_{k+1}-w_k)
+%       w_{k+1}= y_{k+1}-x_{k+1}+w_k
+%
 % Note that the point ws may be defined in the following way:
 % let g1s and g2s be subgradients of respectively f_1 and f_2 at xs such 
 % that g1s+g2s=0 (optimality conditions). Then, ws=xs+lambda*g2s (lambda is

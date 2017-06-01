@@ -6,9 +6,14 @@ clear all; clc;
 % where f_1(x) is L-smooth and mu-strongly convex, and f_2 is convex.
 %
 % We show how to compute the worst-case value of ||wN-ws||^2 when wN is
-% obtained by doing N steps of DRS starting with an initial iterate w0
-% satisfying ||w0-ws||<=1, and ws is some point to which the iterates of
-% DRS converge.
+% obtained by doing N steps of (relaxed) DRS starting with an initial 
+% iterate w0 satisfying ||w0-ws||<=1, and ws is some point to which
+% the iterates of DRS converge.
+%
+% The algorithm is as follows:
+%       x_{k+1}=prox_{\lambda f}(w_k)
+%       y_{k+1}=prox_{\lambda g}(2*x_{k+1}-w_k)
+%       w_{k+1}=(1-\alpha) w_k + \alpha (2*y_{k+1}-2*x_{k+1}+w_k)
 %
 % Note that the point ws may be defined in the following way:
 % let g1s and g2s be subgradients of respectively f_1 and f_2 at xs such 
