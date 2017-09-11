@@ -24,7 +24,7 @@ x0=P.StartingPoint();             % x0 is some starting point
 P.InitialCondition((x0-xs)^2<=1); % Add an initial condition ||x0-xs||^2<= 1
 
 % (3) Algorithm
-N=10;		% number of iterations
+N=5;		% number of iterations
 
 x=cell(N+1,1);% we store the iterates in a cell for convenience
 x{1}=x0;

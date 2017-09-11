@@ -7,7 +7,7 @@ param.mu=0.1;	% Strong convexity parameter
 param.L=1;  % Smoothness parameter
 
 % F is the objective function
-F=P.AddObjective('SmoothStronglyConvex',param); 
+F=P.DeclareFunction('SmoothStronglyConvex',param); 
 
 % x0 is some starting point:
 x0=P.StartingPoint();
@@ -30,7 +30,7 @@ gN=F.gradient(xN);
 % Worst-case evaluated as ||gN||^2:        
 P.PerformanceMetric(gN^2); 
 
-verbose=0;
+verbose=1;
 out=P.solve(verbose);
 wc=out.WCperformance;%double(gN^2)
 

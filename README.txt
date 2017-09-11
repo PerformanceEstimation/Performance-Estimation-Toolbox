@@ -1,10 +1,10 @@
-Authors: A. Taylor (Universite catholique de Louvain),
-         F. Glineur (Universite catholique de Louvain),
-         J. Hendrickx (Universite catholique de Louvain).
+Authors: A. Taylor 		Universite catholique de Louvain,
+         F. Glineur		Universite catholique de Louvain,
+         J. Hendrickx		Universite catholique de Louvain.
 
-Date:   May 10, 2017
+Date:   September 11, 2017
 
-Version: May 10, 2017
+Version: September 11, 2017
 
 ----- Setup
 

@@ -5,7 +5,7 @@ P=pep();
 % (1) Set up the objective function
 param.L=1;      % Smoothness parameter
 
-F=P.AddObjective('SmoothStronglyConvex',param); % F is the objective function
+F=P.DeclareFunction('SmoothStronglyConvex',param); % F is the objective function
 
 % (2) Set up the starting point and initial condition
 x0=P.StartingPoint();             % x0 is some starting point
@@ -26,7 +26,7 @@ end
 [g,f]=F.oracle(x{N+1});                % g=grad F(x), f=F(x)
 P.PerformanceMetric(f-fs); % Worst-case evaluated as F(x)-F(xs)
 
-verbose=0;
+verbose=1;
 out=P.solve(verbose);
 wc=out.WCperformance;
 end

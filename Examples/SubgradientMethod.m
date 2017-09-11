@@ -5,8 +5,8 @@ clear all; clc;
 % where F(x) satisfies a Lipschitz condition; i.e., it has a bounded
 % gradient ||g||<=R for all g being a subgradient of F at some point.
 %
-% We show how to compute the worst-case value of F(xN)-F(xs) when xN is
-% obtained by doing N steps of a subgradient method starting with an initial
+% We show how to compute the worst-case value of min_i F(xi)-F(xs) when xi is
+% obtained by doing i steps of a subgradient method starting with an initial
 % iterate satisfying ||x0-xs||<=1.
 
 % (0) Initialize an empty PEP

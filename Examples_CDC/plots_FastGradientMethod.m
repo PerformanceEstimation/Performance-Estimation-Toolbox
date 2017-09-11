@@ -19,9 +19,4 @@ loglog(N,performance(3,:),'-b','linewidth',2);
 loglog(N(1:15),performance(4,1:15),'-m','linewidth',2);
 xlabel('Iteration count (log scale)','Fontsize',14);
 ylabel('Objective function accuracy (log scale)','Fontsize',14);
-% legend('N=2','N=5','N=10');
 print -depsc InexactFGM_WC.eps
-
-%%
-
-N=30; [2./(N.^2+5*N+6) ans]
