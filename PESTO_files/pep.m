@@ -1,7 +1,7 @@
 classdef pep < handle
     
     %
-    %       Performance Estimation Toolbox (PESTO) version 20170410
+    %       Performance Estimation Toolbox (PESTO) version 20171002
     %
     %       Authors: A. Taylor, J. Hendrickx, F. Glineur
     %       User Manual available at http://perso.uclouvain.be/adrien.taylor
