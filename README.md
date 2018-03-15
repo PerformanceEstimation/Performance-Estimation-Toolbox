@@ -17,6 +17,17 @@ Version: September 11, 2017
 
 The authors would like to thank [**Francois Gonze**](https://perso.uclouvain.be/francois.gonze/) from UCLouvain and **Yoel Drori** from Google Inc. for their feedbacks on preliminary versions of the toolbox.
 
+### Performance Estimation Framework
+
+The toolbox implements the performance estimation approach as developped in the following articles:
+ > [2] Taylor, Adrien B., Julien M. Hendrickx, and François Glineur. "Smooth strongly convex interpolation and exact worst-case performance of first-order methods." Mathematical Programming 161.1-2 (2017): 307-345.
+
+ > [3] Taylor, Adrien B., Julien M. Hendrickx, and François Glineur. "Exact worst-case performance of first-order methods for composite convex optimization." SIAM Journal on Optimization 27.3 (2017): 1283-1313
+
+Note that the approach of using semidefinite programming for obtaining worst-case guarantees was originally introduced in
+
+ > [4] Drori, Yoel, and Marc Teboulle. "Performance of first-order methods for smooth convex minimization: a novel approach." Mathematical Programming 145.1-2 (2014): 451-482
+
 ## Introduction to the toolbox
 
 The document [PESTO_CDC2017_FINAL](PESTO_CDC2017_FINAL.pdf) contains the reference paper for the toolbox.
@@ -39,7 +50,7 @@ in the Matlab prompt (which only adds the required folders to your Matlab path).
 You can now execute the demo files for a step by step introduction to the toolbox.
 
 
-## Examples
+## Example
 
 The folder [Examples](/Examples) contains numerous introductory examples to the toolbox.
 
@@ -76,8 +87,6 @@ N=10;		% number of iterations
 x=x0;
 for i=1:N
     x=x-h*F.gradient(x);
-    % % Alternate - shorter - form:
-    % x=gradient_step(x,F,gam);
 end
 xN=x;
 
@@ -95,16 +104,9 @@ double(fN-fs)   % worst-case objective function accuracy
 % param.L/2/(2*N+1)
 
 ```
-## Performance Estimation Framework
 
-The toolbox implements the performance estimation approach as developped in the following articles:
- > [2] Taylor, Adrien B., Julien M. Hendrickx, and François Glineur. "Smooth strongly convex interpolation and exact worst-case performance of first-order methods." Mathematical Programming 161.1-2 (2017): 307-345.
 
- > [3] Taylor, Adrien B., Julien M. Hendrickx, and François Glineur. "Exact worst-case performance of first-order methods for composite convex optimization." SIAM Journal on Optimization 27.3 (2017): 1283-1313
 
-Note that the approach of using semidefinite programming for obtaining worst-case guarantees was originally introduced in
-
- > [4] Drori, Yoel, and Marc Teboulle. "Performance of first-order methods for smooth convex minimization: a novel approach." Mathematical Programming 145.1-2 (2014): 451-482
  
 
 
