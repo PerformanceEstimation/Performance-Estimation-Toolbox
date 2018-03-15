@@ -12,7 +12,7 @@ Version: September 11, 2017
 This paper contains a simplified and quick general introduction to the theory underlying the toolbox, and to its use.
 
 If you used the toolbox, and found it useful for your research, you can mention the toolbox by citing this paper;
-Taylor, A.B., Hendrickx, J.M., & Glineur, F. (2017, December). Performance Estimation Toolbox (PESTO): automated worst-case analysis of first-order optimization methods. To appear in the proceedings of the 56th IEEE Annual Conference on Decision and Control (CDC).
+Taylor, Adrien B., Julien M. Hendrickx, and François Glineur. "Performance Estimation Toolbox (PESTO): automated worst-case analysis of first-order optimization methods." Proceedings of the 56th IEEE Conference on Decision and Control (CDC 2017). 2017.
 
 (2) The document "UserGuide.pdf" contains more information and examples about the use of the toolbox.
 
