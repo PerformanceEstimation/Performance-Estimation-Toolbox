@@ -8,16 +8,16 @@ Date:    September 11, 2017
 
 Version: September 11, 2017
 
-### Authors
+#### Authors
 - [**Adrien Taylor**](http://www.di.ens.fr/~ataylor/)
 - [**Julien Hendrickx**](https://perso.uclouvain.be/julien.hendrickx/index.html)
 - [**François Glineur**](https://perso.uclouvain.be/francois.glineur/)
 
-### Acknowledgments
+#### Acknowledgments
 
 The authors would like to thank [**Francois Gonze**](https://perso.uclouvain.be/francois.gonze/) from UCLouvain and **Yoel Drori** from Google Inc. for their feedbacks on preliminary versions of the toolbox.
 
-### Performance Estimation Framework
+#### Performance Estimation Framework
 
 The toolbox implements the performance estimation approach as developped in the following articles:
  > [2] Taylor, Adrien B., Julien M. Hendrickx, and François Glineur. "Smooth strongly convex interpolation and exact worst-case performance of first-order methods." Mathematical Programming 161.1-2 (2017): 307-345.
