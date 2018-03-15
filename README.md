@@ -1,4 +1,4 @@
-# Efficient First-order Methods for Convex Minimization: a Constructive Approach
+# Performance-Estimation-Toolbox (PESTO)
 
 This code comes jointly with the following reference.
 
