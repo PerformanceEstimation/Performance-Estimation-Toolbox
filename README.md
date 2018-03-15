@@ -53,7 +53,14 @@ You can now execute the demo files for a step by step introduction to the toolbo
 
 The folder [Examples](/Examples) contains numerous introductory examples to the toolbox.
 
-Among others, the following code (see [GradientMethod](/Examples/GradientMethod.m)) generates a worst-case scenario for the gradient method applied to a smooth (possibly strongly) convex function.
+The files [demo](demo.m) summarizes the currently available step-by-step demonstration files and their targets. As an example, the first demonstration file can be executed by typing
+```Matlab
+demo1
+```
+in the prompt.
+
+
+Among the other examples, the following code (see [GradientMethod](/Examples/GradientMethod.m)) generates a worst-case scenario for the gradient method applied to a smooth (possibly strongly) convex function.
 
 ```Matlab
 % In this example, we use a fixed-step gradient method for
