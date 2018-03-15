@@ -5,6 +5,7 @@ This code comes jointly with the following reference.
 > [1] Taylor, Adrien B., Julien M. Hendrickx, and François Glineur. "Performance Estimation Toolbox (PESTO): automated worst-case analysis of first-order optimization methods." Proceedings of the 56th IEEE Conference on Decision and Control (CDC 2017).
 
 Date:    September 11, 2017
+
 Version: September 11, 2017
 
 ### Authors
@@ -14,7 +15,7 @@ Version: September 11, 2017
 
 ### Acknowledgments
 
-The authors would like to thank [**Francois Gonze**](https://perso.uclouvain.be/francois.gonze/) from UCLouvain and [**Yoel Drori**] from Google Inc. for their feedbacks on preliminary versions of the toolbox.
+The authors would like to thank [**Francois Gonze**](https://perso.uclouvain.be/francois.gonze/) from UCLouvain and **Yoel Drori** from Google Inc. for their feedbacks on preliminary versions of the toolbox.
 
 ## Introduction to the toolbox
 
@@ -34,7 +35,7 @@ Once YALMIP and the SDP solver installed (type 'yalmiptest' for checking the ins
 ```Matlab
 Install_PESTO
 ```
-in the Matlab prompt (which only adds the required folders to your Matlab paths).
+in the Matlab prompt (which only adds the required folders to your Matlab path).
 You can now execute the demo files for a step by step introduction to the toolbox.
 
 
@@ -42,7 +43,7 @@ You can now execute the demo files for a step by step introduction to the toolbo
 
 The folder [Examples](/Examples) contains numerous introductory examples to the toolbox.
 
-Among others, the following code [GradientMethod](/Examples/GradientMethod.m) generates a worst-case scenario for the gradient method applied to a smooth (possibly strongly) convex function.
+Among others, the following code (see [GradientMethod](/Examples/GradientMethod.m)) generates a worst-case scenario for the gradient method applied to a smooth (possibly strongly) convex function.
 
 ```Matlab
 % In this example, we use a fixed-step gradient method for
