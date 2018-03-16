@@ -1,6 +1,6 @@
 # Performance-Estimation-Toolbox (PESTO)
 
-This code comes jointly with the following reference.
+This code comes jointly with the following [`reference`](PESTO_CDC2017_FINAL.pdf).
 
 > [1] Taylor, Adrien B., Julien M. Hendrickx, and François Glineur. "Performance Estimation Toolbox (PESTO): automated worst-case analysis of first-order optimization methods." Proceedings of the 56th IEEE Conference on Decision and Control (CDC 2017).
 
@@ -30,10 +30,10 @@ Note that the approach of using semidefinite programming for obtaining worst-cas
 
 ## Introduction to the toolbox
 
-The document [PESTO_CDC2017_FINAL](PESTO_CDC2017_FINAL.pdf) contains the reference paper for the toolbox.
+The document [`PESTO_CDC2017_FINAL`](PESTO_CDC2017_FINAL.pdf) contains the reference paper for the toolbox.
 This paper contains a simplified and quick general introduction to the theory underlying the toolbox, and to its use.
 
-The document [UserGuide](UserGuide.pdf) contains more detailed information and examples about the use of the toolbox.
+The document [`UserGuide`](UserGuide.pdf) contains more detailed information and examples about the use of the toolbox.
 
 The general purpose of the toolbox is to help the researchers producing worst-case guarantees for their favorite first-order methods.
 
@@ -53,7 +53,7 @@ You can now execute the demo files for a step by step introduction to the toolbo
 
 The folder [Examples](/Examples) contains numerous introductory examples to the toolbox.
 
-The files [demo](demo.m) summarizes the currently available step-by-step demonstration files and their targets. As an example, the first demonstration file can be executed by typing
+The files [`demo`](demo.m) summarizes the currently available step-by-step demonstration files and their targets. As an example, the first demonstration file can be executed by typing
 ```Matlab
 demo1
 ```
