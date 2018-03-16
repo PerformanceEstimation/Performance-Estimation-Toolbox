@@ -60,7 +60,7 @@ demo1
 in the prompt.
 
 
-Among the other examples, the following code (see [GradientMethod](/Examples/GradientMethod.m)) generates a worst-case scenario for the gradient method applied to a smooth (possibly strongly) convex function.
+Among the other examples, the following code (see [`GradientMethod`](/Examples/GradientMethod.m)) generates a worst-case scenario for the gradient method applied to a smooth (possibly strongly) convex function.
 
 ```Matlab
 % In this example, we use a fixed-step gradient method for
