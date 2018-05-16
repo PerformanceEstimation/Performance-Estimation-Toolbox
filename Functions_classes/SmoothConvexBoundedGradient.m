@@ -8,7 +8,7 @@ function cons=SmoothConvexBoundedGradient(pt1,pt2,D,R,L)
 %       (D is nonnegative, possibly infinite).
 %       - a bound R on the maximum norm of any subgradient
 %       (radius-type bound: ||g||<= R for any g being a
-%       subgradient of the function at some x) (D is nonnegative, 
+%       subgradient of the function at some x) (R is nonnegative, 
 %       possibly infinite),
 %       - smoothness constant L (L is nonnegative, possibly infinite).
 %
