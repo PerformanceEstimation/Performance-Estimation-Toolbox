@@ -67,13 +67,24 @@ classdef functionClass < functionHandler
                 obj.AddComponent(x,g,f,spec);
             end
         end
-        function cons=GetInterp(obj)
-            cons=[];
+        function [cons,names]=GetInterp(obj)
+            cons=[]; names={};
             for i=1:obj.list_size
                 for j=1:obj.list_size
                     new_cons=obj.interp_handler(obj.interp_list{i},obj.interp_list{j});
                     if ~isempty(new_cons)
                         cons=cons+new_cons.Eval();
+                        if isempty(obj.interp_list{i}.spec)
+                            namei = sprintf('#%d',i);
+                        else
+                            namei = obj.interp_list{i}.spec;
+                        end
+                        if isempty(obj.interp_list{j}.spec)
+                            namej = sprintf('#%d',j);
+                        else
+                            namej = obj.interp_list{j}.spec;
+                        end
+                        names{end+1} = sprintf('I(%s,%s)',namei,namej);
                     end
                 end
             end

@@ -173,13 +173,14 @@ classdef pep < handle
                 end
             end
         end
-        function cons=collect(obj,tau,verbose_pet)
-            cons=[];
+        function [cons,names]=collect(obj,tau,verbose_pet)
+            cons=[]; names = {};
             if obj.list_size_perf>0
                 if verbose_pet>1, fprintf(' PESTO: Setting up the problem: performance measure'), end;
                 for i=1:obj.list_size_perf
                     lexpr=obj.expr_list_perf{i,1};
                     cons=cons+(tau<=lexpr.Eval());
+                    names{end+1} = sprintf('PM%d',i);
                 end
                 perf_size=length(cons);
                 if verbose_pet>1, fprintf(' (done, %d constraint(s) added) \n',perf_size), end;
@@ -190,6 +191,7 @@ classdef pep < handle
                 for i=1:obj.list_size_init
                     lexpr=obj.expr_list_init{i,1}.Eval();
                     cons=cons+lexpr;
+                    names{end+1} = sprintf('Init%d',i);
                 end
                 init_size=length(cons)-count;
                 if verbose_pet>1, fprintf(' (done, %d constraint(s) added) \n',init_size), end;
@@ -199,6 +201,7 @@ classdef pep < handle
             if obj.list_size_others>0
                 for i=1:obj.list_size_others
                     cons=cons+obj.expr_list_others{i,1}.Eval();
+                    names{end+1} = sprintf('Other%d',i);
                 end
             end
             
@@ -226,13 +229,14 @@ classdef pep < handle
             F=sdpvar(dim2,1);
             tau=sdpvar(1,1);
             obj_func=tau;
-            cons=(G>=0);
+            cons=(G>=0); names = {};
             Evaluable.SetGetFunc(F);Evaluable.SetGetGram(G);
             msg = sprintf(' PESTO: Setting up the problem: interpolation constraints (component %d out of %d done)\n', 0,obj.list_size_func);
             if verbose_pet>1, fprintf(msg), end;
             prevlength = numel(msg);
             for i=1:obj.list_size_func
-                cons=cons+obj.list_func{i,1}.GetInterp();
+                [addcons, addnames] = obj.list_func{i,1}.GetInterp();
+                cons=cons+addcons; names = [names addnames];
                 if verbose_pet>1
                     msg = sprintf(' PESTO: Setting up the problem: interpolation constraints (component %d out of %d done)\n', i,obj.list_size_func);
                     fprintf(repmat('\b', 1, prevlength));
@@ -243,12 +247,16 @@ classdef pep < handle
             interp_cons=length(cons)-1;
             if verbose_pet>1, fprintf('      Total interpolation constraints:  %d \n',interp_cons), end;
             
-            cons=cons+obj.collect(tau,verbose_pet);
-            
+            [addcons, addnames] = obj.collect(tau,verbose_pet);
+            cons=cons+addcons; names = [names addnames];            
             
             if verbose_pet>1, fprintf(' PESTO: Calling SDP solver\n'), end;
             out.solverDetails=optimize(cons,-obj_func,solver_opt);
             out.WCperformance=double(obj_func);
+            for i=2:length(cons)
+                out.dualvalues(i-1)=dual(cons(i));
+            end
+            out.dualnames = names;
             
             if verbose_pet, fprintf(' PESTO: Solver output: %7.5e, solution status: %s\n',out.WCperformance,out.solverDetails.info), end;
             if verbose_pet>1, fprintf(' PESTO: Post-processing\n'), end;
