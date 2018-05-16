@@ -4,13 +4,19 @@ classdef pep < handle
     %       Performance Estimation Toolbox (PESTO) version 20171002
     %
     %       Authors: A. Taylor, J. Hendrickx, F. Glineur
-    %       User Manual available at http://perso.uclouvain.be/adrien.taylor
+    %       User Manual available as UserGuide.pdf
+    % 
     %       Direct help: help pesto, help pep
     %       Examples available in the directory Examples/
     %
     %       Demos are available by typing:
     %       >> demo
     %
+    %       Reference paper available in PESTO_CDC2017_FINAL.pdf:
+    %       Taylor, Adrien B., Julien M. Hendrickx, and François Glineur. 
+    %       "Performance Estimation Toolbox (PESTO): automated worst-case 
+    %       analysis of first-order optimization methods." Proceedings of 
+    %       the 56th IEEE Conference on Decision and Control (CDC 2017).
     %
     %   Content: 
     %       - Classes of functions: Convex, ConvexIndicator, ConvexSupport,
