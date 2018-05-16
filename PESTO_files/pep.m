@@ -176,26 +176,26 @@ classdef pep < handle
         function cons=collect(obj,tau,verbose_pet)
             cons=[];
             if obj.list_size_perf>0
-                if verbose_pet, fprintf(' PESTO: Setting up the problem: performance measure'), end;
+                if verbose_pet>1, fprintf(' PESTO: Setting up the problem: performance measure'), end;
                 for i=1:obj.list_size_perf
                     lexpr=obj.expr_list_perf{i,1};
                     cons=cons+(tau<=lexpr.Eval());
                 end
                 perf_size=length(cons);
-                if verbose_pet, fprintf(' (done, %d constraint(s) added) \n',perf_size), end;
+                if verbose_pet>1, fprintf(' (done, %d constraint(s) added) \n',perf_size), end;
             end
             count=length(cons);
             if obj.list_size_init>0
-                if verbose_pet, fprintf(' PESTO: Setting up the problem: initial conditions'), end;
+                if verbose_pet>1, fprintf(' PESTO: Setting up the problem: initial conditions'), end;
                 for i=1:obj.list_size_init
                     lexpr=obj.expr_list_init{i,1}.Eval();
                     cons=cons+lexpr;
                 end
                 init_size=length(cons)-count;
-                if verbose_pet, fprintf(' (done, %d constraint(s) added) \n',init_size), end;
+                if verbose_pet>1, fprintf(' (done, %d constraint(s) added) \n',init_size), end;
             end
             count=length(cons);
-            if verbose_pet, fprintf(' PESTO: Setting up the problem: other constraints'), end;
+            if verbose_pet>1, fprintf(' PESTO: Setting up the problem: other constraints'), end;
             if obj.list_size_others>0
                 for i=1:obj.list_size_others
                     cons=cons+obj.expr_list_others{i,1}.Eval();
@@ -206,18 +206,17 @@ classdef pep < handle
                 cons=cons+obj.list_func{i,1}.collect();
             end
             others_size=length(cons)-count;
-            if verbose_pet, fprintf(' (done, %d constraint(s) added) \n',others_size), end;
+            if verbose_pet>1, fprintf(' (done, %d constraint(s) added) \n',others_size), end;
         end
         function out=solve(obj,verbose_pet,solver_opt)
             
             assert(obj.t_reset==Point.Reset(),'Another PEP environment has been initialized, re-generate this PEP before solving it')
-            if nargin < 2
-                verbose_pet=1;
+            if nargin < 3
                 verbose_solver=0;
-                solver_opt = sdpsettings('verbose',verbose_solver);%,'solver','mosek','mosek.MSK_DPAR_INTPNT_CO_TOL_PFEAS',1e-10);
-            elseif nargin < 3
-                verbose_solver=0;
-                solver_opt = sdpsettings('verbose',verbose_solver);%,'solver','mosek','mosek.MSK_DPAR_INTPNT_CO_TOL_PFEAS',1e-10);
+                solver_opt = sdpsettings('verbose',verbose_solver);
+                if nargin < 2
+                    verbose_pet = 1;
+                end
             end
             
             dim1=Point.GetSize('Point');
@@ -230,11 +229,11 @@ classdef pep < handle
             cons=(G>=0);
             Evaluable.SetGetFunc(F);Evaluable.SetGetGram(G);
             msg = sprintf(' PESTO: Setting up the problem: interpolation constraints (component %d out of %d done)\n', 0,obj.list_size_func);
-            if verbose_pet, fprintf(msg), end;
+            if verbose_pet>1, fprintf(msg), end;
             prevlength = numel(msg);
             for i=1:obj.list_size_func
                 cons=cons+obj.list_func{i,1}.GetInterp();
-                if verbose_pet
+                if verbose_pet>1
                     msg = sprintf(' PESTO: Setting up the problem: interpolation constraints (component %d out of %d done)\n', i,obj.list_size_func);
                     fprintf(repmat('\b', 1, prevlength));
                     fprintf(msg);
@@ -242,17 +241,17 @@ classdef pep < handle
                 end
             end
             interp_cons=length(cons)-1;
-            if verbose_pet, fprintf('      Total interpolation constraints:  %d \n',interp_cons), end;
+            if verbose_pet>1, fprintf('      Total interpolation constraints:  %d \n',interp_cons), end;
             
             cons=cons+obj.collect(tau,verbose_pet);
             
             
-            if verbose_pet, fprintf(' PESTO: Calling SDP solver\n'), end;
+            if verbose_pet>1, fprintf(' PESTO: Calling SDP solver\n'), end;
             out.solverDetails=optimize(cons,-obj_func,solver_opt);
             out.WCperformance=double(obj_func);
             
             if verbose_pet, fprintf(' PESTO: Solver output: %7.5e, solution status: %s\n',out.WCperformance,out.solverDetails.info), end;
-            if verbose_pet, fprintf(' PESTO: Post-processing\n'), end;
+            if verbose_pet>1, fprintf(' PESTO: Post-processing\n'), end;
             
             % Approximating P=[x0 ... gN] from G using Cholesky
             % Decomposition
