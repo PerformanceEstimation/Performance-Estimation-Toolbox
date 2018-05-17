@@ -40,7 +40,7 @@ classdef functionClass < functionHandler
                 [x,f]=obj.OptimalPoint();
             end
         end
-        function [g, f]=oracle(obj,x,tag)
+        function [g, f, x]=oracle(obj,x,tag)
             assert(isa(x,'char') | isa(x,'Evaluable'),'Oracle call: x must either be a tag or a point');
             if nargin>=3
                 assert(isa(tag,'char'),'Oracle call: second argument must be a tag (string)');
@@ -52,6 +52,7 @@ classdef functionClass < functionHandler
             if isa(x,'char')
                 for i=1:obj.list_size
                     if strcmp(x,obj.interp_list{i}.spec)
+                        x=obj.interp_list{i}.x;
                         g=obj.interp_list{i}.g;
                         f=obj.interp_list{i}.f;
                         found=1;
