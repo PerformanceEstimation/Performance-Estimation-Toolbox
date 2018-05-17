@@ -1,0 +1,1000 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{hyperref}
+\usepackage{bibentry}
+\nobibliography*
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{fixltx2e}
+\usepackage[framed,numbered,autolinebreaks,useliterate]{mcode}
+
+%\usepackage{url,textcomp}
+
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+
+\usepackage{enumerate}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{comment}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{color}
+\usepackage{pdfsync}
+%\usepackage[svgnames]{xcolor}
+\usepackage[tikz]{bclogo}
+
+
+\renewcommand{\headrulewidth}{1pt}
+\newcommand{\norm}[1]{{\left\lVert#1\right\rVert}}
+\newcommand{\normsq}[1]{{\left\lVert#1\right\rVert}^2}
+\newcommand{\Tr}[1]{{\trace\left(#1\right)}}
+\newcommand{\Rd}{\mathbb{R}^d}
+\newcommand{\inner}[2]{{\langle #1, #2\rangle}}
+\DeclareMathOperator{\dom}{dom}
+\DeclareMathOperator{\val}{val}
+\DeclareMathOperator{\epi}{epi}
+\DeclareMathOperator{\trace}{Tr}
+\DeclareMathOperator{\tr}{\trace}
+\DeclareMathOperator{\linspan}{span}
+\DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\FmuL}{\mathcal{F}_{\mu,L}}
+
+\newcommand{\bv}{\mathbf{v}}
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\bg}{\mathbf{g}}
+\newcommand{\bfu}{\mathbf{f}}
+
+\newcommand{\real}{\mathbb{R}}
+\fancyhead[L]{Performance Estimation Toolbox: User Manual}
+\fancyhead[R]{May 2017}
+
+\fancyfoot[C]{\textbf{page \thepage}}
+
+\newcommand{\caution}[1]{{\color{red}{\sc Caution:} #1}}
+\newcommand{\pesto}{{PESTO }}
+
+\begin{document}
+\author{Adrien B. Taylor\footnote{Universit\'e catholique de Louvain, ICTEAM Institute/CORE, 
+               \{adrien.taylor, julien.hendrickx, francois.glineur\}@uclouvain.be}, Julien M. Hendrickx\footnotemark[2], Fran\c{c}ois Glineur\footnotemark[2]}
+\title{Performance Estimation Toolbox (PESTO): User Manual\thanks{This research is supported by the Belgian Network DYSCO (Dynamical Systems, Control, and Optimization), funded by the Interuniversity Attraction Poles Programme, initiated by the Belgian State, Science Policy Office, and of the Concerted Research Action (ARC) programme supported by the Federation Wallonia-Brussels (contract ARC 14/19-060). The scientific responsibility rests with its authors.}}
+\date{Version: \today}
+\maketitle
+%*********
+%*********
+%		**
+%Title: **
+%		**
+%*********
+%*********
+
+%*********
+%*********
+%		**
+%Core:	**
+%		**
+%*********
+%*********
+\renewcommand*\contentsname{}
+\setcounter{tocdepth}{3} \tableofcontents
+
+
+\section*{Foreword}
+This toolbox was written with as only objective to ease the access to the performance estimation framework for performing automated worst-case analyses. The main underlying idea is to allow the user writing the algorithms nearly as he would have implemented them, instead of performing the potentially demanding SDP modelling steps required for using the methodology.
+
+
+In case the toolbox and/or the methodology raises some interest to you, and that you would like to provide/suggest new functionalities or improvements, we would be very happy to hear from you.
+
+\section*{Acknowledgements}
+The authors would like to thank Fran\c{c}ois Gonze from UCLouvain and Yoel Drori from Google Inc.\@ for their feedbacks on preliminary versions of the toolbox.
+
+%==================================
+%								%||
+\section{Introduction}			%||
+%============================	%||
+%==================================
+
+This note details the working procedure of the performance estimation toolbox, whose aim is to ease and improve the performance analyses of first-order optimization methods. The methodology originates from the seminal work on performance estimation of Drori and Teboulle~\cite{Article:Drori} (see also \cite{drori2014contributions} for a full picture of the original developments), and on the subsequent convex interpolation framework developed by the authors~\cite{taylor2015smooth,taylor2015exact} for obtaining non-improvable guarantees for families of first-order methods and problem classes. The interested readers can find a complete survey on the performance estimation literature in the recent~\cite{Taylor2017PEPs}.
+
+The performance estimation toolbox relies on the use of the \textsc{Yalmip}~\cite{Article:Yalmip} modelling language within \textsc{Matlab}, and on the use of an appropriate semidefinite programming (SDP) solver (see for example~\cite{Article:Sedumi,Article:Mosek,Article:sdpt3}). Note that the toolbox is not intended to provide the most efficient implementation of the performance estimation methodology, but rather to provide a simple, generic and direct way to use it. In addition, it is important to have in mind that our capability to (accurately) solve PEPs is inherently limited to our capability to solve semidefinite programs. Typically, the methodology is well-suited for studying a few iterations of simple optimization schemes, but its computational cost may become prohibitive in the case of a large number of iterations (see examples below). 
+
+\begin{enumerate}
+\item Please reference \pesto when used in a published work:
+\begin{itemize}
+	\item \bibentry{pesto2017}
+\end{itemize}
+Note that the general methodology used in \pesto is presented in the following works:
+\begin{itemize}
+\item \bibentry{taylor2015smooth}
+\item \bibentry{taylor2015exact}
+\end{itemize}
+\item We distribute \pesto  for helping researchers of the field, but we do not provide any warranty on the provided results. In particular, note that:
+\begin{itemize}
+\item our capability to solve performance estimation problems is limited by our capability to solve semidefinite programs. Therefore, the solver choice is of utmost importance, as well as an appropriate treatment of the errors/numerical problems within the solver. Good practices regarding the use of the toolbox are presented in Section~\ref{sec:basicuse}.
+\item The toolbox is not aimed to provide computationally efficient implementations of the PEPs. It is foremost designed for (1) obtaining preliminary results on the worst-case performance of simple optimization schemes, (2) helping researchers obtaining worst-case guarantees on their algorithms, and (3) providing a simple numerical validation tool for assessing the quality of other analytical or numerical worst-case guarantees. 
+\end{itemize}
+\end{enumerate}
+
+Depending on the final goal, the advanced users may prefer develop their own (optimized) codes for studying specific algorithms.
+\paragraph{Related methodology} Semidefinite programming was also used in a related approach~\cite{lessard2014analysis} for obtaining bounds on the worst-case guarantees. This alternative approach is specialized for obtaining asymptotic linear rates of convergence.
+
+%======================================
+%									%||
+\section{Setting up the toolbox}		%||
+%==============================		%||
+%======================================
+
+
+\paragraph{Pre-requisites} In order to install the package, please make sure that both \href{https://yalmip.github.io/}{\textsc{Yalmip}} (Version 19-Sep-2015 or later) and some SDP solver (e.g., \href{http://sedumi.ie.lehigh.edu/}{SeDuMi}~\cite{Article:Sedumi}, \href{https://mosek.com/}{MOSEK}~\cite{Article:Mosek}, or~\href{http://www.math.nus.edu.sg/~mattohkc/sdpt3.html}{SDPT3}~\cite{Article:sdpt3}) are installed and properly working on your computer. For testing the proper installation of \textsc{Yalmip} and a SDP solver, you may run the following command
+\begin{verbatim}
+>> yalmiptest
+\end{verbatim}
+\paragraph{Downloading the code} The toolbox is fully available from the following {\sc Github} repository: \begin{center}
+\href{https://github.com/AdrienTaylor/Performance-Estimation-Toolbox}{\sc AdrienTaylor/Performance-Estimation-Toolbox}.\\
+\end{center}
+
+\paragraph{Install \pesto}
+\begin{verbatim}
+>> Install_PESTO
+\end{verbatim}
+
+\paragraph{First aid within \pesto}
+\begin{verbatim}
+>> help pesto
+\end{verbatim}
+Further support can be obtained by contacting the authors.
+
+The best way to quickly get used to the framework is by probably by using the different demonstration files that are available within PESTO. Available demos are summarized by typing:
+\begin{verbatim}
+>> demo
+\end{verbatim}
+
+
+%======================================
+%									%||
+\section{Basic use of the toolbox}	%||
+%==============================		%||
+%======================================
+\label{sec:basicuse}
+
+For the complete pictures and details on the approach, we refer to~\cite[Section 1\&3]{taylor2015smooth} for the simplified case for smooth strongly convex unconstrained minimization, and to~\cite[Section 1\&2]{taylor2015exact} for the full approach for taking into account non-smooth, constrained, composite or finite sums terms in the objective function, with first-order methods possibly involving projection, linear-optimization, proximal or inexact operations. For the sake of simplicity, we approach the toolbox via an example, allowing to go through the different important elements to consider.
+
+Let us consider the following non-smooth convex minimization problem
+\begin{equation}
+\min_{x\in\Rd} f(x),\tag{OPT}\label{eq:origOpt}
+\end{equation}
+with $f$ being a closed, convex and proper function with bounded subgradients, i.e., for all $g\in\partial f(x)$ for some $x\in\Rd$, we have $\norm{g}\leq R$ for some constant $R\geq 0$ (for convenience, we denote $f\in \mathcal{C}_R$). 
+In this example, we study the worst-case performance of the projected subgradient method for solving~\eqref{eq:origOpt}:
+\begin{equation}
+x_{i}=x_{i-1}-h_{i-1}f'(x_{i-1}),\label{eq:subgrad}
+\end{equation}
+where  $f'(x_{i-1})\in\partial f(x_{i-1})$ is a subgradient of $f$ at $x_{i-1}$, and $h_i\in\real$ is some step size parameter. For the worst-case performance measure, we chose to use the criterion \[\min_{0\leq i\leq N} f(x_i)-f(x_*),\]
+with $x_*$ an optimal solution to~\eqref{eq:origOpt}, and $N$ being the number of iterations. Finally, in order to have a bound worst-case measure, we need to consider an \emph{initial condition}; we chose to consider that the initial iterate $x_0$ to satisfy the following quality measure:
+\[ \norm{x_0-x_*}\leq 1,\] with the initial distance being arbitrarily set to $1$ (see homogeneity relations~\cite[Section 3.5]{taylor2015smooth}).
+
+\subsection{Performance estimation problems}
+The key idea underlying the performance estimation approach relies in using the definition of the \emph{worst-case behavior}. That is, the worst-case behavior of
+\begin{align}
+&\max_{f,\{x_i\},x_*} \ \min_{0\leq i\leq N} f(x_i)-f(x_*),  \tag{PEP$(d)$}\label{Intro:PEP} \\
+&\quad\quad \text{s.t. } f\in \mathcal{C}_R(\Rd)  \notag\\
+&\quad\quad\quad\quad    x_0 \text{ satisfies some initialization conditions: } \normsq{x_0-x_*}\leq 1\notag \\
+&\quad\quad\quad\quad    x_{i} \text{ is computed by~\eqref{eq:subgrad} for all $1 \le i \le N$,} 
+\notag\\
+&\quad\quad\quad\quad    x_* \text{ is a minimizer of } f(x). \notag
+\end{align}
+For treating~\eqref{Intro:PEP}, we use semidefinite programming. All the modelling steps for going from~\eqref{Intro:PEP} to a semidefinite program for more complicated settings are detailed in~\cite{taylor2015smooth} and~\cite{taylor2015exact}. 
+
+The first step taken in that direction is to use a discrete version of~\eqref{Intro:PEP}, replacing the \emph{infinite-dimensional} variable and constraint $f\in \mathcal{C}_R(\Rd)$ by an \emph{interpolation constraint} using only coordinates $x_i$, subgradients $g_i$ and function values $f_i$ of the iterates and of an optimal point:
+\[\exists f\in\mathcal{C}_R:\ g_i\in\partial f(x_i) \text{ and } f_i=f(x_i) \ \text{for all } i\in I \overset{\text{(Definition)}}{\Leftrightarrow} \{(x_i,g_i,f_i)\}_{i\in I} \text{ is }\mathcal{C}_R\text{-interpolable},\] with $I=\{0,1,\hdots,N,*\}$.
+One can show that this constraint can equivalently be formulated as\footnote{
+Interpolation conditions for other classes of functions can be found in~~\cite[Section 3]{taylor2015exact}.}
+\[ \{(x_i,g_i,f_i)\}_{i\in I} \text{ is }\mathcal{C}_R\text{-interpolable} \Leftrightarrow f_i\geq f_j+\inner{g_j}{x_i-x_j}\text{ for all } i,j\in I\text{, and } \normsq{g_i}\leq R^2 \text{ for all }i\in I.\]
+Therefore, assuming without loss of generality that $x_*=g_*=0$ and that $f_*=0$, the problem~\eqref{Intro:PEP} can be reformulated as
+\begin{align}
+&\max_{\{x_i,g_i,f_i\}_{i\in I}} \ \min_{0\leq i\leq N} f_i,  \tag{discrete-PEP$(d)$}\label{Intro:PEP2} \\
+&\quad\quad \text{s.t. } f_i\geq f_j+\inner{g_j}{x_i-x_j}\text{ for all } i,j\in I\text{, and } \normsq{g_i}\leq R^2 \text{ for all }i\in I,  \notag\\
+&\quad\quad\quad\quad    x_i,g_i\in\Rd \text{ for all }i\in I,\notag\\
+&\quad\quad\quad\quad    x_0 \text{ satisfies some initialization conditions: } \normsq{x_0-x_*}\leq 1\notag, \\
+&\quad\quad\quad\quad    x_{i}=x_{i-1}-h_{i-1}g_{i-1} \text{ for all } 0 \le i \le N-1, 
+\notag,\\
+&\quad\quad\quad\quad    g_*=0. \notag
+\end{align}
+For solving~\eqref{Intro:PEP2}, we introduce the following notations:
+\[P=[g_0 \ g_1 \ \hdots \ g_N \ x_0],\]
+along with $\bg_i=e_{1+i}$ (for $i=0,\hdots,N$), $\bx_0=e_{N+2}$, $\bx_{i}=\bx_{i-1}-h_{i-1}\bg_{i-1}$ (for $i=1,\hdots,N$) and $\bg_*=\bx_*=0$. Those notations allow conveniently writing for all $i\in\{0,1,\hdots,N,*\}$
+\begin{equation*}
+\begin{aligned}
+x_i&=P\bx_i,\\
+g_i&=P\bg_i.
+\end{aligned}
+\end{equation*}
+Using the previous notations, we note that all scalars products and norms present in the formulation~\eqref{Intro:PEP2} can be written by combining entries of the matrix $G=P^{\top\!}P$ which is positive semidefinite by construction (notation $G\succeq 0$). Indeed, we have the following equalities:
+\[\inner{g_j}{x_i-x_j}=\bg_i^{\top\!} G(\bx_i-\bx_j),\quad \normsq{x_0-x_*}=\bx_0^{\top\!} G\bx_0, \text{and } \normsq{g_i}=\bg_i^{\top\!} G\bg_i.\]
+In addition, we have the following equivalence:
+\[ G\succeq 0, \ \mathrm{rank}\ G\leq d \Leftrightarrow G=P^\top P \text{ with } P\in\mathbb{R}^{d\times (N+2)},\]
+which allows writing~\eqref{Intro:PEP2} as a rank-constrained semidefinite program (SDP).
+\begin{align}
+&\max_{G\succeq 0, \{f_i\}_{i=0,\hdots,N},\tau} \ \tau,  \tag{SDP-PEP$(d)$}\label{Intro:PEP3} \\
+&\quad\quad \text{s.t. } f_i\geq f_j+\inner{g_j}{x_i-x_j}\text{ for all } i,j\in I\text{, and } \normsq{g_i}\leq R^2 \text{ for all }i\in I,  \notag\\
+&\quad\quad\quad\quad    \tau \leq f_i\text{ for all }i\in I,\notag\\
+&\quad\quad\quad\quad    \normsq{x_0-x_*}\leq 1\notag,\\
+&\quad\quad\quad\quad \rank{G}\leq d\notag.
+\end{align}
+For obtaining a formulation that is both \emph{tractable} and \emph{valid for all dimensions}, one can relax the rank constraint from~\eqref{Intro:PEP3}, and solve the corresponding simplified SDP. That is, instead of considering solving~\eqref{Intro:PEP3} for all values of $d$, we solve~\eqref{Intro:PEP3} only for $d=N+2$ (see~\cite[Remark 3]{taylor2015exact}). The worst-case guarantee obtained by solving (PEP$(N+2)$) is valid for any value of the dimension parameter $d$, and is guaranteed to be \emph{exact} (i.e., or non-improvable) as long as $d\geq N+2$ (the so-called \emph{large-scale} assumption). In addition, it can be solved using standard SDP solvers such as~\cite{Article:Sedumi,Article:Mosek,Article:sdpt3}.\vspace{1cm}
+
+\begin{bclogo}[logo=\bcattention, couleur=blue!30, arrondi =0.1, sousTitre=rank deflection constraints]{Good practice}
+Due to current techniques for solving semidefinite programs, the presence of constraints enforcing \emph{rank-deficiency} of the Gram matrix may critically deteriorate the quality of the numerical solutions. For avoiding that, the user should evaluate as few function values and gradients as possible (for limiting the size of the Gram matrix), avoid replicates (avoid evaluating two times the same gradient at the same point), and generally avoid constraints enforcing linear dependence between two vectors. Common examples include
+\begin{itemize}
+\item (algorithmic constraints imposing rank-deficiency) a constraint $\norm{x_1-x_0+f'(x_0)}^2=0$ enforces the equality $x_1=x_0-f'(x_0)$. You should instead consider substituting $x_1$ by $x_0-f'(x_0)$; this is done automatically by the toolbox by defining $x_1$ as $x_0-f'(x_0)$ (see example from Section~\ref{ex:gm_steps}).
+\item (interpolation constraints imposing rank-deficiency) When performing several subgradient evaluations at the same point, the corresponding subgradients may in general be different (if the subdifferential is not a singleton). However, if you evaluate several times the gradient of a differentiable function at the same point, smoothness \emph{implicitly} imposes a rank deficiency on the Gram matrix, as it is equivalent to $\norm{g_1-g_2}^2=0$, where $g_1,g_2\in\partial f(x)$.
+\item (inexactness model imposing rank-deficiency --- see example from Section~\ref{ex:inexactLS}) Consider an initial iterate $x_0$ and a search direction given by a vector $d_0$ satisfying a relative accuracy criterion: $\norm{d_0-f'(x_0)}\leq \varepsilon\norm{f'(x_0)}$. In the case $\varepsilon=0$, the model imposes 
+$\norm{d_0-f'(x_0)}\leq 0$ and hence $d_0=f'(x_0)$. It is far better to consider substituting $d_0$ by $f'(x_0)$ instead of using the constraint $\norm{d_0-f'(x_0)}^2=0$.
+\end{itemize}
+\end{bclogo}
+\newpage
+\subsection{Setting up the PEP within PESTO: full example}\label{ex:gm_steps}
+
+In this section, we exemplify the approach for studying $N$ steps of a subgradient method for minimizing a convex function with bounded subgradients. We chose to use the constant step size rule $h_i=\frac{1}{\sqrt{N+1}}$ and arbitrarily consider the class $\mathcal{C}_R$ with $R=1$. The example is detailed in the following sections.
+\begin{lstlisting}
+% (0) Initialize an empty PEP
+P=pep();
+
+% (1) Set up the objective function
+param.R=1;	% 'radius'-type constraint on the subgradient norms: ||g||<=1
+
+% F is the objective function
+F=P.DeclareFunction('ConvexBoundedGradient',param); 
+
+% (2) Set up the starting point and initial condition
+x0=P.StartingPoint();            % x0 is some starting point
+[xs,fs]=F.OptimalPoint();        % xs is an optimal point, and fs=F(xs)
+P.InitialCondition((x0-xs)^2<=1); % Add an initial condition ||x0-xs||^2<= 1
+
+% (3) Algorithm and (4) performance measure
+N=5; % number of iterations
+h=ones(N,1)*1/sqrt(N+1); % step sizes
+
+x=x0;
+
+% Note: the worst-case performance measure used in the PEP is the 
+%       min_i (PerformanceMetric_i) (i.e., the best value among all
+%       performance metrics added into the problem. Here, we use it
+%       in order to find the worst-case value for min_i [F(x_i)-F(xs)]
+
+% we create an array to save all function values (so that we can evaluate
+% them afterwards)
+f_saved=cell(N+1,1);
+for i=1:N
+    [g,f]=F.oracle(x);
+    f_saved{i}=f;
+    P.PerformanceMetric(f-fs);
+    x=x-h(i)*g;
+end
+
+[g,f]=F.oracle(x);
+f_saved{N+1}=f;
+P.PerformanceMetric(f-fs);
+
+% (5) Solve the PEP
+P.solve();
+
+% (6) Evaluate the output
+for i=1:N+1
+    f_saved{i}=double(f_saved{i});
+end
+f_saved
+% The result should be (and is) 1/sqrt(N+1).
+\end{lstlisting}
+\newpage
+\subsection{Basic objects and algebraic operations}\label{sec:basicobjects}
+There are four essential types of objects implemented within the toolbox:
+\begin{enumerate}
+\item functions, for which we refer to~\ref{sec:functions}. Functions can be created, added and evaluated. There are two basic ways to create functions: first, by relying on the \verb?DeclareFunction? method of a PEP object (see Section~\ref{ex:gm_steps}, step (0) Initialization of a PEP), and second by summing other functions. In the following example, we create and add two convex functions (more functional classes are described in the sequel).\\[-1cm]
+\begin{lstlisting}
+% We declare two convex functions: f1 and f2.
+f1=P.DeclareFunction('Convex'); 
+f2=P.DeclareFunction('Convex');
+
+% We create a new function F that is the sum of f1 and f2.
+F=f1+f2;
+\end{lstlisting}
+Let $\verb?x0?$ be some initial point. In order to evaluate the function, there are three standard ways. First, if only the subgradient of $F$ at $x_0$ is of interest, one can use the following.\\[-1cm]
+\begin{lstlisting}
+% Evaluating a subgradient of F at x0.
+g0=F.subgradient(x0);
+\end{lstlisting} If only the function value $F(x_0)$ is of interest, one can use the following alternative.\\[-1cm]
+\begin{lstlisting}
+% Evaluating  F(x0).
+F0=F.value(x0);
+\end{lstlisting} Finally, if both a subgradient and a function value are of interest, we advise the user to use the following construction (which is better than combining the previous ones) performing both evaluations simultaneously.\\[-1cm]
+\begin{lstlisting}
+% Evaluating  F(x0) and a subgradient of F at x0.
+[g0,F0]=F.oracle(x0);
+\end{lstlisting}
+\item Vectors, which can be created, added, subtracted or multiplied (inner product) with each other or with a constant (also, divisions by nonzero constants are accepted). Once the PEP object is solved, vectors can also be evaluated. The basic operations for creating a vector are the following
+\begin{itemize}
+\item by evaluating a subgradient of a function (see previous point),
+\item by generating a \emph{starting point}, that is, generating a point with no constraint (yet) on its position. This operation can be repeated to generate as much starting points as needed.\\[-1cm]
+\begin{lstlisting}
+x0=P.StartingPoint(); % x0 is some starting point
+\end{lstlisting}
+\item Also, it is possible to generate an optimal point of a given function.\\[-1cm]
+\begin{lstlisting}
+[xs,fs]=F.OptimalPoint(); % xs is an optimal point, and fs=F(xs)
+\end{lstlisting}
+\item Finally, it is possible to define new vectors by combining other ones. For example, for describing the iterations of an algorithm.\\[-1cm]
+\begin{lstlisting}
+x=x-F.subgradient(x); % subgradient step (step size 1)
+\end{lstlisting}
+Note an alternate form for the previous code is as follows\\[-1cm]
+\begin{lstlisting}
+x=gradient_step(x,F,1); % subgradient step (step size 1)
+\end{lstlisting}
+\end{itemize}
+It is also possible to compute inner products of pairs of vectors, resulting in scalar values. This operation is essential for defining (among others) initial conditions, performance measures, and interpolation conditions.\\[-1cm]
+\begin{lstlisting}
+% scalar_value1 is squared distance between x and the optimal point xs.
+scalar_value1=(x-xs)^2; 
+
+% scalar_value2 is the inner product of a subgradient of F at x and x
+scalar_value2=F.subgradient(x)*x; 
+\end{lstlisting}
+Finally, once the corresponding PEP has been solved, vectors (and scalars) involved in this PEP can be evaluated using the \verb?double? command. For example, the following evaluations are valid:\\[-1cm]
+\begin{lstlisting}
+double(scalar_value1), double(x0-xs), double((x0-xs)^2), double(scalar_value2)
+\end{lstlisting}
+\item Scalars (constants, function values $f_i$'s or inner products $\inner{g_i}{x_i}$'s), which can be added, subtracted with each others (also, divisions by nonzero constants are accepted). Scalars can also be used to generate constraints (see next point). Once the PEP object is solved, scalars can also be evaluated.
+\item Constraints (see also Section~\ref{sec:constraints}), which can be created by linearly combining scalar values in an (in)equality. In addition to the interpolation constraints, the two most common examples involve initial conditions and performance measures. The following code is valid and add two \emph{initialization} constraints to the PEP:\\[-1cm]
+\begin{lstlisting}
+P.InitialCondition((x0-xs)^2<=1);% Add an initial condition ||x0-xs||^2<= 1
+P.InitialCondition(F0-Fs<=1);	% Add an initial condition F0-Fs<= 1
+\end{lstlisting}
+In PESTO, the performance measure is assumed to be of the form $\min_k \{m_k(G,\{f_i\}_i)\}$, where each $m_k(.)$ is a performance measure (e.g., in the previous subgradient example, we used $\min_{0\leq k \leq N} f_k-f_*$). The command \verb?PerformanceMetric? allows to create new $m_k(.)$'s.\\[-1cm]
+\begin{lstlisting}
+P.PerformanceMetric((x-xs)^2); 		% Add a performance measure ||x-xs||^2
+P.PerformanceMetric(F.value(x)-Fs);	% Add a performance measure F0-Fs
+\end{lstlisting}
+Note that as in the example~\eqref{Intro:PEP3}, the performance metrics are encoded as new constraints involving the objective function $\tau$. 
+\end{enumerate}
+\newpage
+\subsection{Functional classes} \label{sec:functions}
+In PESTO, interpolation constraints are hidden to the users, and are specifically handled by routines in the \verb?Functions_classes? directory. The list of functional classes for which interpolation constraints are handled in the toolbox is presented in Table~\ref{Tab:func_classes}.  For details about the corresponding input parameters, type \verb?help ClassName? in the Matlab prompt (e.g., \verb?help Convex?).
+\begin{table}[ht!]
+{
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}ll@{}}
+\specialrule{2pt}{1pt}{1pt}
+Function class & PESTO routine name \\
+\hline
+Convex functions &  \verb?Convex?\\ 
+Convex functions (bounded subdifferentials) &  \verb?ConvexBoundedGradient? \\
+Convex indicator functions  (bounded domain) & \verb?ConvexIndicator? \\
+Convex support functions (bounded subdifferentials)  &  \verb?ConvexSupport?\\
+Smooth strongly convex functions   & \verb?SmoothStronglyConvex? \\
+Smooth (possibly nonconvex) functions &  \verb?Smooth?\\
+Smooth convex functions  (bounded subdifferentials) &  \verb?SmoothConvexBoundedGradient?\\
+Strongly convex functions (bounded domain) & \verb?StronglyConvexBoundedDomain?\\
+\specialrule{2pt}{1pt}{1pt}
+\end{tabular}
+\caption{Default functional classes within PESTO. Some classes are overlapping and are present only for promoting a better readability of the code. The corresponding interpolation conditions are developed in~\cite[Section 3.1]{taylor2015exact}.}
+\label{Tab:func_classes}}
+\end{center}}
+\end{table}
+
+\begin{bclogo}[logo=\bcattention, couleur=blue!30, arrondi =0.1, sousTitre=Interpolation and hidden assumptions]{Good to know}
+The functions are only required to be interpolated at the points they were evaluated. This conception is of utmost importance when performing PEP-based worst-case analyses, as this may incorporate \emph{hidden assumptions}. Common examples include:
+\begin{itemize}
+\item (existence of optimal point) not evaluating the function at an optimal point is equivalent not to assume the existence of an optimal point. Hence, the worst-case guarantees will be valid even when no optimal point exists.
+\item (feasible initial point) In the case of constrained minimization, not evaluating the corresponding indicator function at an initial point is equivalent not to assume that this point is feasible (i.e., we do not require the existence of a subgradient of the indicator function at that point). Hence, the worst-case guarantees will be valid even for  infeasible initial points.
+\end{itemize}
+Note that those remark are also generically valid when performing convergence proofs. As PEPs can be seen as black-boxes proof generator, it is of utmost importance to be aware of the assumptions being made.
+\end{bclogo}
+\vspace{1cm}
+As an illustration of the previous remark, the following codes can be used to study the worst-case performances of the projected gradient method for minimizing a (constrained) smooth strongly convex function. In the first case, we require $x_0$ to be feasible, by evaluating the indicator function at $x_0$ (i.e., we require the indicator function to have a subgradient at $x_0$, and hence force $x_0$ to be feasible).
+\newpage
+\paragraph{Example 1} In this example, $x_0$ is feasible.
+\begin{lstlisting}
+% In this example, we use a projected gradient method for
+% solving the constrained smooth strongly convex minimization problem
+%   min_x F(x)=f_1(x)+f_2(x); 
+%   for notational convenience we denote xs=argmin_x F(x);
+% where f_1(x) is L-smooth and mu-strongly convex and where f_2(x) is
+% a convex indicator function.
+%
+% We show how to compute the worst-case value of F(xN)-F(xs) when xN is
+% obtained by doing N steps of the method starting with an initial
+% iterate satisfying F(x0)-F(xs)<=1.
+
+% (0) Initialize an empty PEP
+P=pep();
+
+% (1) Set up the objective function
+paramf1.mu=.1;	% Strong convexity parameter
+paramf1.L=1;    % Smoothness parameter
+f1=P.DeclareFunction('SmoothStronglyConvex',paramf1);
+f2=P.DeclareFunction('ConvexIndicator');
+F=f1+f2; % F is the objective function
+
+% (2) Set up the starting point and initial condition
+x0=P.StartingPoint();		 % x0 is some starting point
+[xs,fs]=F.OptimalPoint(); 	 % xs is an optimal point, and fs=F(xs)
+[g0,f0]=F.oracle(x0);
+
+P.InitialCondition(f0-fs<=1); % Add an initial condition f0-fs<=1
+
+% (3) Algorithm
+gam=1/paramf1.L;		% step size
+N=1;		% number of iterations
+
+x=x0;
+for i=1:N
+    xint=gradient_step(x,f1,gam);
+    x=projection_step(xint,f2);
+end
+xN=x;
+fN=F.value(xN);
+
+% (4) Set up the performance measure
+P.PerformanceMetric(fN-fs);
+
+% (5) Solve the PEP
+P.solve()
+
+% (6) Evaluate the output
+double(fN-fs)   % worst-case objective function accuracy
+
+% Result should be (and is) max((1-paramf1.mu*gam)^2,(1-paramf1.L*gam)^2)
+\end{lstlisting}
+\newpage
+\paragraph{Example 2} In this example, $x_0$ is not required to be feasible.
+
+\begin{lstlisting}
+% In this example, we use a projected gradient method for
+% solving the constrained smooth strongly convex minimization problem
+%   min_x F(x)=f_1(x)+f_2(x); 
+%   for notational convenience we denote xs=argmin_x F(x);
+% where f_1(x) is L-smooth and mu-strongly convex and where f_2(x) is
+% a convex indicator function.
+%
+% We show how to compute the worst-case value of F(xN)-F(xs) when xN is
+% obtained by doing N steps of the method starting with an initial
+% iterate satisfying ||x0-xs||^2<=1.
+
+% (0) Initialize an empty PEP
+P=pep();
+
+% (1) Set up the objective function
+paramf1.mu=.1;	% Strong convexity parameter
+paramf1.L=1;    % Smoothness parameter
+f1=P.DeclareFunction('SmoothStronglyConvex',paramf1);
+f2=P.DeclareFunction('ConvexIndicator');
+F=f1+f2; % F is the objective function
+
+% (2) Set up the starting point and initial condition
+x0=P.StartingPoint();		 % x0 is some starting point
+[xs,fs]=F.OptimalPoint(); 	 % xs is an optimal point, and fs=F(xs)
+
+P.InitialCondition((x0-xs)^2<=1); % Add an initial condition ||x0-xs||^2<= 1
+
+% (3) Algorithm
+gam=1/paramf1.L;		% step size
+N=1;		% number of iterations
+
+x=x0;
+for i=1:N
+    xint=gradient_step(x,f1,gam);
+    x=projection_step(xint,f2);
+end
+xN=x;
+fN=F.value(xN);
+
+% (4) Set up the performance measure
+P.PerformanceMetric(fN-fs);
+
+% (5) Solve the PEP
+P.solve()
+
+% (6) Evaluate the output
+double(fN-fs)   % worst-case objective function accuracy
+
+% Result should be (and is) max((1-paramf1.mu*gam)^2,(1-paramf1.L*gam)^2)
+\end{lstlisting}
+\newpage
+\subsection{First-order information recovery}\label{sec:oracles}
+As for interpolation conditions, the different models for first-order information recovery (oracles) are hidden to the users, and are specifically handled by routines within the \verb?Primitive_oracles? directory. There are essentially two types of oracles available at the moment, which are summarized in Table~\ref{Tab:prim_oracles}.  For details about the corresponding input parameters, type \verb?help OracleName? in the Matlab prompt (e.g., \verb?help subgradient?).
+
+\begin{table}[ht!]{
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}ll@{}}
+\specialrule{2pt}{1pt}{1pt}
+Type  & PESTO routine name\\ 
+\hline
+Gradient/subgradient & \verb?subgradient?\\
+Inexact gradient/subgradient (relative inaccuracy)& \verb?inexactsubgradient?\\
+Inexact gradient/subgradient (absolute inaccuracy)& \verb?inexactsubgradient?\\
+\specialrule{2pt}{1pt}{1pt}
+\end{tabular}
+\caption{First-order information recovery within PESTO.}
+\label{Tab:prim_oracles}}
+\end{center}}
+\end{table}
+
+
+\subsection{Standard algorithmic steps}\label{sec:alg_steps}
+In the same philosophy as for functional classes (Section~\ref{sec:functions}) and oracles (Section~\ref{sec:oracles}), the implementation of several standard algorithmic operations are hidden to the users, and are handled by routines within the \verb?Primitive_steps? directory. The list of primitive algorithmic operations is presented in Table~\ref{Tab:prim_algorithmic_steps}. For details about the corresponding input parameters, type \verb?help StepName? in the Matlab prompt (e.g., \verb?help gradient_step?).
+\begin{table}[ht!]{
+\begin{center}
+{\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}ll@{}}
+\specialrule{2pt}{1pt}{1pt}
+Algorithmic step  & \pesto routine name\\ 
+\hline
+Gradient/subradient step & \verb?gradient_step?\\
+projection step & \verb?projection_step?\\
+proximal step & \verb?proximal_step?\\
+Conditional/Frank-Wolfe/linear optimization step & \verb?linearoptimization_step?\\
+Line search & \verb?exactlinesearch_step?\\
+\specialrule{2pt}{1pt}{1pt}
+\end{tabular}
+\caption{Standard algorithmic steps within PESTO.}
+\label{Tab:prim_algorithmic_steps}}
+\end{center}}
+\end{table}
+
+\subsection{Solving the PEP}
+By default \verb|pep.solve| will display the PEP (SDP) size and the solver output.
+Verbosity can be controlled using the \verb?verbose_pet? argument:
+\begin{lstlisting}
+P.solve(0) %for no output
+P.solve(1) %for default display
+P.solve(2) %for detailed display
+\end{lstlisting}
+Without additional specifications, \verb|pep.solve| calls the default Yalmip solver with no output.
+Changing the solver used and its display level can be done with an extra \verb|solver_opt| argument (see \href{https://yalmip.github.io/command/sdpsettings/}{Yalmip's guide} for \verb|sdpsetting|):
+\begin{lstlisting}
+P.solve(1,sdpsettings('solver','SeDuMi')) %to use SeDuMi with default display
+P.solve(1,sdpsettings('solver','mosek','mosek.MSK_DPAR_INTPNT_CO_TOL_PFEAS',1e-10)) %to use MOSEK with extra accuracy
+\end{lstlisting}
+
+
+
+%======================================
+%									%||
+\section{Advanced operations}		%||
+%==============================		%||
+%======================================
+
+Although the structure of the toolbox and the basic operations (see Section~\ref{sec:basicuse}) already allow for a certain flexibility for studying a variety of first-order schemes, some \emph{advanced} operations may be used in order to model a larger panel of methods and functional classes.
+
+\subsection{Adding add-hoc constraints}\label{sec:constraints}
+In Section~\ref{sec:basicobjects}, we introduced the \verb?InitialCondition? procedure for introducing constraints. Another possibility is to use the \verb?AddConstraint? method. There are essentially no differences between the two methods; the only reason for having both is readability. The following two codes are equivalent.\\[-1cm]
+\begin{lstlisting}
+P.InitialCondition((x0-xs)^2<=1);% Add an initial condition ||x0-xs||^2<= 1
+\end{lstlisting}\vspace{-.5cm}
+\begin{lstlisting}
+P.AddConstraint((x0-xs)^2<=1);% Add an initial condition ||x0-xs||^2<= 1
+\end{lstlisting}
+
+\subsection{Adding points to be interpolated}
+For modelling purposes, it can be useful to explicitly create new vectors, and link them via a function, and a coordinate/subgradient relation. More precisely, consider two vectors \verb?x? and \verb?g?, one scalar \verb?f? and the following function $F$:\\[-1cm]
+\begin{lstlisting}
+% We declare one convex function
+F=P.DeclareFunction('Convex');
+\end{lstlisting}
+In order to force \verb?g? and \verb?f? to be respectively a subgradient and the function value of $F$ at \verb?x?, we use the \verb?AddComponent? routine:\\[-1cm]
+\begin{lstlisting}
+F.AddComponent(x,g,f); % g=grad of F at x, f=F(x)
+\end{lstlisting}
+Note that in some context (e.g., when implementing new algorithmic steps or first-order oracles), it can be useful to create new vectors or scalars with no constraints on them. This can be done using the \verb?Point? class, as follows.\\[-1cm]
+\begin{lstlisting}
+x=Point('Point'); % x is a vector
+f=Point('Scalar');% f is a scalar; atlernative form: f=Point('Function value')
+\end{lstlisting}
+This is for example used for implementing the projection, proximal and the linear optimization steps of the toolbox. As an example, let us consider performing a proximal (or implicit) step on $F$ from some point $x_0$, with step size $\gamma$:
+\[x=x_0-\gamma \partial F(x).\]
+This is implemented in the \verb?proximal_step? routine of PESTO. Let us have a look inside it.
+\begin{lstlisting}
+function [x] = proximal_step(x0,func,gamma)
+% [x] = proximal_step(x0,func,gamma)
+%
+% This routine performs a proximal step of step size gamma, starting from
+% x0, and on function func. That is, it performs:
+%       x=x0-gamma*g, where g is a (sub)gradient of func at x.
+%       (implicit/proximal scheme).
+%
+% Input: - starting point x0
+%        - function func on which the (sub)gradient will be evaluated
+%        - step size gamma of the proximal step
+%
+% Output: x=x0-gamma*g, where g is a (sub)gradient of func at x.
+%
+g=Point('Point');
+x=x0-gamma*g;
+f=Point('Function value');
+func.AddComponent(x,g,f);
+
+end
+\end{lstlisting}
+\subsection{Adding new primitive oracles and primitive algorithmic steps}
+
+Adding new primitive oracles and algorithmic steps within PESTO is fundamentaly very simple: just add a new routines with appropriate input/output arguments. The lists of existing such routines can be found in Section~\ref{sec:oracles} and~\ref{sec:alg_steps}, and in the directories \verb?Primitive_steps? and \verb?Primitive_oracles? of the toolbox.
+\newpage
+\subsection{Adding new functional classes}
+First of all, we saw in Section~\ref{sec:functions} how to create new functions within some predefined classes. As an example, the following lines create a smooth strongly convex function.\\[-1cm]
+\begin{lstlisting}
+paramF.mu=.1;	% Strong convexity parameter
+paramF.L=1;    % Smoothness parameter
+F=P.DeclareFunction('SmoothStronglyConvex',paramF);
+\end{lstlisting}
+Essentially, when creating a function, we instantiate a function object containing a list (initially empty) of points on which its corresponding interpolation conditions should hold. For encoding the interpolation condition, we use a very simple approach: each function object also refers to an \emph{interpolation routine} (all interpolation routines are presented in the directory \verb?Functions_classes? of the PESTO toolbox). 
+In order to create new functions, it is also possible to directly create a instantiate a function object and associate it to a specific interpolation routine.
+
+As an example, the interpolation routine for the class of smooth strongly convex function is \verb?SmoothStronglyConvex.m?, and the previous code for generating a smooth strongly convex function can equivalently be written as
+\begin{lstlisting}
+paramF.mu=.1;	% Strong convexity parameter
+paramF.L=1;    % Smoothness parameter
+F=P.AddObjective(@(pt1,pt2)SmoothStronglyConvex(pt1,pt2,paramF.mu,paramF.L));
+\end{lstlisting}
+In other words, each \emph{interpolation routine} is a method taking two points (\verb?pt1? and \verb?pt2?) in input, as well as as many parameters as needed (here, $\mu$ and $L$), and providing the interpolation constraint corresponding to those two points in output (we assume that interpolation conditions are always required for all pairs of points). In order to create a new function, one has create a \emph{function handle} depending only on the two points (\verb?pt1? and \verb?pt2?), by fixing the values of the parameters.
+
+Concerning the implementation of the interpolation routines, note that both points \verb?pt1? and \verb?pt2? are structures with three fields corresponding to the coordinate vector: \verb?pt1.x?, its corresponding (sub)gradient: \verb?pt1.g? and its function value \verb?pt1.f?. All those elements should be treated as standard vectors or scalars of the PESTO toolbox. As an example, \verb?SmoothStronglyConvex.m? contains the following code.\\[-1cm]
+
+\begin{lstlisting}
+function cons=SmoothStronglyConvex(pt1,pt2,mu,L)
+assert(mu>=0 & L>=0 & L>=mu,'Constants provided to the functional class are not valid');
+if ~(pt1.x.isEqual(pt2.x) && pt1.g.isEqual(pt2.g) && pt1.f.isEqual(pt2.f))
+    if L~=Inf
+        cons=((pt1.f-pt2.f+pt1.g*(pt2.x-pt1.x)+...
+            1/(2*(1-mu/L))*(1/L*(pt1.g-pt2.g)*(pt1.g-pt2.g).'+...
+            mu*(pt1.x-pt2.x)*(pt1.x-pt2.x).'-...
+            2*mu/L*(pt1.x-pt2.x)*(pt1.g-pt2.g).'))<=0);
+    else
+        cons=((pt1.f-pt2.f+pt1.g*(pt2.x-pt1.x)+mu/2*(pt1.x-pt2.x)^2)<=0);
+    end    
+else
+    cons=[];
+end
+end
+\end{lstlisting}
+
+Another example: \verb?Convex.m? contains the following code.\\[-1cm]
+\begin{lstlisting}
+function cons=Convex(pt1,pt2)
+if ~(pt1.x.isEqual(pt2.x) && pt1.g.isEqual(pt2.g) && pt1.f.isEqual(pt2.f))
+    cons=((pt1.f-pt2.f+pt1.g*(pt2.x-pt1.x))<=0);
+else
+    cons=[];
+end
+
+end
+\end{lstlisting}
+\newpage
+\subsection{Tags and evaluations}
+When evaluating a function value, a (sub)gradient, or both, it is possible to \emph{tag} the corresponding values, in order to be able to easily recover them. As examples,
+
+
+In some cases, tags allows recovering hidden pieces of information. For example, when minimizing $F(x)=f_1(x)+f_2(x)$ with both $f_1$ and $f_2$ being non-smooth convex functions and $x_*$ being an optimal point of $F$.  How do we efficiently recover two vectors $g_1\in\partial f_1(x_*)$ and $g_2\in\partial f_2(x_*)$ such that $g_1+g_2=0$ ?\\[-1cm]
+\begin{lstlisting}
+f1=P.DeclareFunction('Convex');
+f2=P.DeclareFunction('Convex');
+F=f1+f2; % F is the objective function
+
+[xs,fs]=F.OptimalPoint('opt'); % xs is an optimal point, and fs=F(xs)
+
+% note that we tag the point xs as 'opt' to be able to re-evaluate it
+% easily (providing the oracle routine with this tag allows to recover
+% previously evaluated points).
+
+% the next step evaluates the oracle at the tagged point 'opt' (xs) for
+% recovering the values of g1s and g2s; this allows to guarantee that
+% g1s+g2s=0;
+[g1s,~]=f1.oracle('opt');
+[g2s,~]=f2.oracle('opt');
+\end{lstlisting}
+
+Note that the \verb?double? command, allowing to evaluate a vector or a scalar after solving the PEP does not allow evaluating gradients and function values that were not saved in a variable, or appropriately tagged. For example, the following lines are valid and equivalent\\[-1cm]
+\begin{lstlisting}
+double(g1s), double(g2s),
+double(f1.gradient('opt')), double(f2.gradient('opt'))
+\end{lstlisting}
+(note that evaluating the corresponding function values also work.\\[-1cm]
+\begin{lstlisting}
+double(f1.value('opt')), double(f2.value('opt'))
+\end{lstlisting}
+Finally, note that \emph{tags} can also be specified when evaluating function and gradient values with the \verb?oracle?, \verb?subgradient? or \verb?value? routines; the three following lines have the same results.\\[-1cm]
+\begin{lstlisting}
+F.oracle(x0,'x0');
+F.subgradient(x0,'x0');
+F.value(x0,'x0');
+\end{lstlisting}
+That is, each of those lines evaluate the function and/or gradient at $x_0$ and tag the evaluation. The evaluated gradient and function values can be recovered using one of the  following way:\\[-1cm]
+\begin{lstlisting}
+[g0,F0]=F.oracle('x0');
+g0=F.subgradient('x0');
+F0=F.value('x0');
+\end{lstlisting}
+%======================================
+%									%||
+\section{Further Examples}		%||
+%==============================		%||
+%======================================
+More examples and demonstration files are available within the toolbox (in the directories \verb?Examples? and \verb?Examples_CDC?). The detailed analyses of the examples provided hereafter (optimized gradient method, steepest descent with exact line searches and Douglas-Rachford splitting) can respectively be found in~\cite{Article:Drori,kim2014optimized,kim2015convergence},~\cite{deKlerkELS2016} and~\cite{giselsson2016linear}.
+\newpage
+
+\subsection{Optimized gradient method}
+\begin{lstlisting}
+% In this example, we use the optimized gradient method (OGM) for
+% solving the L-smooth convex minimization problem
+%   min_x F(x); for notational convenience we denote xs=argmin_x F(x).
+%
+% We show how to compute the worst-case value of F(xN)-F(xs) when xN is
+% obtained by doing N steps of the gradient method starting with an initial
+% iterate satisfying ||x0-xs||<=1.
+
+% (0) Initialize an empty PEP
+P=pep();
+
+% (1) Set up the objective function
+param.L=1;      % Smoothness parameter
+
+F=P.DeclareFunction('SmoothStronglyConvex',param); % F is the objective function
+
+% (2) Set up the starting point and initial condition
+x0=P.StartingPoint();		 % x0 is some starting point
+[xs,fs]=F.OptimalPoint(); 		 % xs is an optimal point, and fs=F(xs)
+P.InitialCondition((x0-xs)^2<=1); % Add an initial condition ||x0-xs||^2<= 1
+
+% (3) Algorithm
+gam=1/param.L;		% step size
+N=5;		% number of iterations
+
+x=cell(N+1,1);%we store all the x's in a cell (for convenience)
+x{1}=x0;
+y=x0;
+theta=1;
+for i=1:N
+    x{i+1}=gradient_step(y,F,gam);
+    theta_prev=theta;
+    if i<N
+        theta=(1+sqrt(4*theta^2+1))/2;
+    else
+        theta=(1+sqrt(8*theta^2+1))/2;
+    end
+    y=x{i+1}+(theta_prev-1)/theta*(x{i+1}-x{i})+theta_prev/theta*(x{i+1}-y);
+end
+
+% (4) Set up the performance measure
+fN=F.value(y);                % g=grad F(x), f=F(x)
+P.PerformanceMetric(fN-fs); % Worst-case evaluated as F(x)-F(xs)
+
+% (5) Solve the PEP
+P.solve()
+
+% (6) Evaluate the output
+double(fN-fs)   % worst-case objective function accuracy
+
+% The result should be 1/2/theta^2
+\end{lstlisting}
+\newpage
+\subsection{Exact line searches}
+\begin{lstlisting}
+% In this example, we use a gradient method with exact line search
+% for solving the L-smooth mu-strongly convex minimization problem
+%   min_x F(x); for notational convenience we denote xs=argmin_x F(x).
+%
+%   Starting from an iterate x0, the method performs at each iteration
+%   an exact line search step in the steepest descent direction
+%       gamma=argmin_gamma F(xi-gamma*gi), with gi the gradient of F at xi,
+%   and performs the update
+%       x{i+1}=xi-gamma*gi.
+%
+% We show how to compute the worst-case value of F(xN)-F(xs) when xN is
+% obtained by doing N steps of the method starting with an initial
+% iterate satisfying F(x0)-F(xs)<=1.
+
+% (0) Initialize an empty PEP
+P=pep();
+
+% (1) Set up the objective function
+param.mu=.1;	% Strong convexity parameter
+param.L=1;      % Smoothness parameter
+
+F=P.DeclareFunction('SmoothStronglyConvex',param); 
+% F is the objective function
+
+% (2) Set up the starting point and initial condition
+x0=P.StartingPoint();		 % x0 is some starting point
+[xs,fs]=F.OptimalPoint(); 		 % xs is an optimal point, and fs=F(xs)
+[g0,f0]=F.oracle(x0);
+P.InitialCondition(f0-fs<=1); % Add an initial condition f0-fs<= 1
+
+% (3) Algorithm
+N=2;
+x=x0;
+for i=1:N
+    [g,~]=F.oracle(x);
+    x=exactlinesearch_step(x,F,g);
+end
+
+% (4) Set up the performance measure
+[g,f]=F.oracle(x);
+P.PerformanceMetric(f-fs); % Worst-case evaluated as F(x)-F(xs)
+
+% (5) Solve the PEP
+P.solve()
+
+% (6) Evaluate the output
+double(f-fs)   % worst-case objective function accuracy
+
+% The result should be
+%((param.L-param.mu)/(param.L+param.mu))^(2*N)
+\end{lstlisting}
+\newpage
+\subsection{Exact line search in inexact search direction}\label{ex:inexactLS}
+\begin{lstlisting}
+% In this example, we use an inexact gradient method with exact line search
+% for solving the L-smooth mu-strongly convex minimization problem
+%   min_x F(x); for notational convenience we denote xs=argmin_x F(x).
+%
+%   Starting from an iterate x0, the method performs at each iteration
+%   an exact line search step in a direction d satisfying a relative 
+%   accuracy criterion
+%   (gi is the gradient of F at xi)
+%       ||d-gi||<=eps*||gi|| (**)
+%   that is, the method evaluates
+%       gamma=argmin_gamma F(xi-gamma*d) for d satisfying (**)
+%   and performs the update
+%       x{i+1}=xi-gamma*d.
+%
+% We show how to compute the worst-case value of F(xN)-F(xs) when xN is
+% obtained by doing N steps of the method starting with an initial
+% iterate satisfying F(x0)-F(xs)<=1.
+
+% (0) Initialize an empty PEP
+P=pep();
+
+% (1) Set up the objective function
+param.mu=.1;	% Strong convexity parameter
+param.L=1;      % Smoothness parameter
+
+F=P.DeclareFunction('SmoothStronglyConvex',param); 
+% F is the objective function
+
+% (2) Set up the starting point and initial condition
+x0=P.StartingPoint();		 % x0 is some starting point
+[xs,fs]=F.OptimalPoint(); 	 % xs is an optimal point, and fs=F(xs)
+[g0, f0]=F.oracle(x0);               
+P.InitialCondition(f0-fs<=1); % Add an initial condition f0-fs<= 1
+
+% (3) Algorithm
+N=2;
+eps=0.1;
+x=x0;
+for i=1:N
+    d=inexactsubgradient(x,F,eps,0);
+    x=exactlinesearch_step(x,F,d);
+end
+fN=F.value(x);
+% (4) Set up the performance measure
+P.PerformanceMetric(fN-fs); % Worst-case evaluated as ||g||^2
+
+% (5) Solve the PEP
+P.solve()
+
+% (6) Evaluate the output
+double(fN-fs)   % worst-case objective function accuracy
+
+% The result should be
+%((param.L*(1+eps)-param.mu*(1-eps))/(param.L*(1+eps)+param.mu*(1-eps)))^(2*N)
+\end{lstlisting}
+\newpage
+\subsection{Douglas-Rachford splitting}
+
+\begin{lstlisting}
+% In this example, we use a Douglas-Rachford splitting (DRS) 
+% method for solving the composite convex minimization problem
+%   min_x F(x)=f_1(x)+f_2(x) 
+%   (for notational convenience we denote xs=argmin_x F(x);
+% where f_1(x) is L-smooth and mu-strongly convex, and f_2 is convex.
+%
+% We show how to compute the worst-case value of ||wN-ws||^2 when wN is
+% obtained by doing N steps of DRS starting with an initial iterate w0
+% satisfying ||w0-ws||<=1, and ws is some point to which the iterates of
+% DRS converge.
+%
+% Note that the point ws may be defined in the following way:
+% let g1s and g2s be subgradients of respectively f_1 and f_2 at xs such 
+% that g1s+g2s=0 (optimality conditions). Then, ws=xs+lambda*g2s (lambda is
+% the step size used in DRS).
+
+% (0) Initialize an empty PEP
+P=pep();
+
+% (1) Set up the objective function
+paramf1.mu=.1;	% Strong convexity parameter
+paramf1.L=1;      % Smoothness parameter
+f1=P.DeclareFunction('SmoothStronglyConvex',paramf1);
+f2=P.DeclareFunction('Convex');
+F=f1+f2; % F is the objective function
+
+% (2) Set up the starting point and initial condition
+w0=P.StartingPoint(); % x0 is some starting point
+[xs,fs]=F.OptimalPoint('opt'); % xs is an optimal point, and fs=F(xs)
+
+% note that we tag the point xs as 'opt' to be able to re-evaluate it
+% easily (providing the oracle routine with this tag allows to recover
+% previously evaluated points).
+
+% the next step evaluates the oracle at the tagged point 'opt' (xs) for
+% recovering the values of g1s and g2s; this allows to guarantee that
+% g1s+g2s=0;
+[g1s,~]=f1.oracle('opt');
+[g2s,~]=f2.oracle('opt');
+lambda=2; ws=xs+lambda*g2s;
+
+% Add an initial condition ||w0-ws||^2<= 1
+P.InitialCondition((w0-ws)^2-1<=0); 
+
+% (3) Algorithm
+N=5;            % number of iterations
+gam=lambda;		% step size
+
+w=w0;
+for i=1:N
+    x=proximal_step(w,f2,gam);
+    y=proximal_step(2*x-w,f1,gam);
+    w=y-x+w;
+end
+
+% (4) Set up the performance measure
+P.PerformanceMetric((w-ws)^2);
+
+% (5) Solve the PEP
+P.solve()
+
+% (6) Evaluate the output
+double((w-ws)^2)   % worst-case distance to fixed point ws
+
+% The result should be (and is)
+% max(1/(1+paramf1.mu*gam),gam*paramf1.L/(1+gam*paramf1.L))^(2*N) 
+% 
+% see (Theorem 2): Giselsson, Pontus, and Stephen Boyd. "Linear 
+%                  convergence and metric selection in Douglas-Rachford
+%                  splitting and ADMM."
+%                  IEEE Transactions on Automatic Control (2016). 
+\end{lstlisting}
+%%%%======================================
+%%%%									%||
+%%%\section{}		%||
+%%%%==============================		%||
+%%%%======================================
+%\subsection{Upcoming tools}
+%The PESTO toolbox is still under developments
+%%%%\subsection{Recovering dual variables}
+%%%\begin{itemize}
+%%%\item {\color{red}\sc (Upcoming)} dual variable recovery and proof helper
+%%%\item {\color{red}\sc (Upcoming)} proof helper
+%%%\item {\color{red}\sc (Upcoming)} worst-case function recovery and interpolation
+%%%\item {\color{red}\sc (Upcoming)} GFOM-procedure with separable structure?
+%%%\end{itemize}
+%\subsection{Simplifying the PEP via relaxations}
+%\subsection{Recovering discrete function}
+
+
+\newpage
+\bibliographystyle{unsrt}
+\bibliography{bib_}{}
+\end{document}
+
+
