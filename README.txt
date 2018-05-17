@@ -2,9 +2,9 @@ Authors: A. Taylor 		Universite catholique de Louvain,
          F. Glineur		Universite catholique de Louvain,
          J. Hendrickx		Universite catholique de Louvain.
 
-Date:   September 11, 2017
+Date:   May 17
 
-Version: September 11, 2017
+Version: May 17
 
 ----- Introduction
 
