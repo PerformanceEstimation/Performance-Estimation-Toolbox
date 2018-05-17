@@ -96,5 +96,16 @@ classdef functionClass < functionHandler
         function disp(obj)
             fprintf('Function, %d interpolation points\n',obj.list_size);
         end
+        function list=GetTags(obj)
+            list = {};
+            for i=1:obj.list_size
+                spec = obj.interp_list{i}.spec;
+                if ~isempty(spec)
+                    list{end+1} = spec;
+                end
+            end
+        end
+                
+                
     end
 end

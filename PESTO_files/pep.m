@@ -180,7 +180,7 @@ classdef pep < handle
                 for i=1:obj.list_size_perf
                     lexpr=obj.expr_list_perf{i,1};
                     cons=cons+(tau<=lexpr.Eval());
-                    names{end+1} = sprintf('PM%d',i);
+                    names{end+1} = sprintf('Perf%d',i);
                 end
                 perf_size=length(cons);
                 if verbose_pet>1, fprintf(' (done, %d constraint(s) added) \n',perf_size), end;
