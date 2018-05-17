@@ -251,12 +251,21 @@ classdef pep < handle
             cons=cons+addcons; names = [names addnames];            
             
             if verbose_pet>1, fprintf(' PESTO: Calling SDP solver\n'), end;
+
             out.solverDetails=optimize(cons,-obj_func,solver_opt);
             out.WCperformance=double(obj_func);
             for i=2:length(cons)
                 out.dualvalues(i-1)=dual(cons(i));
             end
             out.dualnames = names;
+
+            trace_heuristic = 0; % TODO ajout pepsetting trace_heuristic 
+            if trace_heuristic % to obtain "better" wc functions
+                if verbose_pet>1, fprintf(' PESTO: Applying resolve with trace heuristic\n'), end;
+                cons = cons + (obj_func >= out.WCperformance);
+                names = [names 'Fix'];
+                optimize(cons,trace(G),solver_opt);
+            end
             
             if verbose_pet, fprintf(' PESTO: Solver output: %7.5e, solution status: %s\n',out.WCperformance,out.solverDetails.info), end;
             if verbose_pet>1, fprintf(' PESTO: Post-processing\n'), end;
@@ -264,9 +273,10 @@ classdef pep < handle
             % Approximating P=[x0 ... gN] from G using Cholesky
             % Decomposition
             [V,D]=eig(double(G));%
-            tol=1e-9;%We throw away eigenvalues smaller that 1e-9
+            tol=1e-3; %Throw away eigenvalues smaller that tol
             eigenV=diag(D); eigenV(eigenV < tol)=0;
             new_D=diag(eigenV); [~,P]=qr(sqrt(new_D)*V.');
+            P=P(1:sum(eigenV>0),:);
             Evaluable.Solved(1,double(F),double(P));
         end
     end
