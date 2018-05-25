@@ -11,7 +11,7 @@ classdef CompositeFunction < functionHandler
         end
         function obj3=plus(obj1,obj2)
             assert(isa(obj1,'functionHandler') && isa(obj2,'functionHandler'));
-            obj3=CompositeFunctions(obj1,obj2);
+            obj3=CompositeFunction(obj1,obj2);
         end
         function obj=AddComponent(obj,x,g,f,spec)
             assert(strcmp(x.getType(),'Point') & strcmp(g.getType(),'Point') & strcmp(f.getType(),'Function value'),'Wrong type representation');
