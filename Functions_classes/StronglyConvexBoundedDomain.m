@@ -13,7 +13,7 @@ function cons=StronglyConvexBoundedDomain(pt1,pt2,D,R,mu)
 % To generate a smooth convex function 'f' with diameter-type bound
 % D=infinite, radius-type bound R=1 and strong convexity mu=1.5,
 % from an instance of PEP called P:
-%  >> P=pet();
+%  >> P=pep();
 %  >> param.D=Inf; param.R=1; param.mu=1.5;
 %  >> f=P.AddObjective('StronglyConvexBoundedDomain',param);
 %

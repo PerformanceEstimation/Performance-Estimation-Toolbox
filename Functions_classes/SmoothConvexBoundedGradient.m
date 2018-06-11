@@ -18,7 +18,7 @@ function cons=SmoothConvexBoundedGradient(pt1,pt2,D,R,L)
 % To generate a smooth convex function 'f' with diameter-type bound
 % D=infinite, radius-type bound R=1 and a smoothness constant L=1.5,
 % from an instance of PEP called P:
-%  >> P=pet();
+%  >> P=pep();
 %  >> param.D=Inf; param.R=1; param.L=1.5;
 %  >> f=P.AddObjective('SmoothConvexBoundedGradient',param);
 %

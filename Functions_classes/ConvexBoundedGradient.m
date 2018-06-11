@@ -16,7 +16,7 @@ function cons=ConvexBoundedGradient(pt1,pt2,D,R)
 %
 % To generate a convex function 'f' with diameter-type bound D=infinite,
 % and radius-type bound R=1 from an instance of PEP called P:
-%  >> P=pet();
+%  >> P=pep();
 %  >> param.D=Inf; param.R=1;
 %  >> f=P.AddObjective('ConvexBoundedGradient',param);
 %

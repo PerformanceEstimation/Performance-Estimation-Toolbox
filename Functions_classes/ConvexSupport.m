@@ -16,7 +16,7 @@ function cons=ConvexSupport(pt1,pt2,D,R)
 %
 % To generate a convex support function 'h' with diameter-type bound
 % D=infinite and a radius-type bound R=1 from an instance of PEP called P:
-%  >> P=pet();
+%  >> P=pep();
 %  >> param.D=Inf; param.R=1;
 %  >> h=P.AddObjective('ConvexSupport',param);
 %

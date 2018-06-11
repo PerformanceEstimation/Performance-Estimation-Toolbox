@@ -12,7 +12,7 @@ function cons=SmoothStronglyConvex(pt1,pt2,mu,L)
 % To generate a smooth strongly convex function 'f' with smoothness 
 % constant L=1.5 and strong convexity constant mu=0.1
 % from an instance of PEP called P:
-%  >> P=pet();
+%  >> P=pep();
 %  >> param.mu=0.1; param.L=1.5;
 %  >> f=P.AddObjective('SmoothStronglyConvex',param);
 %

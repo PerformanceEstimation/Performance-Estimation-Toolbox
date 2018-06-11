@@ -4,7 +4,7 @@ function cons=Convex(pt1,pt2)
 % functions (no parameter is expected).
 %
 % To generate a convex function 'h' from an instance of PEP called P:
-%  >> P=pet();
+%  >> P=pep();
 %  >> h=P.AddObjective('Convex');
 %
 %

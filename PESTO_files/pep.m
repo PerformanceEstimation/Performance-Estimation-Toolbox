@@ -13,7 +13,7 @@ classdef pep < handle
     %       >> demo
     %
     %       Reference paper available in PESTO_CDC2017_FINAL.pdf:
-    %       Taylor, Adrien B., Julien M. Hendrickx, and François Glineur. 
+    %       Taylor, Adrien B., Julien M. Hendrickx, and Franï¿½ois Glineur. 
     %       "Performance Estimation Toolbox (PESTO): automated worst-case 
     %       analysis of first-order optimization methods." Proceedings of 
     %       the 56th IEEE Conference on Decision and Control (CDC 2017).
@@ -138,6 +138,10 @@ classdef pep < handle
                 switch InterpEval
                     case 'Convex'
                         out=functionClass(@(pt1,pt2)Convex(pt1,pt2));
+                        obj.list_size_func=obj.list_size_func+1;
+                        obj.list_func{obj.list_size_func,1}=out;
+                    case 'Linear'
+                        out=functionClass(@(pt1,pt2)Linear(pt1,pt2));
                         obj.list_size_func=obj.list_size_func+1;
                         obj.list_func{obj.list_size_func,1}=out;
                     case 'SmoothStronglyConvex'

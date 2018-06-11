@@ -10,7 +10,7 @@ function cons=ConvexIndicator(pt1,pt2,D,R)
 %
 % To generate a convex indicator function 'h' with diameter D=infinite and
 % a radius R=1 from an instance of PEP called P:
-%  >> P=pet();
+%  >> P=pep();
 %  >> param.D=Inf; param.R=1;
 %  >> h=P.AddObjective('ConvexIndicator',param);
 %
