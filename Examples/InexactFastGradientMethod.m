@@ -25,7 +25,7 @@ F=P.DeclareFunction('SmoothStronglyConvex',param); % F is the objective function
 
 % (2) Set up the starting point and initial condition
 x0      = P.StartingPoint();        % x0 is some starting point
-[xs,fs] = F.OptimalPoint();          % xs is an optimal point, and fs=F(xs)
+[xs,fs] = F.OptimalPoint();         % xs is an optimal point, and fs=F(xs)
 P.InitialCondition((x0-xs)^2 <= 1); % Add an initial condition ||x0-xs||^2<= 1
 
 % (3) Algorithm
