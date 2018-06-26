@@ -18,7 +18,7 @@ clear all; clc;
 P = pep();
 
 % (1) Set up the objective function
-param.mu = 0;
+param.mu = 0;      % strong convexity parameter
 param.L  = 1;      % Smoothness parameter
 
 F=P.DeclareFunction('SmoothStronglyConvex',param); % F is the objective function
