@@ -25,13 +25,13 @@ F=P.DeclareFunction('SmoothStronglyConvex',param); % F is the objective function
 
 % (2) Set up the starting point and initial condition
 x0=P.StartingPoint();             % x0 is some starting point
-[xs,fs]=F.OptimalPoint();              % xs is an optimal point, and fs=F(xs)
+[xs,fs]=F.OptimalPoint();         % xs is an optimal point, and fs=F(xs)
 P.InitialCondition((x0-xs)^2<=1); % Add an initial condition ||x0-xs||^2<= 1
 
 % (3) Algorithm
-N=7;		% number of iterations
+N=7; % number of iterations
 
-x=cell(N+1,1);% we store the iterates in a cell for convenience
+x=cell(N+1,1); % we store the iterates in a cell for convenience
 x{1}=x0;
 y=x0;
 eps=.1;
@@ -42,7 +42,7 @@ for i=1:N
 end
 
 % (4) Set up the performance measure
-[g,f]=F.oracle(x{N+1});                % g=grad F(x), f=F(x)
+[g,f]=F.oracle(x{N+1});    % g=grad F(x), f=F(x)
 P.PerformanceMetric(f-fs); % Worst-case evaluated as F(x)-F(xs)
 
 % (5) Solve the PEP
