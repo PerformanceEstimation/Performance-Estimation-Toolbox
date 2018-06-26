@@ -24,9 +24,9 @@ param.L  = 1;      % Smoothness parameter
 F=P.DeclareFunction('SmoothStronglyConvex',param); % F is the objective function
 
 % (2) Set up the starting point and initial condition
-x0      = P.StartingPoint();      % x0 is some starting point
-[xs,fs] = F.OptimalPoint();        % xs is an optimal point, and fs=F(xs)
-P.InitialCondition((x0-xs)^2<=1); % Add an initial condition ||x0-xs||^2<= 1
+x0      = P.StartingPoint();        % x0 is some starting point
+[xs,fs] = F.OptimalPoint();          % xs is an optimal point, and fs=F(xs)
+P.InitialCondition((x0-xs)^2 <= 1); % Add an initial condition ||x0-xs||^2<= 1
 
 % (3) Algorithm
 N = 7; % number of iterations
@@ -36,20 +36,20 @@ x{1} = x0;
 y    = x0;
 eps  = .1;
 for i = 1:N
-    d      = inexactsubgradient(y,F,eps);
-    x{i+1} = y-1/param.L*d;
-    y      = x{i+1}+(i-1)/(i+2)*(x{i+1}-x{i});
+    d      = inexactsubgradient(y, F, eps);
+    x{i+1} = y - 1/param.L * d;
+    y      = x{i+1} + (i-1)/(i+2) * (x{i+1} - x{i});
 end
 
 % (4) Set up the performance measure
 [g,f] = F.oracle(x{N+1});    % g=grad F(x), f=F(x)
-P.PerformanceMetric(f-fs); % Worst-case evaluated as F(x)-F(xs)
+P.PerformanceMetric(f - fs); % Worst-case evaluated as F(x)-F(xs)
 
 % (5) Solve the PEP
 P.solve()
 
 % (6) Evaluate the output
-double(f-fs)   % worst-case objective function accuracy
+double(f - fs)   % worst-case objective function accuracy
 
 % Result should be worse than 2/(N^2+5*N+6) (for exact fast gradient)
 % see Taylor, Adrien B., Julien M. Hendrickx, and François Glineur.
