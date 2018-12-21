@@ -4,17 +4,17 @@ clear all; clc;
 %   min_x F(x); for notational convenience we denote xs=argmin_x F(x).
 %
 % We show how to compute the worst-case value of F(xN)-F(xs) when xN is
-% obtained by doing N steps of the gradient method starting with an initial
-% iterate satisfying ||x0-xs||<=1.
+% obtained by doing N steps of OGM starting with an initial iterate
+% satisfying ||x0-xs||<=1.
 %
 % Note that OGM is developped in the following two works:
-%(1)Drori, Yoel, and Marc Teboulle. 
-%   "Performance of first-order methods for smooth convex minimization:
-%   a novel approach." Mathematical Programming 145.1-2 (2014): 451-482.
+%(1) Drori, Yoel, and Marc Teboulle. 
+%    "Performance of first-order methods for smooth convex minimization:
+%    a novel approach." Mathematical Programming 145.1-2 (2014): 451-482.
 %
-%(2)Kim, Donghwan, and Jeffrey A. Fessler. 
-%   "Optimized first-order methods for smooth convex minimization."
-%   Mathematical programming 159.1-2 (2016): 81-107.
+%(2) Kim, Donghwan, and Jeffrey A. Fessler. 
+%    "Optimized first-order methods for smooth convex minimization."
+%    Mathematical programming 159.1-2 (2016): 81-107.
 
 
 % (0) Initialize an empty PEP

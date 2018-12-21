@@ -24,11 +24,11 @@ clear all; clc;
 P=pep();
 
 % (1) Set up the objective function
-paramf1.mu=.1;	% Strong convexity parameter
-paramf1.L=1;      % Smoothness parameter
-f1=P.DeclareFunction('SmoothStronglyConvex',paramf1);
-f2=P.DeclareFunction('Convex');
-F=f1+f2; % F is the objective function
+paramf1.mu = .1;        % Strong convexity parameter
+paramf1.L  = 1;         % Smoothness parameter
+f1 = P.DeclareFunction('SmoothStronglyConvex',paramf1);
+f2 = P.DeclareFunction('Convex');
+F  = f1+f2; % F is the objective function
 
 % (2) Set up the starting point and initial condition
 w0=P.StartingPoint(); % x0 is some starting point
@@ -41,22 +41,22 @@ w0=P.StartingPoint(); % x0 is some starting point
 % the next step evaluates the oracle at the tagged point 'opt' (xs) for
 % recovering the values of g1s and g2s; this allows to guarantee that
 % g1s+g2s=0;
-[g1s,~]=f1.oracle('opt');
-[g2s,~]=f2.oracle('opt');
-lambda=2; ws=xs+lambda*g2s;
+[g1s,~] = f1.oracle('opt');
+[g2s,~] = f2.oracle('opt');
+lambda = 2; ws = xs+lambda*g2s;
 
 % Add an initial condition ||w0-ws||^2<= 1
 P.InitialCondition((w0-ws)^2-1<=0); 
 
 % (3) Algorithm
-N=5;            % number of iterations
-gam=lambda;		% step size
+N   = 5;            % number of iterations
+gam = lambda;		% step size
 
-w=w0;
+w = w0;
 for i=1:N
-    x=proximal_step(w,f2,gam);
-    y=proximal_step(2*x-w,f1,gam);
-    w=y-x+w;
+    x = proximal_step(w,f2,gam);
+    y = proximal_step(2*x-w,f1,gam);
+    w = y-x+w;
 end
 
 % (4) Set up the performance measure

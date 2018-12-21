@@ -56,4 +56,4 @@ for i=1:N+1
     f_saved{i}=double(f_saved{i});
 end
 f_saved
-% The result should be (and is) 1/sqrt(N+1).
+% The result should be 1/sqrt(N+1).

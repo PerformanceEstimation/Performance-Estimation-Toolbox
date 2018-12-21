@@ -55,4 +55,3 @@ double(xN-xs)   % vector xN-xs on the worst-case computed with PEP
 % See Jaggi, Martin. "Revisiting Frank-Wolfe: Projection-free sparse 
 %     convex optimization." In: Proceedings of the 30th International
 %     Conference on Machine Learning (ICML-13), pp. 427–435 (2013)
-

@@ -1,11 +1,11 @@
 classdef pep < handle
     
     %
-    %       Performance Estimation Toolbox (PESTO) version 20171002
+    %       Performance Estimation Toolbox (PESTO) version 20181221
     %
     %       Authors: A. Taylor, J. Hendrickx, F. Glineur
     %       User Manual available as UserGuide.pdf
-    % 
+    %
     %       Direct help: help pesto, help pep
     %       Examples available in the directory Examples/
     %
@@ -13,12 +13,12 @@ classdef pep < handle
     %       >> demo
     %
     %       Reference paper available in PESTO_CDC2017_FINAL.pdf:
-    %       Taylor, Adrien B., Julien M. Hendrickx, and Fran�ois Glineur. 
-    %       "Performance Estimation Toolbox (PESTO): automated worst-case 
-    %       analysis of first-order optimization methods." Proceedings of 
+    %       Taylor, Adrien B., Julien M. Hendrickx, and Francois Glineur.
+    %       "Performance Estimation Toolbox (PESTO): automated worst-case
+    %       analysis of first-order optimization methods." Proceedings of
     %       the 56th IEEE Conference on Decision and Control (CDC 2017).
     %
-    %   Content: 
+    %   Content:
     %       - Classes of functions: Convex, ConvexIndicator, ConvexSupport,
     %       Smooth, SmoothConvexBoundedGradient, SmoothStronglyConvex,
     %       StronglyConvexBoundedDomain, ConvexBoundedGradient.
@@ -45,6 +45,7 @@ classdef pep < handle
         list_func;
         list_size_func;
         t_reset;
+        pesto_opt_traceheuristic;
     end
     methods
         function obj=pep()
@@ -57,11 +58,16 @@ classdef pep < handle
             obj.list_func=cell(0,1);
             obj.list_size_func=0;
             obj.t_reset=now;
+            obj.pesto_opt_traceheuristic = 0;
             Point.Reset(obj.t_reset);
             pep.CountActive(1);
         end
         function delete(obj)
             pep.CountActive(-1);
+        end
+        function obj=TraceHeuristic(obj,active)
+            assert(active==0 || active==1,'Trace heuristic option should be 0/1');
+            obj.pesto_opt_traceheuristic = active;
         end
         function disp(obj)
             fprintf('Instance of Performance Estimation Problem (PEP) \n');
@@ -171,7 +177,31 @@ classdef pep < handle
                     case 'ConvexBoundedGradient'
                         out=functionClass(@(pt1,pt2)ConvexBoundedGradient(pt1,pt2,param.D,param.R));
                         obj.list_size_func=obj.list_size_func+1;
-                        obj.list_func{obj.list_size_func,1}=out;                      
+                        obj.list_func{obj.list_size_func,1}=out;
+                    case 'Monotone'
+                        out=functionClass(@(pt1,pt2)Monotone(pt1,pt2));
+                        obj.list_size_func=obj.list_size_func+1;
+                        obj.list_func{obj.list_size_func,1}=out;
+                    case 'StronglyMonotone'
+                        out=functionClass(@(pt1,pt2)StronglyMonotone(pt1,pt2,param.mu));
+                        obj.list_size_func=obj.list_size_func+1;
+                        obj.list_func{obj.list_size_func,1}=out;
+                    case 'Lipschitz'
+                        out=functionClass(@(pt1,pt2)Lipschitz(pt1,pt2,param.L));
+                        obj.list_size_func=obj.list_size_func+1;
+                        obj.list_func{obj.list_size_func,1}=out;
+                    case 'Cocoercive'
+                        out=functionClass(@(pt1,pt2)Cocoercive(pt1,pt2,param.beta));
+                        obj.list_size_func=obj.list_size_func+1;
+                        obj.list_func{obj.list_size_func,1}=out;
+                    case 'CocoerciveStronglyMonotone'
+                        out=functionClass(@(pt1,pt2)CocoerciveStronglyMonotone(pt1,pt2,param.beta,param.mu));
+                        obj.list_size_func=obj.list_size_func+1;
+                        obj.list_func{obj.list_size_func,1}=out;
+                    case 'LipschitzStronglyMonotone'
+                        out=functionClass(@(pt1,pt2)LipschitzStronglyMonotone(pt1,pt2,param.L,param.mu));
+                        obj.list_size_func=obj.list_size_func+1;
+                        obj.list_func{obj.list_size_func,1}=out;
                     otherwise
                         assert(0,'Invalid component added to the objective function');
                 end
@@ -252,32 +282,33 @@ classdef pep < handle
             if verbose_pet>1, fprintf('      Total interpolation constraints:  %d \n',interp_cons), end;
             
             [addcons, addnames] = obj.collect(tau,verbose_pet);
-            cons=cons+addcons; names = [names addnames];            
+            cons=cons+addcons; names = [names addnames];
             
             if verbose_pet>1, fprintf(' PESTO: Calling SDP solver\n'), end;
-
+            
             out.solverDetails=optimize(cons,-obj_func,solver_opt);
             out.WCperformance=double(obj_func);
             for i=2:length(cons)
                 out.dualvalues(i-1)=dual(cons(i));
             end
             out.dualnames = names;
-
-            trace_heuristic = 0; % TODO ajout pepsetting trace_heuristic 
-            if trace_heuristic % to obtain "better" wc functions
+            
+            if verbose_pet, fprintf(' PESTO: Solver output: %7.5e, solution status: %s\n',out.WCperformance,out.solverDetails.info), end;
+            
+            
+            if verbose_pet>1, fprintf(' PESTO: Post-processing\n'), end;
+            
+            if obj.pesto_opt_traceheuristic % to obtain "low-dimensional" wc functions
                 if verbose_pet>1, fprintf(' PESTO: Applying resolve with trace heuristic\n'), end;
                 cons = cons + (obj_func >= out.WCperformance);
                 names = [names 'Fix'];
                 optimize(cons,trace(G),solver_opt);
             end
             
-            if verbose_pet, fprintf(' PESTO: Solver output: %7.5e, solution status: %s\n',out.WCperformance,out.solverDetails.info), end;
-            if verbose_pet>1, fprintf(' PESTO: Post-processing\n'), end;
-            
             % Approximating P=[x0 ... gN] from G using Cholesky
             % Decomposition
             [V,D]=eig(double(G));%
-            tol=1e-3; %Throw away eigenvalues smaller that tol
+            tol=1e-5; %Throw away eigenvalues smaller that tol
             eigenV=diag(D); eigenV(eigenV < tol)=0;
             new_D=diag(eigenV); [~,P]=qr(sqrt(new_D)*V.');
             P=P(1:sum(eigenV>0),:);
@@ -297,3 +328,4 @@ classdef pep < handle
         end
     end
 end
+

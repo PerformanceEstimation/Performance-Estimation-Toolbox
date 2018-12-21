@@ -4,9 +4,9 @@ This code comes jointly with the following [`reference`](PESTO_CDC2017_FINAL.pdf
 
 > [1] Taylor, Adrien B., Julien M. Hendrickx, and François Glineur. "Performance Estimation Toolbox (PESTO): automated worst-case analysis of first-order optimization methods." Proceedings of the 56th IEEE Conference on Decision and Control (CDC 2017).
 
-Date:    May 17, 2018
+Date:    Dec 21, 2018
 
-Version: May 17, 2018
+Version: Dec 21, 2018
 
 #### Authors
 - [**Adrien Taylor**](http://www.di.ens.fr/~ataylor/)

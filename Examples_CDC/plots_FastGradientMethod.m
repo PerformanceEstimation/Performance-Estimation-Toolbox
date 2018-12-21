@@ -1,5 +1,3 @@
-
-
 Nmax=30; eps_values=[.1 .3 .5];
 N=1:Nmax;
 performance=zeros(length(eps_values)+1,Nmax);

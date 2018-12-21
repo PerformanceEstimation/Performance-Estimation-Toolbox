@@ -36,11 +36,11 @@ x0=P.StartingPoint();		 % x0 is some starting point
 P.InitialCondition(f0-fs<=1); % Add an initial condition f0-fs<= 1
 
 % (3) Algorithm
-N=2;
-x=x0;
-for i=1:N
-    [g,~]=F.oracle(x);
-    x=exactlinesearch_step(x,F,g);
+N = 2;
+x = x0;
+for i = 1:N
+    g = F.gradient(x);
+    x = exactlinesearch_step(x,F,g);
 end
 
 % (4) Set up the performance measure

@@ -7,7 +7,11 @@ clear all; clc;
 % We show how to compute the worst-case value of F(xN)-F(xs) when xN is
 % obtained by doing N steps of the method starting with an initial
 % iterate satisfying ||x0-xs||<=1.
-
+%
+% (**) Van Scoy, B., Freeman, R. A., & Lynch, K. M. (2018). 
+% "The fastest known globally convergent first-order method for 
+%  minimizing strongly convex functions."
+%  IEEE Control Systems Letters, 2(1), 49-54.
 
 % (0) Initialize an empty PEP
 P=pep();

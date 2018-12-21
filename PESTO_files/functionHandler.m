@@ -18,6 +18,15 @@ classdef (Abstract) functionHandler < handle
             obj.list_size_others=obj.list_size_others+1;
             obj.expr_list_others{obj.list_size_others,1}=expr;
         end
+        function g=evaluate(obj,expr,tag) % SAME AS GRADIENT
+            if nargin>=3
+                assert(isa(tag,'char'),'Value call: second argument must be a tag (string)');
+                spec=tag;
+            else
+                spec='';
+            end
+            [g,~]=obj.oracle(expr,spec);
+        end
         function g=gradient(obj,expr,tag)
             if nargin>=3
                 assert(isa(tag,'char'),'Value call: second argument must be a tag (string)');
