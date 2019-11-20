@@ -4,9 +4,9 @@ This code comes jointly with the following [`reference`](PESTO_CDC2017_FINAL.pdf
 
 > [1] Taylor, Adrien B., Julien M. Hendrickx, and François Glineur. "Performance Estimation Toolbox (PESTO): automated worst-case analysis of first-order optimization methods." Proceedings of the 56th IEEE Conference on Decision and Control (CDC 2017).
 
-Date:    Dec 21, 2018
+Date:    Nov 2019
 
-Version: Dec 21, 2018
+Version: Nov 2019
 
 #### Authors
 - [**Adrien Taylor**](http://www.di.ens.fr/~ataylor/)
@@ -16,6 +16,13 @@ Version: Dec 21, 2018
 #### Acknowledgments
 
 The authors would like to thank [**Francois Gonze**](https://perso.uclouvain.be/francois.gonze/) from UCLouvain and **Yoel Drori** from Google Inc. for their feedbacks on preliminary versions of the toolbox.
+
+Additional material was incorporated thanks to:
+- [**Ernest Ryu**](https://www.math.ucla.edu/~eryu/) (UCLA), [**Carolina Bergeling**](http://www.control.lth.se/personnel/carolina-bergeling.html) (Lund), and [**Pontus Giselsson**](http://www.control.lth.se/personnel/pontus-giselsson/) (Lund) (monotone operators and splitting methods),
+- [**Francis Bach**](https://www.di.ens.fr/~fbach/) (Inria & ENS Paris) (stochastic methods and potential functions),
+- **Radu-Alexandru Dragomir** (ENS Paris & TSE), [**Alexandre d’Aspremont**](https://www.di.ens.fr/~aspremon/) (CNRS & ENS Paris), and [**Jérôme Bolte**](https://www.tse-fr.eu/people/jerome-bolte) (TSE) (Bregman divergences and new notions of smoothness).
+
+Last but not least, we thank **Loic Estève** (Inria) for technical support.
 
 #### Performance Estimation Framework
 

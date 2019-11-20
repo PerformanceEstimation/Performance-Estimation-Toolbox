@@ -1,4 +1,4 @@
-function x = projection_step(x0,ind)
+function x = projection_step(x0,ind,tag)
 % [x] = projection_step(x0,ind)
 %
 % This routine performs a projection step of step size gamma, starting from
@@ -8,7 +8,8 @@ function x = projection_step(x0,ind)
 % indicator function.
 %
 % Input: - starting point x0
-%        - indicator function of the set on which x0 should be projected.
+%        - indicator function of the set on which x0 should be projected
+%        - optional tag
 %
 % Output: x=Proj_ind(x0).
 %
@@ -17,5 +18,10 @@ x=x0-g_ind;
 f=Point('Function value');
 ind.AddComponent(x,g_ind,f);
 
+if nargin > 2
+    ind.AddComponent(x,g_ind,f,tag);
+else
+    ind.AddComponent(x,g_ind,f);
+end
 end
 

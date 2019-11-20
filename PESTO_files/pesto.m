@@ -1,5 +1,5 @@
     %
-    %       Performance Estimation Toolbox (PESTO) version 20181221
+    %       Performance Estimation Toolbox (PESTO) version 20191130
     %
     %       Authors: A. Taylor, J. Hendrickx, F. Glineur
     %       User Manual available as UserGuide.pdf

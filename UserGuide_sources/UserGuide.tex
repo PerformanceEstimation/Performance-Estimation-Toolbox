@@ -32,7 +32,12 @@
 %\usepackage[svgnames]{xcolor}
 \usepackage[tikz]{bclogo}
 \usepackage{pifont}
-
+\hypersetup{
+	colorlinks   = true, %Colours links instead of ugly boxes
+	urlcolor     = blue, %Colour for external hyperlinks
+	linkcolor    = blue, %Colour of internal links
+	citecolor   = blue %Colour of citations
+}
 
 \renewcommand{\headrulewidth}{1pt}
 \newcommand{\norm}[1]{{\left\lVert#1\right\rVert}}
@@ -57,7 +62,7 @@
 
 \newcommand{\real}{\mathbb{R}}
 \fancyhead[L]{Performance Estimation Toolbox: User Manual}
-\fancyhead[R]{December 2018}
+\fancyhead[R]{November 2019}
 
 \fancyfoot[C]{\textbf{page \thepage}}
 
@@ -93,15 +98,27 @@
 This toolbox was written with as only objective to ease the access to the performance estimation framework for performing automated worst-case analyses. The main underlying idea is to allow the user writing the algorithms nearly as he would have implemented them, instead of performing the potentially demanding SDP modelling steps required for using the methodology.
 
 \section*{External contributions and feedbacks}
-In case the toolbox and/or the methodology raises some interest to you, and that you would like to provide/suggest new functionalities or improvements, we would be very happy to hear from you.
+In case the toolbox and/or the methodology raises some interest to you, and that you would like to provide/suggest new functionalities or improvements, we would be very happy to hear from you (also if you find any kind of typo or error). In particular, if you want to provide a PESTO example involving new methods, we would be very happy to include them within the example section along with appropriate acknowledgements.
 
 \section*{Acknowledgements}
 The authors would like to thank Fran\c{c}ois Gonze (UCLouvain), Yoel Drori (Google Inc.) and Th\'eo Golvet (ENSTA ParisTech) for their very constructive feedbacks on preliminary versions of the toolbox.
+Additional material was incorporated thanks to:
+\begin{itemize}
+	\item Ernest Ryu (UCLA), Carolina Bergeling (Lund), and Pontus Giselsson (Lund) [monotone operators and splitting methods],
+	\item Francis Bach (Inria \& ENS Paris) [stochastic methods and potential functions],
+	\item Radu-Alexandru Dragomir (ENS Paris \& TSE), Alexandre d'Aspremont (CNRS \& ENS Paris), and J\'er\^ome Bolte (TSE) [Bregman divergences and new notions of smoothness].	
+\end{itemize}
+Last but not least, we thank Loic Est\`eve (Inria) for technical support.
 
 \section*{Recent updates}
 \begin{itemize}
-	\item[12/2018] Maximally monotone, Lipschitz, cocoercive and strongly monotone operators were added (see Section~\ref{sec:operators}). Note that \verb|PESTO| was initially thought for handling performance of optimization algorithms. Internally, the toolbox handles operators exactly as it does with function, except that no function values are available for operators.
-	\item[12/2018] The example section was completed with much more material. In particular, we added applications to operator splitting methods and fixed-point iterations.
+	\item[11/2019] {\bf{}[New]} The example section was largely extended and now contain about {\bf 50~examples}. Newcomers include:  stochastic methods, non-Euclidean methods (e.g., NoLips), nonconvex applications and monotone inclusions. We also show how to use the toolbox to verify potential functions.
+	\item[11/2019] {\bf{}[New]} New primitives: mirror and proximal mirror steps.
+	\item[11/2019] {\bf{}[Update]} Updated operations on functions: additions, subtractions, and scalings are implemented in a more efficient fashion.
+	\item[11/2019] {\bf{}[Update]} Behaviors of tags was slightly modified (see late Section~\ref{sec:tags}), allowing more straightforward implementations of algorithms such as Bregman gradient (a.k.a., NoLips) methods.
+	\item[11/2019] {\bf{}[Correction]}: Proximal operations for sums of functions were not effectively implemented.
+	\item[12/2018] {\bf{}[New]} Maximally monotone, Lipschitz, cocoercive and strongly monotone operators were added (see Section~\ref{sec:operators}). Note that \verb|PESTO| was initially thought for handling performance of optimization algorithms. Internally, the toolbox handles operators exactly as it does with function, except that no function values are available for operators.
+	\item[12/2018] {\bf{}[New]} Example section completed with much more material. In particular, we added applications to operator splitting methods and fixed-point iterations.
 \end{itemize}
 
 %\section*{Updates plan}
@@ -257,13 +274,13 @@ which allows writing~\eqref{Intro:PEP2} as a rank-constrained semidefinite progr
 &\quad\quad\quad\quad \rank{G}\leq d\notag.
 \end{align}
 For obtaining a formulation that is both \emph{tractable} and \emph{valid for all dimensions}, one can relax the rank constraint from~\eqref{Intro:PEP3}, and solve the corresponding simplified SDP. That is, instead of considering solving~\eqref{Intro:PEP3} for all values of $d$, we solve~\eqref{Intro:PEP3} only for $d=N+2$ (see~\cite[Remark 3]{taylor2015exact}). The worst-case guarantee obtained by solving (PEP$(N+2)$) is valid for any value of the dimension parameter $d$, and is guaranteed to be \emph{exact} (i.e., or non-improvable) as long as $d\geq N+2$ (the so-called \emph{large-scale} assumption). In addition, it can be solved using standard SDP solvers such as~\cite{Article:Sedumi,Article:Mosek,Article:sdpt3}.\vspace{1cm}
-
+\newpage
 \begin{bclogo}[logo=\bcattention, couleur=blue!30, arrondi =0.1, sousTitre=rank deflection constraints]{Good practice}
 Due to current techniques for solving semidefinite programs, the presence of constraints enforcing \emph{rank-deficiency} of the Gram matrix may critically deteriorate the quality of the numerical solutions. For avoiding that, the user should evaluate as few function values and gradients as possible (for limiting the size of the Gram matrix), avoid replicates (avoid evaluating two times the same gradient at the same point), and generally avoid constraints enforcing linear dependence between two vectors. Common examples include
 \begin{itemize}
 \item (algorithmic constraints imposing rank-deficiency) a constraint $\norm{x_1-x_0+f'(x_0)}^2=0$ enforces the equality $x_1=x_0-f'(x_0)$. You should instead consider substituting $x_1$ by $x_0-f'(x_0)$; this is done automatically by the toolbox by defining $x_1$ as $x_0-f'(x_0)$ (see example from Section~\ref{ex:gm_steps}).
 \item (interpolation constraints imposing rank-deficiency) When performing several subgradient evaluations at the same point, the corresponding subgradients may in general be different (if the subdifferential is not a singleton). However, if you evaluate several times the gradient of a differentiable function at the same point, smoothness \emph{implicitly} imposes a rank deficiency on the Gram matrix, as it is equivalent to $\norm{g_1-g_2}^2=0$, where $g_1,g_2\in\partial f(x)$.
-\item (inexactness model imposing rank-deficiency --- see example from Section~\ref{ex:inexactLS}) Consider an initial iterate $x_0$ and a search direction given by a vector $d_0$ satisfying a relative accuracy criterion: $\norm{d_0-f'(x_0)}\leq \varepsilon\norm{f'(x_0)}$. In the case $\varepsilon=0$, the model imposes 
+\item (inexactness model imposing rank-deficiency --- see examples and~\cite{deKlerkELS2016}) Consider an initial iterate $x_0$ and a search direction given by a vector $d_0$ satisfying a relative accuracy criterion: $\norm{d_0-f'(x_0)}\leq \varepsilon\norm{f'(x_0)}$. In the case $\varepsilon=0$, the model imposes 
 $\norm{d_0-f'(x_0)}\leq 0$ and hence $d_0=f'(x_0)$. It is far better to consider substituting $d_0$ by $f'(x_0)$ instead of using the constraint $\norm{d_0-f'(x_0)}^2=0$.
 \end{itemize}
 \end{bclogo}
@@ -325,7 +342,7 @@ f_saved
 \subsection{Basic objects and algebraic operations}\label{sec:basicobjects}
 There are four essential types of objects implemented within the toolbox:
 \begin{enumerate}
-\item functions, for which we refer to~\ref{sec:functions}. Functions can be created, added and evaluated. There are two basic ways to create functions: first, by relying on the \verb?DeclareFunction? method of a PEP object (see Section~\ref{ex:gm_steps}, step (0) Initialization of a PEP), and second by summing other functions. In the following example, we create and add two convex functions (more functional classes are described in the sequel).\\[-1cm]
+\item functions, for which we refer to~\ref{sec:functions}. Functions can be created, added, subtracted, scaled, and evaluated. There are two basic ways to create functions: firstly, by relying on the \verb?DeclareFunction? method of a PEP object (see Section~\ref{ex:gm_steps}, step (0) Initialization of a PEP), and secondly by performing basic operations with other functions (sums, differences scaling, etc.). In the following example, we create and add two convex functions (more functional classes are described in the sequel).\\[-1cm]
 \begin{lstlisting}
 % We declare two convex functions: f1 and f2.
 f1=P.DeclareFunction('Convex'); 
@@ -569,10 +586,12 @@ In the same philosophy as for functional classes (Section~\ref{sec:functions}) a
 Algorithmic step  & \pesto routine name & Tightness\\ 
 \hline
 Gradient/subradient step & \verb?gradient_step? & \ding{52}\\
-projection step & \verb?projection_step? & \ding{52}\\
-proximal step & \verb?proximal_step? & \ding{52}\\
+Projection step & \verb?projection_step? & \ding{52}\\
+Proximal step & \verb?proximal_step? & \ding{52}\\
 Conditional/Frank-Wolfe/linear optimization step & \verb?linearoptimization_step? & \ding{52}\\
 Line search & \verb?exactlinesearch_step? & \ding{54}\\
+{Mirror step} & \verb?mirror? & \ding{52}\\
+{Proximal mirror step} & \verb?mirror_prox? & \ding{52}\\
 \specialrule{2pt}{1pt}{1pt}
 \end{tabular}
 \caption{Standard algorithmic steps within PESTO. Note that no tightness guarantees are provided when using exact line searches (i.e., the code will only provide upper bounds in that case, which are often tight but probably not always~\cite{drori2018efficient,deKlerkELS2016}).}
@@ -663,7 +682,7 @@ f=Point('Scalar');% f is a scalar; atlernative form: f=Point('Function value')
 \end{lstlisting}
 This is for example used for implementing the projection, proximal and the linear optimization steps of the toolbox. As an example, let us consider performing a proximal (or implicit) step on $F$ from some point $x_0$, with step size $\gamma$:
 \[x=x_0-\gamma \partial F(x).\]
-This is implemented in the \verb?proximal_step? routine of PESTO. Let us have a look inside it.
+This is implemented in the \verb?proximal_step? routine of PESTO. Let us have a look inside it.\\[-1cm]
 \begin{lstlisting}
 function [x] = proximal_step(x0,func,gamma)
 % [x] = proximal_step(x0,func,gamma)
@@ -678,12 +697,11 @@ function [x] = proximal_step(x0,func,gamma)
 %        - step size gamma of the proximal step
 %
 % Output: x=x0-gamma*g, where g is a (sub)gradient of func at x.
-%
+
 g=Point('Point');
 x=x0-gamma*g;
 f=Point('Function value');
 func.AddComponent(x,g,f);
-
 end
 \end{lstlisting}
 \subsection{Adding new primitive oracles and primitive algorithmic steps}
@@ -699,7 +717,7 @@ F=P.DeclareFunction('SmoothStronglyConvex',paramF);
 Essentially, when creating a function, we instantiate a function object containing a list (initially empty) of points on which its corresponding interpolation conditions should hold. For encoding the interpolation condition, we use a very simple approach: each function object also refers to an \emph{interpolation routine} (all interpolation routines are presented in the directory \verb?Functions_classes? of the PESTO toolbox). 
 In order to create new functions, it is also possible to directly create a instantiate a function object and associate it to a specific interpolation routine.
 
-As an example, the interpolation routine for the class of smooth strongly convex function is \verb?SmoothStronglyConvex.m?, and the previous code for generating a smooth strongly convex function can equivalently be written as
+As an example, the interpolation routine for the class of smooth strongly convex function is \verb?SmoothStronglyConvex.m?, and the previous code for generating a smooth strongly convex function can equivalently be written as\\[-1cm]
 \begin{lstlisting}
 paramF.mu=.1;	% Strong convexity parameter
 paramF.L=1;    % Smoothness parameter
@@ -707,7 +725,7 @@ F=P.AddObjective(@(pt1,pt2)SmoothStronglyConvex(pt1,pt2,paramF.mu,paramF.L));
 \end{lstlisting}
 In other words, each \emph{interpolation routine} is a method taking two points (\verb?pt1? and \verb?pt2?) in input, as well as as many parameters as needed (here, $\mu$ and $L$), and providing the interpolation constraint corresponding to those two points in output (we assume that interpolation conditions are always required for all pairs of points). In order to create a new function, one has create a \emph{function handle} depending only on the two points (\verb?pt1? and \verb?pt2?), by fixing the values of the parameters.
 
-Concerning the implementation of the interpolation routines, note that both points \verb?pt1? and \verb?pt2? are structures with three fields corresponding to the coordinate vector: \verb?pt1.x?, its corresponding (sub)gradient: \verb?pt1.g? and its function value \verb?pt1.f?. All those elements should be treated as standard vectors or scalars of the PESTO toolbox. As an example, \verb?SmoothStronglyConvex.m? contains the following code.\\[-1cm]
+Concerning the implementation of interpolation routines, note that both points \verb?pt1? and \verb?pt2? are structures with three fields corresponding to the coordinate vector: \verb?pt1.x?, its corresponding (sub)gradient: \verb?pt1.g? and its function value \verb?pt1.f?. All those elements should be treated as standard vectors or scalars of the PESTO toolbox. For example, \verb?SmoothStronglyConvex.m? contains the following code.\\[-1cm]
 
 \begin{lstlisting}
 function cons=SmoothStronglyConvex(pt1,pt2,mu,L)
@@ -726,7 +744,7 @@ else
 end
 end
 \end{lstlisting}
-
+\newpage
 Another example: \verb?Convex.m? contains the following code.\\[-1cm]
 \begin{lstlisting}
 function cons=Convex(pt1,pt2)
@@ -739,7 +757,7 @@ end
 end
 \end{lstlisting}
 \newpage
-\subsection{Tags and evaluations}
+\subsection{Tags and evaluations}\label{sec:tags}
 When evaluating a function value, a (sub)gradient, or both, it is possible to \emph{tag} the corresponding values, in order to be able to easily recover them. As examples,
 
 
@@ -783,583 +801,62 @@ That is, each of those lines evaluate the function and/or gradient at $x_0$ and 
 g0=F.subgradient('x0');
 F0=F.value('x0');
 \end{lstlisting}
+\begin{bclogo}[logo=\bcattention, couleur=blue!30, arrondi =0.1, sousTitre=Specifying both a tag a a point]{Good to know}
+	When calling an evaluation routine (e.g., \emph{oracle}, \emph{gradient}, etc.) for evaluating (sub)gradients and/or function values, with both a point and a tag all routine will prioritize tags! Meaning that if another point with the same tag was already evaluated, the output will correspond to the evaluation of the other point. As an example:\\[-1cm]
+	\begin{lstlisting}
+	[g0,F0]=F.oracle(x0,'x0');
+	[g1,F1]=F.oracle(x1,'x0');
+	\end{lstlisting}
+	will output $g_1=g_0$ and $f_1=f_0$ even if $x_1\neq x_0$. In other words, it will first check in the database if the point corresponding to the tag was already evaluated before performing an actual new evaluation.
+\end{bclogo}
 \clearpage
 %======================================
 %									%||
 \section{Applications}		%||
 %==============================		%||
 %======================================
-More examples and demonstration files are available within the toolbox (in the directories \verb?Examples? and \verb?Examples_CDC?). In the following pages, we provide codes for analyzing (or verifying the analyses) the following applications. 
+More examples and demonstration files are available within the toolbox (in the directories \verb?Examples? and \verb?Examples_CDC?). We provide the overview below; note that we included analyses done through PEPs from different authors (details in the example files)~\cite{Article:Drori,drori2014optimal,drori2014contributions,drori2017exact,drori2018efficient,kim2014optimized,kim2018optimizing,kim2015convergence,kim2019accelerated,deKlerkELS2016,taylor2015exact,taylor2015smooth,taylor2018exact,pmlr-v99-taylor19a,ryu2018operator,gu2019optimal}, and IQCs~\cite{van2018fastest,cyrus2018robust}
+
+\subsection{Complete list of examples}
+The toolbox include the following examples:
 \begin{enumerate}
-	\item Convex minimization
+	\item methods for unconstrained convex minimization:
 	\begin{itemize}
-		\item Proximal point algorithm
+		\item proximal point algorithm (see e.g.,~\cite{guler1991convergence}), fast/accelerated proximal point algorithms (see~\cite{guler1992new}), subgradient methods (see e.g.,~\cite{Shor:Subgradient,Book:Nesterov2}), subgradient with exact line search (see~\cite{drori2018efficient}), gradient method (see e.g.,~\cite{Book:Nesterov2,Book:polyak1987}), gradient with exact line-search (see e.g.,~\cite{deKlerkELS2016}), heavy-ball method (see e.g.,~\cite{polyak1964some}), fast gradient method (see e.g.,~\cite{Nesterov:1983wy}), conjugate gradient method (see e.g.,~\cite{drori2018efficient}), optimized gradient method (see e.g.,~\cite{kim2014optimized,Article:Drori,drori2014contributions,drori2017exact}), optimized gradient method with line search (see e.g.,~\cite{drori2018efficient}), optimized gradient method for gradient norm (see e.g.,~\cite{kim2018optimizing}), fast/accelerated gradient method for smooth strongly convex minimization (see e.g.,~\cite{Book:Nesterov2,bansal2017potential}), triple momentum method (see e.g.,~\cite{van2018fastest}), robust momentum method (see e.g.,~\cite{cyrus2018robust}), relatively inexact fast gradient, gradient with exact line-search in inexact directions (see e.g.,~~\cite{deKlerkELS2016}).
 	\end{itemize}
-	\item Nonsmooth convex minimization
+	\item Methods for composite convex minimization:
 	\begin{itemize}
-		\item Subgradient methods
+		\item proximal point method (see e.g.,~\cite{guler1991convergence}), projected and proximal gradient method (see e.g.,~\cite{Book:Nesterov2,Book:polyak1987}), fast/accelerated projected/proximal gradient method (see e.g.,~\cite{nesterov2013gradient,beck2009fast}, proximal optimized gradient method (see e.g.,~\cite{taylor2015exact}), conditional gradient/Frank-Wolfe (see e.g.,~\cite{frank1956algorithm,jaggi2013revisiting}), Douglas-Rachford (see e.g.,~\cite{douglas1956,bauschke2017douglas,giselsson2016linear}), fast/accelerated Douglas-Rachford (see e.g.,~\cite{patrinos2014douglas}), three operator splitting (see e.g.,~\cite{davis2017three}), Bregman gradient descent/NoLips (see e.g.,~\cite{bauschke2016descent,lu2018relatively,Dragomir2019optimal}), Bregman proximal point method (see e.g.,~\cite{eckstein1993nonlinear}), improved interior gradient algorithm (IGA,~\cite{auslender2006interior}).
 	\end{itemize}
-	\item Smooth convex minimization:
+	\item Methods for nonconvex minimization
 	\begin{itemize}
-		\item Optimized gradient method for smooth convex minimization~\cite{kim2014optimized}.
-		\item Optimized gradient method for gradient norm for smooth convex minimization~\cite{kim2018optimizing}
-		\item Conjugate gradient for smooth convex minimization~\cite{drori2018efficient}.
+		\item gradient descent, NoLips (see e.g.,~\cite{bolte2018first}).
 	\end{itemize}
-	\item Smooth strongly convex minimization:
+	\item Methods for stochastic convex minimization:
 	\begin{itemize}
-		\item Steepest descent for smooth strongly convex minimization~\cite{deKlerkELS2016}.
-		\item Steepest descent with inexact search directions for smooth strongly convex minimization~\cite{deKlerkELS2016}.
-		\item Triple momentum method for smooth strongly convex minimization~\cite{van2018fastest}.
-		\item Robust momentum method for smooth strongly convex minimization~\cite{cyrus2018robust}.
+		\item SAGA~\cite{defazio2014saga}, Point SAGA~\cite{defazio2016simple}, SAGA with Sampled Negative Momentum (SSNM)~\cite{pmlr-v89-zhou19c}, stochastic gradient decent (see e.g.,~ \cite{moulines2011non}).
 	\end{itemize}
-	\item Composite convex minimization and operator splitting
+	\item Methods for monotone inclusions (see e.g.,~\cite{bauschke2011convex,ryu2016primer})
 	\begin{itemize}
-		\item Douglas-Rachford splitting for solving a monotone inclusion problem (results to be compared with~\cite{ryu2018operator}).
-		\item Douglas-Rachford splitting for minimizing the sum of two functions (results to be compared with~\cite{giselsson2016linear}).
-		\item Davis-Yin operator three-operator splitting (PEP version in~\cite{ryu2018operator}).
+		\item proximal point method, fast/accelerated proximal point method~\cite{kim2019accelerated}, Douglas-Rachford~\cite{douglas1956,moursi2019douglas} (see e.g.~\cite{bauschke2017douglas}), three operator splitting~\cite{davis2017three}.
 	\end{itemize}
-	\item Fixed-point iterations for non-expansive mappings
+	\item Methods for fixed-point problems (based on~\cite{lieder2017convergence,lieder2018})
 	\begin{itemize}
-		\item Halpern-iteration for non-expansive mappings (PEP version in~\cite{lieder2017convergence}).
-		\item Krasnolskii-Mann (PEP version in~\cite{lieder2018}).
-	\end{itemize}	
-	\item Geometry of smooth strongly convex functions
+		\item Krasnoselskii-Mann~\cite{mann1953mean}, Halpern iterations~\cite{halpern1967fixed}.
+	\end{itemize}
+	\item Verifying potential functions: (based on~\cite{pmlr-v99-taylor19a})
 	\begin{itemize}
-		\item Let $f$ and $g$ be two smooth strongly convex functions. What is the maximum distance between the optimum of $f+g$ and the average between the optimum of $f$ and that of $g$ ?
+		\item potential on gradient method fast/accelerated gradient method based on that in~\cite{bansal2017potential} and~\cite{pmlr-v99-taylor19a}.
+	\end{itemize}
+	\item Geometry of (possibly smooth and strongly) convex functions
+	\begin{itemize}
+		\item Let $f$ and $g$ be two smooth strongly convex functions. What is the maximum distance between the optimum of $f+g$ and the average between the optimum of $f$ and that of $g$?
 	\end{itemize}
 \end{enumerate}
-\newpage
-\subsection{Convex minimization}
-\subsubsection{Proximal point algorithm}
-This example is due to~\cite{taylor2015exact}. The interested reader can easily play with the code (see the \verb?Examples? directory of the toolbox) for incorporating additional elements such as momentum or inexactness.
-\begin{lstlisting}
-% In this example, we use a proximal point method for solving the 
-% non-smooth convex minimization problem
-%   min_x F(x); for notational convenience we denote xs=argmin_x F(x);
-%
-% We show how to compute the worst-case value of F(xN)-F(xs) when xN is
-% obtained by doing N steps of a proximal method starting with an initial
-% iterate satisfying ||x0-xs||<=1.
 
-% (0) Initialize an empty PEP
-P=pep();
-
-% (1) Set up the objective function
-F=P.DeclareFunction('Convex'); % F is the objective function
-
-% (2) Set up the starting point and initial condition
-x0=P.StartingPoint();		 % x0 is some starting point
-[xs,fs]=F.OptimalPoint(); 		 % xs is an optimal point, and fs=F(xs)
-P.InitialCondition((x0-xs)^2<=1); % Add an initial condition ||x0-xs||^2<= 1
-
-% (3) Algorithm
-N=4;		% number of iterations
-gam=1;		% step size
-
-x=x0;
-for i=1:N
-	x=proximal_step(x,F,gam);
-end
-xN=x;
-
-% (4) Set up the performance measure
-fN=F.value(xN);
-P.PerformanceMetric(fN-fs);
-
-% (5) Solve the PEP
-P.solve()
-
-% (6) Evaluate the output
-double(fN-fs)   % worst-case objective function accuracy
-
-% The result should be (and is) 1/(4*N*gam)
-% see Taylor, Adrien B., Julien M. Hendrickx, and Francois Glineur.
-%     "Exact Worst-case Performance of First-order Methods for Composite
-%     Convex Optimization." to appear in SIAM Journal on Optimization
-%     (2017)
-\end{lstlisting}
-\newpage
-\subsection{Nonsmooth convex minimization}
-\subsubsection{Subgradient methods}
-\begin{lstlisting}
-% In this example, we use a subgradient method for
-% solving the non-smooth convex minimization problem
-%   min_x F(x); for notational convenience we denote xs=argmin_x F(x);
-% where F(x) satisfies a Lipschitz condition; i.e., it has a bounded
-% gradient ||g||<=R for all g being a subgradient of F at some point.
-%
-% We show how to compute the worst-case value of min_i F(xi)-F(xs) when xi is
-% obtained by doing i steps of a subgradient method starting with an initial
-% iterate satisfying ||x0-xs||<=1.
-
-% (0) Initialize an empty PEP
-P=pep();
-
-% (1) Set up the objective function
-param.R=1;	% 'radius'-type constraint on the subgradient norms: ||g||<=1
-
-% F is the objective function
-F=P.DeclareFunction('ConvexBoundedGradient',param); 
-
-% (2) Set up the starting point and initial condition
-x0=P.StartingPoint();            % x0 is some starting point
-[xs,fs]=F.OptimalPoint();        % xs is an optimal point, and fs=F(xs)
-P.InitialCondition((x0-xs)^2<=1);% Add an initial condition ||x0-xs||^2<= 1
-
-% (3) Algorithm and (4) performance measure
-N=5; % number of iterations
-h=ones(N,1)*1/sqrt(N+1); % step sizes
-
-x=x0;
-
-% Note: the worst-case performance measure used in the PEP is the 
-%       min_i (PerformanceMetric_i) (i.e., the best value among all
-%       performance metrics added into the problem. Here, we use it
-%       in order to find the worst-case value for min_i [F(x_i)-F(xs)]
-
-% we create an array to save all function values (so that we can evaluate
-% them afterwards)
-f_saved=cell(N+1,1);
-for i=1:N
-	[g,f]=F.oracle(x);
-	f_saved{i}=f;
-	P.PerformanceMetric(f-fs);
-	x=x-h(i)*g;
-end
-
-[g,f]=F.oracle(x);
-f_saved{N+1}=f;
-P.PerformanceMetric(f-fs);
-
-% (5) Solve the PEP
-P.solve()
-
-% (6) Evaluate the output
-for i=1:N+1
-	f_saved{i}=double(f_saved{i});
-end
-f_saved
-% The result should be 1/sqrt(N+1).
-\end{lstlisting}
-\newpage
-\subsection{Smooth convex minimization}
-Different examples are provided in the \verb?Examples? directory of the toolbox, including the vanilla gradient method or the celebrated fast gradient method~\cite{Nesterov:1983wy}. In this section, we provide three examples: the Optimized gradient method (OGM)~\cite{kim2014optimized} (first numerical version in~\cite{Article:Drori,drori2014contributions}), a greedy conjugate gradient-like method~\cite{drori2018efficient}, and the Optimized gradient method for gradient norm (OGM-G)~\cite{kim2018optimizing}. 
-
-It was established in~\cite{drori2017exact} that OGM enjoys the best possible worst-case guarantee on function values for smooth convex minimization. By using the following code, the reader can verify that both OGM and conjugate gradient achieves this lower bound.
-\subsubsection{Optimized gradient method}
-\begin{lstlisting}
-% In this example, we use the optimized gradient method (OGM) for
-% solving the L-smooth convex minimization problem
-%   min_x F(x); for notational convenience we denote xs=argmin_x F(x).
-%
-% We show how to compute the worst-case value of F(xN)-F(xs) when xN is
-% obtained by doing N steps of OGM starting with an initial iterate
-% satisfying ||x0-xs||<=1.
-
-% (0) Initialize an empty PEP
-P=pep();
-
-% (1) Set up the objective function
-param.L=1;      % Smoothness parameter
-
-F=P.DeclareFunction('SmoothStronglyConvex',param); % F is the objective function
-
-% (2) Set up the starting point and initial condition
-x0=P.StartingPoint();		 % x0 is some starting point
-[xs,fs]=F.OptimalPoint(); 		 % xs is an optimal point, and fs=F(xs)
-P.InitialCondition((x0-xs)^2<=1); % Add an initial condition ||x0-xs||^2<= 1
-
-% (3) Algorithm
-gam=1/param.L;		% step size
-N=5;		% number of iterations
-
-x=cell(N+1,1);%we store all the x's in a cell (for convenience)
-x{1}=x0;
-y=x0;
-theta=1;
-for i=1:N
-	x{i+1}=gradient_step(y,F,gam);
-	theta_prev=theta;
-	if i<N
-		theta=(1+sqrt(4*theta^2+1))/2;
-	else
-		theta=(1+sqrt(8*theta^2+1))/2;
-	end
-	y=x{i+1}+(theta_prev-1)/theta*(x{i+1}-x{i})+theta_prev/theta*(x{i+1}-y);
-end
-
-% (4) Set up the performance measure
-fN=F.value(y);                % g=grad F(x), f=F(x)
-P.PerformanceMetric(fN-fs); % Worst-case evaluated as F(x)-F(xs)
-
-% (5) Solve the PEP
-P.solve()
-
-% (6) Evaluate the output
-double(fN-fs)   % worst-case objective function accuracy
-% The result should be 1/2/theta^2
-\end{lstlisting}
-\newpage
-\subsubsection{Conjugate gradient method (or greedy first-order method)}
-\begin{lstlisting}
-% In this example, we use a greedy first-order method (GFOM), or conjugate
-% gradient, for solving the L-smooth (possibly mu-strongly) 
-% convex minimization problem
-%   min_x F(x); for notational convenience we denote xs=argmin_x F(x).
-%
-% We show how to compute the worst-case value of F(xN)-F(xs) when xN is
-% obtained by doing N steps of the gradient method starting with an initial
-% iterate satisfying ||x0-xs||<=1.
-
-
-% (0) Initialize an empty PEP
-P=pep();
-
-% (1) Set up the objective function
-param.L=1;      % Smoothness parameter
-param.mu=0.0;   % Strong convexity parameter
-
-% F is the objective function
-F=P.DeclareFunction('SmoothStronglyConvex',param); 
-
-% (2) Set up the starting point and initial condition
-x0=P.StartingPoint();		 % x0 is some starting point
-[xs,fs]=F.OptimalPoint(); 		 % xs is an optimal point, and fs=F(xs)
-P.InitialCondition((x0-xs)^2<=1); % Add an initial condition ||x0-xs||^2<= 1
-
-% (3) Algorithm
-N=5;		% number of iterations
-
-x=cell(N+1,1);%we store all the x's in a cell (for convenience)
-g=cell(N+1,1);%we store all the g's in a cell (for convenience)
-x{1}=x0;
-g{1}=F.gradient(x{1});
-dirs{1}=g{1};
-for i=1:N
-	[x{i+1}, g{i+1}] = exactlinesearch_step(x{i},F,dirs);
-	dirs{2+(i-1)*2}  = x{i+1} - x{1};
-	dirs{3+(i-1)*2}  = g{i+1};
-end
-
-% (4) Set up the performance measure
-fN=F.value(x{N+1});                % g=grad F(x), f=F(x)
-P.PerformanceMetric(fN-fs); % Worst-case evaluated as F(x)-F(xs)
-
-% (5) Solve the PEP
-P.solve()
-
-% (6) Evaluate the output
-double(fN-fs)   % worst-case objective function accuracy
-% The results are the same as those for the optimized gradient method.
-\end{lstlisting}
-\newpage
-\subsubsection{Optimized gradient method for gradient norm}
-\begin{lstlisting}
-% In this example, we use the optimized gradient method for gradient norm
-% (OGM-G) for solving the L-smooth convex minimization problem
-%   min_x F(x); for notational convenience we denote xs=argmin_x F(x).
-%
-% We show how to compute the worst-case value of ||F'(xN)||^2 when xN is
-% obtained by doing N steps of OGM-G starting with an initial
-% iterate satisfying F(x0)-F(x*)<=1.
-
-
-% (0) Initialize an empty PEP
-P=pep();
-L = 1;
-% (1) Set up the objective function
-param.L=L;      % Smoothness parameter
-
-F=P.DeclareFunction('SmoothStronglyConvex',param); % F is the objective function
-
-% (2) Set up the starting point and initial condition
-x0=P.StartingPoint();           % x0 is some starting point
-[xs,fs]=F.OptimalPoint(); 		% xs is an optimal point, and fs=F(xs)
-[g0,f0]=F.oracle(x0);
-P.InitialCondition(f0-fs<=1);   % Add an initial condition F(x0)-F(x*)<=1.
-
-% (3) Algorithm
-gam=1/param.L;		% step size
-N=5;		% number of iterations
-
-x=cell(N+1,1);%we store all the x's in a cell (for convenience)
-x{1}=x0;
-g{1}=g0;
-y{1}=x0;
-theta(1)=1;
-for i=1:N
-	if i<N
-		theta(i+1)=(1+sqrt(4*theta(i)^2+1))/2;
-	else
-		theta(i+1)=(1+sqrt(4*theta(i)^2+1))/2;
-	end
-end
-th_ti = @(i)theta(N+1-i);
-
-for i = 1:N
-	y{i+1} = x{i} - 1/L * g{i};
-	cc       = (2*th_ti(i)-1)/(2*th_ti(i-1)-1);
-	x{i+1} = y{i+1} + (th_ti(i-1)-1)/th_ti(i-1)*cc*(y{i+1}-y{i}) + cc * (y{i+1}-x{i});
-	g{i+1}   = F.gradient(x{i+1});
-end
-
-% (4) Set up the performance measure
-% gN=F.gradient(x{N+1});                % g=grad F(x), f=F(x)
-obj = (g{N+1})^2;
-P.PerformanceMetric(obj); % Worst-case evaluated as F(x)-F(xs)
-
-% (5) Solve the PEP
-P.solve();
-
-% (6) Evaluate the output
-double(obj)   % worst-case objective function accuracy
-
-% The result should be 2/theta(end)^2
-\end{lstlisting}
-\newpage 
-\subsection{Smooth strongly convex minimization}
-As for the previous cases, different examples are provided in the \verb?Examples? directory of the toolbox. This section provides the code for four algorithms.
-\subsubsection{Gradient descent with exact line searches}
-\begin{lstlisting}
-% In this example, we use a gradient method with exact line search
-% for solving the L-smooth mu-strongly convex minimization problem
-%   min_x F(x); for notational convenience we denote xs=argmin_x F(x).
-%
-%   Starting from an iterate x0, the method performs at each iteration
-%   an exact line search step in the steepest descent direction
-%       gamma=argmin_gamma F(xi-gamma*gi), with gi the gradient of F at xi,
-%   and performs the update
-%       x{i+1}=xi-gamma*gi.
-%
-% We show how to compute the worst-case value of F(xN)-F(xs) when xN is
-% obtained by doing N steps of the method starting with an initial
-% iterate satisfying F(x0)-F(xs)<=1.
-
-% (0) Initialize an empty PEP
-P=pep();
-
-% (1) Set up the objective function
-param.mu=.1;	% Strong convexity parameter
-param.L=1;      % Smoothness parameter
-
-F=P.DeclareFunction('SmoothStronglyConvex',param); 
-% F is the objective function
-
-% (2) Set up the starting point and initial condition
-x0=P.StartingPoint();		 % x0 is some starting point
-[xs,fs]=F.OptimalPoint(); 		 % xs is an optimal point, and fs=F(xs)
-[g0,f0]=F.oracle(x0);
-P.InitialCondition(f0-fs<=1); % Add an initial condition f0-fs<= 1
-
-% (3) Algorithm
-N=2;
-x=x0;
-for i=1:N
-    [g,~]=F.oracle(x);
-    x=exactlinesearch_step(x,F,g);
-end
-
-% (4) Set up the performance measure
-[g,f]=F.oracle(x);
-P.PerformanceMetric(f-fs); % Worst-case evaluated as F(x)-F(xs)
-
-% (5) Solve the PEP
-P.solve()
-
-% (6) Evaluate the output
-double(f-fs)   % worst-case objective function accuracy
-
-% The result should be
-%((param.L-param.mu)/(param.L+param.mu))^(2*N)
-\end{lstlisting}
-\newpage
-\subsubsection{Inexact gradient descent with exact line search}\label{ex:inexactLS}
-\begin{lstlisting}
-% In this example, we use an inexact gradient method with exact line search
-% for solving the L-smooth mu-strongly convex minimization problem
-%   min_x F(x); for notational convenience we denote xs=argmin_x F(x).
-%
-%   Starting from an iterate x0, the method performs at each iteration
-%   an exact line search step in a direction d satisfying a relative 
-%   accuracy criterion
-%   (gi is the gradient of F at xi)
-%       ||d-gi||<=eps*||gi|| (**)
-%   that is, the method evaluates
-%       gamma=argmin_gamma F(xi-gamma*d) for d satisfying (**)
-%   and performs the update
-%       x{i+1}=xi-gamma*d.
-%
-% We show how to compute the worst-case value of F(xN)-F(xs) when xN is
-% obtained by doing N steps of the method starting with an initial
-% iterate satisfying F(x0)-F(xs)<=1.
-
-% (0) Initialize an empty PEP
-P=pep();
-
-% (1) Set up the objective function
-param.mu=.1;	% Strong convexity parameter
-param.L=1;      % Smoothness parameter
-
-F=P.DeclareFunction('SmoothStronglyConvex',param); 
-% F is the objective function
-
-% (2) Set up the starting point and initial condition
-x0=P.StartingPoint();		 % x0 is some starting point
-[xs,fs]=F.OptimalPoint(); 	 % xs is an optimal point, and fs=F(xs)
-[g0, f0]=F.oracle(x0);               
-P.InitialCondition(f0-fs<=1); % Add an initial condition f0-fs<= 1
-
-% (3) Algorithm
-N=2;
-eps=0.1;
-x=x0;
-for i=1:N
-    d=inexactsubgradient(x,F,eps,0);
-    x=exactlinesearch_step(x,F,d);
-end
-fN=F.value(x);
-% (4) Set up the performance measure
-P.PerformanceMetric(fN-fs); % Worst-case evaluated as ||g||^2
-
-% (5) Solve the PEP
-P.solve()
-
-% (6) Evaluate the output
-double(fN-fs)   % worst-case objective function accuracy
-
-% The result should be
-%((param.L*(1+eps)-param.mu*(1-eps))/(param.L*(1+eps)+param.mu*(1-eps)))^(2*N)
-\end{lstlisting}
-\newpage
-\subsubsection{Triple momentum method}
-\begin{lstlisting}
-% In this example, we use the triple momentum method for solving the 
-% L-smooth mu-strongly convex minimization problem
-%   min_x F(x); 
-%   for notational convenience we denote xs=argmin_x F(x).
-%
-% We show how to compute the worst-case value of F(xN)-F(xs) when xN is
-% obtained by doing N steps of the method starting with an initial
-% iterate satisfying ||x0-xs||<=1.
-
-
-% (0) Initialize an empty PEP
-P=pep();
-
-% (1) Set up the objective function
-param.L=1;      % Smoothness parameter
-param.mu=.1;    % Strong convexity parameter
-
-F=P.DeclareFunction('SmoothStronglyConvex',param); % F is the objective function
-
-% (2) Set up the starting point and initial condition
-x0=P.StartingPoint();             % x0 is some starting point
-[xs,fs]=F.OptimalPoint();         % xs is an optimal point, and fs=F(xs)
-P.InitialCondition((x0-xs)^2<=1); % Add an initial condition ||x0-xs||^2<= 1
-
-% (3) Algorithm
-N=10;		% number of iterations
-
-kappa=param.mu/param.L;
-rho=(1-sqrt(kappa));
-
-alpha=(1+rho)/param.L; beta=rho^2/(2-rho); gamma=rho^2/(1+rho)/(2-rho);
-delta=rho^2/(1-rho^2);
-
-xsi=cell(N+1,1);% we store the iterates in a cell for convenience
-xsi{1}=x0;
-xsi{2}=x0;
-y=x0;
-for i=2:N+1
-	xsi{i+1}=(1+beta)*xsi{i}-beta*xsi{i-1}-alpha*F.gradient(y);
-	y=(1+gamma)*xsi{i+1}-gamma*xsi{i};
-	x=(1+delta)*xsi{i+1}-delta*xsi{i};
-end
-
-% (4) Set up the performance measure
-fN=F.value(x);         % fN=F(xN)
-P.PerformanceMetric(fN-fs); % Worst-case evaluated as F(x)-F(xs)
-
-% (5) Solve the PEP
-P.solve()
-
-% (6) Evaluate the output
-double(fN-fs)   % worst-case objective function accuracy
-
-% Should at most match the standard guarantees
-% f(xN)-f(xs)<= (1-sqrt(kappa))^(2*N)*param.L/2/kappa*double((x0-xs)^2)
-% ||xN-xs||^2<= (1-sqrt(kappa))^(2*N)/kappa*double((x0-xs)^2)
-\end{lstlisting}
-\newpage 
-\subsubsection{Robust momentum method}
-\begin{lstlisting}
-% In this example, we use the robust momentum method for solving the 
-% L-smooth mu-strongly convex minimization problem
-%   min_x F(x); 
-%   for notational convenience we denote xs=argmin_x F(x).
-% We show how to compute the rate of the Lyapunov function developped in
-%(**) Cyrus, S., Hu, B., Van Scoy, B., & Lessard, L. "A robust accelerated 
-%     optimization algorithm for strongly convex functions." In 2018 Annual
-%     American Control Conference (ACC) (pp. 1376-1381). IEEE.
-
-% (0) Initialize an empty PEP
-P=pep();
-
-% (1) Set up the objective function
-L  = 1;  param.L=L;      % Smoothness parameter
-mu = .2; param.mu=mu;    % Strong convexity parameter
-
-F=P.DeclareFunction('SmoothStronglyConvex',param); % F is the objective function
-
-% (2) Set up the starting point and initial condition
-xm1=P.StartingPoint();            % xm1 is some starting point
-x0=P.StartingPoint();             % x0 is some starting point
-[xs,fs]=F.OptimalPoint();         % xs is an optimal point, and fs=F(xs)
-
-% (3) Algorithm' parameters
-kappa = param.L/param.mu;
-lam   = .1;
-rho   = lam*(1-1/kappa) + (1-lam)*(1-1/sqrt(kappa));
-
-alpha  = kappa*(1-rho)^2*(1+rho)/L;
-beta   = kappa*rho^3/(kappa-1);
-gamma  = rho^3/((kappa-1)*(1-rho)^2*(1+rho));
-lambda = mu^2*(kappa-kappa*rho^2-1)/(2*rho*(1-rho));
-nnu    = (1+rho)*(1-kappa+2*kappa*rho-kappa*rho^2)/(2*rho);
-
-% (4) Perform two iterations according to the notations in (**)
-y0      = x0+gamma*(x0-xm1);
-[g0,F0] = F.oracle(y0);
-x1      = x0 + beta*(x0-xm1) - alpha*g0;
-y1      = x1 + gamma*(x1-x0);
-[g1,F1] = F.oracle(y1);
-x2      = x1+beta*(x1-x0)-alpha*g1;
-
-z0      = (x0-rho^2*xm1)/(1-rho^2);
-z1      = (x1-rho^2*x0)/(1-rho^2);
-z2      = (x2-rho^2*x1)/(1-rho^2);
-
-% (5) Evaluate the Lyapunov function at the first and second iterations
-q0 = (L-mu)*(F0-fs-mu/2*(y0-xs)^2)-1/2*(g0-mu*(y0-xs))^2;
-q1 = (L-mu)*(F1-fs-mu/2*(y1-xs)^2)-1/2*(g1-mu*(y1-xs))^2;
-
-initLyapunovValue   = lambda*(z1-xs)^2+q0;
-finalLyapunovValue  = lambda*(z2-xs)^2+q1;
-
-% (6) Normalize the initial value of the Lyapunov function to one and observe
-% that the value of the second indeed corresponds to the rate.
-P.InitialCondition(initLyapunovValue <= 1);     	% (initial condition)
-P.PerformanceMetric(finalLyapunovValue);   		% (performance measure)
-
-% (5) Solve the PEP
-P.solve(1);
-% the value of final should match rho^2
-[double(finalLyapunovValue) rho^2]
-\end{lstlisting}
-\newpage 
-\subsection{Composite minimization and operator splitting}
-A series of examples for this setting are presented in the directory \verb|Examples|. Those examples include a code to reproduce the analysis~\cite{taylor2018exact} for the proximal gradient method, a code for obtaining tight worst-case bounds for the celebrated fast iterative shrinkage-thresholding algorithm (FISTA)~\cite{beck2009fast}, and a code for studying conditional gradient methods (a.k.a. Frank-Wolfe~\cite{frank1956algorithm}). We provide below examples for studying the Douglas-Rachford splitting in different settings.
-\subsubsection{Douglas-Rachford splitting for monotone inclusion}
+The following pages contain the code for two of them.
+\clearpage
+\subsection{Example 1: Douglas-Rachford splitting for monotone inclusion}
 \begin{lstlisting}
 % In this example, we use a Douglas-Rachford splitting (DRS) 
 % method for solving a monotone inclusion problem
@@ -1379,21 +876,28 @@ A series of examples for this setting are presented in the directory \verb|Examp
 % Note that we allow the user to choose a stepsize alpha in the resolvent.
 %
 % This setting is studied in
-% (**) Ernest K. Ryu, Adrien B. Taylor, C. Bergeling, and P. Giselsson.
+% [1] Walaa M. Moursi, and Lieven Vandenberghe. "Douglas-Rachford
+%     Splitting for the Sum of a Lipschitz Continuous and a Strongly
+%     Monotone Operator." (2019)
+% and the methodology using PEPs is presented in
+% [2] Ernest K. Ryu, Adrien B. Taylor, C. Bergeling, and P. Giselsson.
 %      "Operator Splitting Performance Estimation: Tight contraction
-%       factors and optimal parameter selection." arXiv:1812.00146, 2018.
-%
+%       factors and optimal parameter selection." (2018).
+% since the results of [2] tightened that of [1] we compare with [2] below.
+
 % (0) Initialize an empty PEP
 P=pep();
 
 % (1) Set up the class of monotone inclusions
 paramA.L  =  1; paramA.mu = 0; % A is 1-Lipschitz and 0-strongly monotone
 paramB.mu = .1;                % B is .1-strongly monotone
+
 A = P.DeclareFunction('LipschitzStronglyMonotone',paramA);
 B = P.DeclareFunction('StronglyMonotone',paramB);
 
 % (2) Set up the starting points
-w0=P.StartingPoint(); w1=P.StartingPoint();
+w0=P.StartingPoint();
+w1=P.StartingPoint();
 P.InitialCondition((w0-w1)^2<=1);  % Normalize the initial distance ||w0-ws||^2 <= 1
 
 % (3) Algorithm
@@ -1410,140 +914,6 @@ z1 = w1-theta*(x1-y1);
 
 % (4) Set up the performance measure: ||z0-z1||^2
 P.PerformanceMetric((z0-z1)^2);
-% (5) Solve the PEP
-P.solve()
-% (6) Evaluate the worst-case contraction factor; it should match the result from (**)
-double((z0-z1)^2)
-\end{lstlisting}
-
-\newpage
-\subsubsection{Douglas-Rachford splitting for composite minimization}
-\begin{lstlisting}
-% In this example, we use a Douglas-Rachford splitting (DRS) 
-% method for solving the composite convex minimization problem
-%   min_x F(x)=f_1(x)+f_2(x) 
-%   (for notational convenience we denote xs=argmin_x F(x);
-% where f_1(x) is L-smooth and mu-strongly convex, and f_2 is convex.
-%
-% We show how to compute the worst-case value of ||wN-ws||^2 when wN is
-% obtained by doing N steps of DRS starting with an initial iterate w0
-% satisfying ||w0-ws||<=1, and ws is some point to which the iterates of
-% DRS converge.
-%
-% Note that the point ws may be defined in the following way:
-% let g1s and g2s be subgradients of respectively f_1 and f_2 at xs such 
-% that g1s+g2s=0 (optimality conditions). Then, ws=xs+lambda*g2s (lambda is
-% the step size used in DRS).
-
-% (0) Initialize an empty PEP
-P=pep();
-
-% (1) Set up the objective function
-paramf1.mu=.1;	% Strong convexity parameter
-paramf1.L=1;      % Smoothness parameter
-f1=P.DeclareFunction('SmoothStronglyConvex',paramf1);
-f2=P.DeclareFunction('Convex');
-F=f1+f2; % F is the objective function
-
-% (2) Set up the starting point and initial condition
-w0=P.StartingPoint(); % x0 is some starting point
-[xs,fs]=F.OptimalPoint('opt'); % xs is an optimal point, and fs=F(xs)
-
-% note that we tag the point xs as 'opt' to be able to re-evaluate it
-% easily (providing the oracle routine with this tag allows to recover
-% previously evaluated points).
-
-% the next step evaluates the oracle at the tagged point 'opt' (xs) for
-% recovering the values of g1s and g2s; this allows to guarantee that
-% g1s+g2s=0;
-[g1s,~]=f1.oracle('opt');
-[g2s,~]=f2.oracle('opt');
-lambda=2; ws=xs+lambda*g2s;
-
-% Add an initial condition ||w0-ws||^2<= 1
-P.InitialCondition((w0-ws)^2-1<=0); 
-
-% (3) Algorithm
-N=5;            % number of iterations
-gam=lambda;		% step size
-
-w=w0;
-for i=1:N
-    x=proximal_step(w,f2,gam);
-    y=proximal_step(2*x-w,f1,gam);
-    w=y-x+w;
-end
-
-% (4) Set up the performance measure
-P.PerformanceMetric((w-ws)^2);
-
-% (5) Solve the PEP
-P.solve()
-
-% (6) Evaluate the output
-double((w-ws)^2)   % worst-case distance to fixed point ws
-
-% The result should be (and is)
-% max(1/(1+paramf1.mu*gam),gam*paramf1.L/(1+gam*paramf1.L))^(2*N) 
-% 
-% see (Theorem 2): Giselsson, Pontus, and Stephen Boyd. "Linear 
-%                  convergence and metric selection in Douglas-Rachford
-%                  splitting and ADMM."
-%                  IEEE Transactions on Automatic Control (2016). 
-\end{lstlisting}
-
-
-\newpage
-
-\subsubsection{Three-operator splitting}
-\begin{lstlisting}
-% In this example, we use a Three-Operator Splitting method for solving
-% a monotone inclusion problem
-%   find x st   0 \in Ax + Bx + Cx
-% where A is maximally monotone, B is cocoercive and C is the gradient of 
-% a smooth strongly convex function. We denote by JA and JB the respective
-% resolvents of A and B.
-%
-% One iteration of the algorithm starting from point w is as follows:
-%       x = JB( w )
-%       y = JA( 2 * x - w - C x)
-%       z = w - theta * ( x - y )
-% and then we choose as the next iterate the value of z.
-%
-% Given two initial points w0 and w1, we show how to compute the worst-case
-% contraction factor ||z0 - z1||/||w0 - w1|| obtained after doing one
-% iteration of DRS from respectively w0 and w1. Note that we allow the 
-% user to choose a stepsize alpha in the resolvent and for C.
-%
-% (0) Initialize an empty PEP
-P=pep();
-
-% (1) Set up the class of monotone inclusions
-paramB.beta = 1;            % B is 1-cocoercive
-paramC.L = 1; paramC.mu=.1; % C is the gradient of a 1-smooth .1-str convex
-
-A = P.DeclareFunction('Monotone');
-B = P.DeclareFunction('Cocoercive',paramB);
-C = P.DeclareFunction('SmoothStronglyConvex',paramC);
-
-% (2) Set up the starting points
-w0=P.StartingPoint(); w1=P.StartingPoint();
-P.InitialCondition((w0-w1)^2<=1);  % Normalize the initial distance ||w0-ws||^2 <= 1
-
-% (3) Algorithm
-alpha = .9;		% step size (in the resolvents)
-theta = 1.3;    % overrelaxation
-
-x0 = proximal_step(w0,B,alpha);
-y0 = proximal_step(2*x0-w0-alpha*C.evaluate(x0),A,alpha);
-z0 = w0-theta*(x0-y0);
-
-x1 = proximal_step(w1,B,alpha);
-y1 = proximal_step(2*x1-w1-alpha*C.evaluate(x1),A,alpha);
-z1 = w1-theta*(x1-y1);
-
-% (4) Set up the performance measure: ||z0-z1||^2
-P.PerformanceMetric((z0-z1)^2);
 
 % (5) Solve the PEP
 P.solve()
@@ -1551,97 +921,9 @@ P.solve()
 % (6) Evaluate the output
 double((z0-z1)^2)   % worst-case contraction factor
 \end{lstlisting}
-\newpage
-\subsection{Fixed-point iterations of nonexpansive mappings}
-Performance estimation problems have very recently been applied to the convergence analysis of fixed-point iterations of non-expansive mappings in~\cite{lieder2017convergence,lieder2018}. This kind of analysis can also be done with the toolbox and we give the corresponding examples below.
-\subsubsection{Halpern iterations}
-\begin{lstlisting}
-% In this example, we use the Halpern iteration for finding a fixed point
-% to the non-expansive operator A :
-%   find x such that  x = Ax
-%
-% (**) Lieder, Felix. "On the Convergence Rate of the Halpern-Iteration." 
-%      (2017)
-
-
-% (0) Initialize an empty PEP
-P=pep();
-
-% (1) Set up the objective function
-paramA.L=1;      % A is 1-Lipschitz (non-expansive)
-A = P.DeclareFunction('Lipschitz',paramA);
-
-% (2) Set up the starting point and initial condition
-x0 = P.StartingPoint();		 % x0 is some starting point
-xs = fixedpoint(A);
-P.InitialCondition((x0-xs)^2<=1); % Add an initial condition ||x0-xs||^2<= 1
-
-% (3) Algorithm
-N = 10;
-lambda = @(k)(1/(k+2));
-x=x0;
-for i=1:N
-	x = lambda(i-1) * x0 + (1-lambda(i-1)) * A.evaluate(x);
-end
-xN  = x;
-AxN = A.evaluate(xN);
-% (4) Set up the performance measure
-P.PerformanceMetric((xN-AxN)^2); % Worst-case evaluated as F(x)-F(xs)
-
-% (5) Solve the PEP
-P.solve()
-
-% (6) Evaluate the output
-double((xN-AxN)^2)   % worst-case objective function accuracy
-
-% The result should be (2/(N+1))^2 as in (**)
-\end{lstlisting}
-\newpage
-\subsubsection{Krasnoselskii--Mann}
-\begin{lstlisting}
-% In this example, we use Krasnoselskii-Mann iterations for finding a 
-% fixed point to the non-expansive operator A :
-%   find x such that  x = Ax
-%
-% This scheme was first studied using PEPs in:
-% (**) Felix Lieder. "Projection Based Methods for Conic Linear Programming 
-%       Optimal First Order Complexities and Norm Constrained Quasi Newton 
-%       Methods."  PhD thesis (2018)
-
-
-% (0) Initialize an empty PEP
-P=pep();
-
-% (1) Set up the objective function
-paramA.L=1;      % A is 1-Lipschitz (non-expansive)
-A = P.DeclareFunction('Lipschitz',paramA);
-
-% (2) Set up the starting point and initial condition
-x0 = P.StartingPoint();		 % x0 is some starting point
-xs = fixedpoint(A);
-P.InitialCondition((x0-xs)^2<=1); % Add an initial condition ||x0-xs||^2<= 1
-
-% (3) Algorithm
-N = 10;
-lambda = @(k)(1/(k+2));
-x=x0;
-for i=1:N
-	x = lambda(i-1) * x + (1-lambda(i-1)) * A.evaluate(x);
-end
-xN  = x;
-AxN = A.evaluate(xN);
-% (4) Set up the performance measure
-P.PerformanceMetric((xN-AxN)^2); % Worst-case squared residual
-
-% (5) Solve the PEP
-P.solve()
-
-% (6) Evaluate the output
-double((xN-AxN)^2)   % worst-case squared residual
-\end{lstlisting}
-\newpage
-\subsection{Geometry of smooth strongly convex functions}
-The file \verb?Examples/Minimizer_of_a_sum.m? illustrates how the toolbox can be used to explore properties of (strongly) convex functions that are not directly related to optimization algorithms. In this example, we consider the following problem.
+\clearpage
+\subsection{Example 2: properties of smooth strongly convex functions}
+The file \verb?Examples/08_Properties of (non)convex functions/A_Minimizer of a sum.m? illustrates how the toolbox can be used to explore properties of (strongly) convex functions that are not directly related to optimization algorithms. In this example, we consider the following problem.
 
 Given two functions $f$ and $g$ both $\mu$-strongly convex and $L$-smooth, how far can the minimizer $x_\star(f+g)$ of the sum $f+g$ be from $\tfrac12 (x_\star(f)+x_\star(g))$ (where $x_\star(f)$ and $x_\star(g)$ are respectively the minimizers of $f$ and $g$). Using the code, one can easily verify that
 \begin{itemize}
@@ -1649,8 +931,23 @@ Given two functions $f$ and $g$ both $\mu$-strongly convex and $L$-smooth, how f
 	\item[(ii)] the solution scales linearly with $\norm{x_\star(g)-x_\star(f)}$ which we thus assume to be $1$.
 \end{itemize}
 The code computes the worst-case distance $\norm{x_\star(f+g)-\tfrac{x_\star(f)+x_\star(g)}{2}}$ for various values of $\kappa$ and plots its dependence on $\kappa$.
- 
 \begin{lstlisting}
+% This example shows how the PESTO toolbox can also be used to explore
+% properties of (strongly) convex functions that are not directly related
+% to optimization algorithms:
+% we consider the following problem: Given two functions f, g both
+% mu-strongly convexe and L-smooth, how far can the minimizer xsfg of (f+g) 
+% be from the mean of the minimizers xsf and xsg of respectively f and g. 
+%
+% One can verify that the answer to this problem 
+% (i) is invariant if mu and L are multiplied by a same constant, and hence
+% only depends on the condition number kappa = L/mu
+% (ii) scales linearly with ||xsf-xsg||, which we will thus assume to be 1
+%
+% The code computes the worst-case distance for various values of kappa and
+% plots its dependence on kappa.
+
+
 % number of tests and vector of kappa to be tested
 n_test = 80;
 kappa = 1.025.^(1:n_test);
@@ -1659,42 +956,42 @@ verbose = 0; % verbose mode of the toolbox
 
 for k = 1:n_test;
 
-	% (0) Information about current test    
-	disp('---------------------------------------------------')
-	disp(['Test ', num2str(k) , ' of ', num2str(n_test)])
-	disp(['condition number = ' , num2str(round(kappa(k)*10^3)/10^3)])
-	disp('---------------------------------------------------')
+% (0) Information about current test    
+disp('---------------------------------------------------')
+disp(['Test ', num2str(k) , ' of ', num2str(n_test)])
+disp(['condition number = ' , num2str(round(kappa(k)*10^3)/10^3)])
+disp('---------------------------------------------------')
 
-	% (1) Declaration of the "PEP"
-	P=pep();
+% (1) Declaration of the "PEP"
+P=pep();
 
-	% (2) functions parameters (using scale_invariance)
-	param.mu=1;	% Strong convexity parameter
-	param.L=kappa(k);      % Smoothness parameter
+% (2) functions parameters (using scale_invariance)
+param.mu=1;	% Strong convexity parameter
+param.L=kappa(k);      % Smoothness parameter
 
-	% (3) functions declarations
-	f= P.DeclareFunction('SmoothStronglyConvex',param);
-	g= P.DeclareFunction('SmoothStronglyConvex',param);
-	fg = f+g;
+% (3) functions declarations
+f= P.DeclareFunction('SmoothStronglyConvex',param);
+g= P.DeclareFunction('SmoothStronglyConvex',param);
+fg = f+g;
 
-	% (4) decleration of the minimizers
-	[xsf,fs] = f.OptimalPoint();
-	[xsg,gs] = g.OptimalPoint();
-	[xsfg,fgs] = fg.OptimalPoint();
+% (4) decleration of the minimizers
+[xsf,fs] = f.OptimalPoint();
+[xsg,gs] = g.OptimalPoint();
+[xsfg,fgs] = fg.OptimalPoint();
 
-	% (5) Contraint on the minimizer (have to be declared as "initial
-	%condition")
-	P.InitialCondition((xsf-xsg)^2<=1);
-	% note: the problem will naturally force (xsf-xsg)^2 = 1
+% (5) Contraint on the minimizer (have to be declared as "initial
+%condition")
+P.InitialCondition((xsf-xsg)^2<=1);
+% note: the problem will naturally force (xsf-xsg)^2 = 1
 
-	% (6) Criterion to be maximized
-	P.PerformanceMetric((xsfg-(xsf+xsg)/2 )^2 ); 
+% (6) Criterion to be maximized
+P.PerformanceMetric((xsfg-(xsf+xsg)/2 )^2 ); 
 
-	% (7) Solving the Pep
-	P.solve(verbose);
+% (7) Solving the Pep
+P.solve(verbose);
 
-	% (8) Evaluation and storage the output
-	distance_sq(k) =double((xsfg-(xsf+xsg)/2 )^2); 
+% (8) Evaluation and storage the output
+distance_sq(k) =double((xsfg-(xsf+xsg)/2 )^2); 
 
 end
 
@@ -1720,6 +1017,7 @@ disp('Computation ended')
 disp('The result should show the square distance is asymptotically')
 disp('linear in the condition number')
 disp('************************************************************')
+
 \end{lstlisting}
 \clearpage
 \bibliographystyle{unsrt}

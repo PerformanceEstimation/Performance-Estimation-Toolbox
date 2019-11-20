@@ -63,9 +63,24 @@ classdef functionClass < functionHandler
                     assert(false,'Oracle: this tag does not match any previously evaluated point.')
                 end
             else
-                g=Point('Point');
-                f=Point('Function value');
-                obj.AddComponent(x,g,f,spec);
+                if nargin >= 3
+                    if ~strcmp(tag,'') % check that the tag is not simply empty
+                        for i=1:obj.list_size
+                            if strcmp(tag,obj.interp_list{i}.spec)
+                                x=obj.interp_list{i}.x;
+                                g=obj.interp_list{i}.g;
+                                f=obj.interp_list{i}.f;
+                                found=1;
+                                break;
+                            end
+                        end
+                    end
+                end
+                if nargin < 3 || found == 0
+                    g=Point('Point');
+                    f=Point('Function value');
+                    obj.AddComponent(x,g,f,spec);
+                end
             end
         end
         function [cons,names]=GetInterp(obj)
@@ -90,10 +105,6 @@ classdef functionClass < functionHandler
                 end
             end
         end
-        function obj3=plus(obj1,obj2)
-            assert(isa(obj1,'functionClass') && isa(obj2,'functionClass'));
-            obj3=CompositeFunction(obj1,obj2);
-        end
         function disp(obj)
             fprintf('Function, %d interpolation points\n',obj.list_size);
         end
@@ -106,7 +117,7 @@ classdef functionClass < functionHandler
                 end
             end
         end
-                
-                
+        
+        
     end
 end

@@ -1,10 +1,10 @@
-Authors: A. Taylor 		Universite catholique de Louvain,
+Authors: A. Taylor 		INRIA Paris,
          F. Glineur		Universite catholique de Louvain,
          J. Hendrickx		Universite catholique de Louvain.
 
-Date:   Dec 18
+Date:   Nov 2019
 
-Version: Dec 18
+Version: Nov 2019
 
 ----- Introduction
 

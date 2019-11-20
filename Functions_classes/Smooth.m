@@ -22,12 +22,14 @@ function cons=Smooth(pt1,pt2,L)
 %
 % (2) Taylor, Adrien B., Julien M. Hendrickx, and François Glineur.
 %     "Exact Worst-case Performance of First-order Methods for Composite
-%     Convex Optimization."to appear in SIAM Journal on Optimization (2017)
+%     Convex Optimization." SIAM Journal on Optimization (2017)
 %
+%  *** There is a typo in [2] Theorem 6, in front of the scalair product
+%  (should be a minus and not a plus); this is corrected below).
 %
 assert(L>=0,'Constants provided to the functional class are not valid');
 if ~(pt1.x.isEqual(pt2.x) && pt1.g.isEqual(pt2.g) && pt1.f.isEqual(pt2.f))
-    cons=((pt1.f-pt2.f-L/4*(pt1.x-pt2.x)^2+1/2*(pt1.g+pt2.g)*(pt1.x-pt2.x)+1/(4*L)*(pt1.g-pt2.g)^2)<=0);
+    cons=((pt1.f-pt2.f-L/4*(pt1.x-pt2.x)^2-1/2*(pt1.g+pt2.g)*(pt1.x-pt2.x)+1/(4*L)*(pt1.g-pt2.g)^2)<=0);
 else
     cons=[];
 end
