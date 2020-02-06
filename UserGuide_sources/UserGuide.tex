@@ -107,11 +107,13 @@ Additional material was incorporated thanks to:
 	\item Ernest Ryu (UCLA), Carolina Bergeling (Lund), and Pontus Giselsson (Lund) [monotone operators and splitting methods],
 	\item Francis Bach (Inria \& ENS Paris) [stochastic methods and potential functions],
 	\item Radu-Alexandru Dragomir (ENS Paris \& TSE), Alexandre d'Aspremont (CNRS \& ENS Paris), and J\'er\^ome Bolte (TSE) [Bregman divergences and new notions of smoothness].	
+	\item Mathieu Barr\'e (Inria \& ENS Paris), and Alexandre d'Aspremont (CNRS \& ENS Paris) [adaptive methods].
 \end{itemize}
 Last but not least, we thank Loic Est\`eve (Inria) for technical support.
 
 \section*{Recent updates}
 \begin{itemize}
+	\item[02/2020] {\bf{}[New]} Example section extended with two adaptive methods (variants of Polyak steps).
 	\item[11/2019] {\bf{}[New]} The example section was largely extended and now contain about {\bf 50~examples}. Newcomers include:  stochastic methods, non-Euclidean methods (e.g., NoLips), nonconvex applications and monotone inclusions. We also show how to use the toolbox to verify potential functions.
 	\item[11/2019] {\bf{}[New]} New primitives: mirror and proximal mirror steps.
 	\item[11/2019] {\bf{}[Update]} Updated operations on functions: additions, subtractions, and scalings are implemented in a more efficient fashion.
@@ -822,7 +824,7 @@ The toolbox include the following examples:
 \begin{enumerate}
 	\item methods for unconstrained convex minimization:
 	\begin{itemize}
-		\item proximal point algorithm (see e.g.,~\cite{guler1991convergence}), fast/accelerated proximal point algorithms (see~\cite{guler1992new}), subgradient methods (see e.g.,~\cite{Shor:Subgradient,Book:Nesterov2}), subgradient with exact line search (see~\cite{drori2018efficient}), gradient method (see e.g.,~\cite{Book:Nesterov2,Book:polyak1987}), gradient with exact line-search (see e.g.,~\cite{deKlerkELS2016}), heavy-ball method (see e.g.,~\cite{polyak1964some}), fast gradient method (see e.g.,~\cite{Nesterov:1983wy}), conjugate gradient method (see e.g.,~\cite{drori2018efficient}), optimized gradient method (see e.g.,~\cite{kim2014optimized,Article:Drori,drori2014contributions,drori2017exact}), optimized gradient method with line search (see e.g.,~\cite{drori2018efficient}), optimized gradient method for gradient norm (see e.g.,~\cite{kim2018optimizing}), fast/accelerated gradient method for smooth strongly convex minimization (see e.g.,~\cite{Book:Nesterov2,bansal2017potential}), triple momentum method (see e.g.,~\cite{van2018fastest}), robust momentum method (see e.g.,~\cite{cyrus2018robust}), relatively inexact fast gradient, gradient with exact line-search in inexact directions (see e.g.,~~\cite{deKlerkELS2016}).
+		\item proximal point algorithm (see e.g.,~\cite{guler1991convergence}), fast/accelerated proximal point algorithms (see~\cite{guler1992new}), subgradient methods (see e.g.,~\cite{Shor:Subgradient,Book:Nesterov2}), subgradient with exact line search (see~\cite{drori2018efficient}), gradient method (see e.g.,~\cite{Book:Nesterov2,Book:polyak1987}), gradient with exact line-search (see e.g.,~\cite{deKlerkELS2016,de2017worst}), heavy-ball method (see e.g.,~\cite{polyak1964some}), fast gradient method (see e.g.,~\cite{Nesterov:1983wy}), conjugate gradient method (see e.g.,~\cite{drori2018efficient}), optimized gradient method (see e.g.,~\cite{kim2014optimized,Article:Drori,drori2014contributions,drori2017exact}), optimized gradient method with line search (see e.g.,~\cite{drori2018efficient}), optimized gradient method for gradient norm (see e.g.,~\cite{kim2018optimizing}), fast/accelerated gradient method for smooth strongly convex minimization (see e.g.,~\cite{Book:Nesterov2,bansal2017potential}), triple momentum method (see e.g.,~\cite{van2018fastest}), robust momentum method (see e.g.,~\cite{cyrus2018robust}), relatively inexact fast gradient, gradient with exact line-search in inexact directions (see e.g.,~~\cite{deKlerkELS2016,de2017worst}).
 	\end{itemize}
 	\item Methods for composite convex minimization:
 	\begin{itemize}
@@ -851,6 +853,10 @@ The toolbox include the following examples:
 	\item Geometry of (possibly smooth and strongly) convex functions
 	\begin{itemize}
 		\item Let $f$ and $g$ be two smooth strongly convex functions. What is the maximum distance between the optimum of $f+g$ and the average between the optimum of $f$ and that of $g$?
+	\end{itemize}
+	\item Adaptive methods:
+	\begin{itemize}
+		\item Polyak steps and variants using PEPs in~\cite{Barre2020Polyak}.
 	\end{itemize}
 \end{enumerate}
 

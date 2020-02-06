@@ -2,9 +2,9 @@ Authors: A. Taylor 		INRIA Paris,
          F. Glineur		Universite catholique de Louvain,
          J. Hendrickx		Universite catholique de Louvain.
 
-Date:   Nov 2019
+Date:   Feb 2020
 
-Version: Nov 2019
+Version: Feb 2020
 
 ----- Introduction
 

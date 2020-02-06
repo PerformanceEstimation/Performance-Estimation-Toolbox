@@ -4,9 +4,9 @@ This code comes jointly with the following [`reference`](PESTO_CDC2017_FINAL.pdf
 
 > [1] Taylor, Adrien B., Julien M. Hendrickx, and François Glineur. "Performance Estimation Toolbox (PESTO): automated worst-case analysis of first-order optimization methods." Proceedings of the 56th IEEE Conference on Decision and Control (CDC 2017).
 
-Date:    Nov 2019
+Date:    Feb 2020
 
-Version: Nov 2019
+Version: Feb 2020
 
 #### Authors
 - [**Adrien Taylor**](http://www.di.ens.fr/~ataylor/)
@@ -20,7 +20,8 @@ The authors would like to thank [**Francois Gonze**](https://perso.uclouvain.be/
 Additional material was incorporated thanks to:
 - [**Ernest Ryu**](https://www.math.ucla.edu/~eryu/) (UCLA), [**Carolina Bergeling**](http://www.control.lth.se/personnel/carolina-bergeling.html) (Lund), and [**Pontus Giselsson**](http://www.control.lth.se/personnel/pontus-giselsson/) (Lund) (monotone operators and splitting methods),
 - [**Francis Bach**](https://www.di.ens.fr/~fbach/) (Inria & ENS Paris) (stochastic methods and potential functions),
-- **Radu-Alexandru Dragomir** (ENS Paris & TSE), [**Alexandre d’Aspremont**](https://www.di.ens.fr/~aspremon/) (CNRS & ENS Paris), and [**Jérôme Bolte**](https://www.tse-fr.eu/people/jerome-bolte) (TSE) (Bregman divergences and new notions of smoothness).
+- [**Radu-Alexandru Dragomir**](https://www.di.ens.fr/radu-alexandru.dragomir/) (ENS Paris & TSE), [**Alexandre d’Aspremont**](https://www.di.ens.fr/~aspremon/) (CNRS & ENS Paris), and [**Jérôme Bolte**](https://www.tse-fr.eu/people/jerome-bolte) (TSE) (Bregman divergences and new notions of smoothness).
+- **Mathieu Barré** (Inria \& ENS Paris), and [**Alexandre d’Aspremont**](https://www.di.ens.fr/~aspremon/) (CNRS \& ENS Paris) (adaptive methods).
 
 Last but not least, we thank **Loic Estève** (Inria) for technical support.
 
