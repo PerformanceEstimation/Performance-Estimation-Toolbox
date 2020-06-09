@@ -50,7 +50,8 @@ for i = 1:N
     [x{i+1}, g{i+1}, f{i+1}] = exactlinesearch_step(y,F,d);
     agglomerate              = agglomerate + theta{i+1} * g{i+1};
 end
-          
+
+% (4) Set up the objective
 P.PerformanceMetric(f{N+1}-fs); % Worst-case evaluated as F(x)-F(xs)
 
 % (5) Solve the PEP
