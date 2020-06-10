@@ -8,7 +8,7 @@ clear all; clc;
 % We show how to compute the convergence rate to a fixed point of the
 % operator, which is denoted by z_*.
 %
-% 
+%
 % The exact method is from [1], its PEP formulation and solution from [2].
 % The precise formulation we used is described in [2, Section 4.4]
 %
@@ -39,24 +39,26 @@ zk      = P.StartingPoint();        % zk is a previous iterate
 
 
 % (3) Set up the method
-sigma           = .2;
+N               = 5;
+sigma           = rand;
 opt.criterion   = 'PD_gapII';
 
-lambda          = 1;
+lambda          = rand*4;
 
 z           = cell(2,1); z{1} = zk;
 
-[x,df,~,~,~,~,epsVar] = inexact_proximal_step(z{1},f,lambda,opt);
-y                     = proximal_step(x-lambda*df,g,lambda);
-P.AddConstraint(epsVar <= sigma^2 * (y-z{1}+lambda*df)^2);
-z{2}                  = z{1} + y - x;
-
+for i = 1:N
+    [x,df,~,~,~,~,epsVar] = inexact_proximal_step(z{i},f,lambda,opt);
+    y                     = proximal_step(x-lambda*df,g,lambda);
+    P.AddConstraint(epsVar <= sigma^2/lambda^2 * (y-z{i}+lambda*df)^2);
+    z{i+1}                  = z{i} + y - x;
+end
 
 % (4) Set up the objective and initial condition
 
 zs   = xs + lambda * f.gradient('xs');
 init = (z{1}-zs)^2;
-obj  = (z{2}-zs)^2;
+obj  = (z{N+1}-zs)^2;
 P.InitialCondition(init <= 1);
 P.PerformanceMetric(obj); % Worst-case evaluated as F(x)-F(xs)
 
@@ -65,8 +67,8 @@ P.solve(2)
 
 % (6) Evaluate the output, and compare to what it should be, as exposed in
 % [2, Theorem 4.9]
-theoretical_expr = max( ((1-sigma+lambda*m*sigma)/(1-sigma+lambda*m))^2,...
-    ((sigma+(1-sigma)*lambda*L)/(1+(1-sigma)*lambda*L))^2);
+theoretical_expr = (max( ((1-sigma+lambda*m*sigma)/(1-sigma+lambda*m))^2,...
+    ((sigma+(1-sigma)*lambda*L)/(1+(1-sigma)*lambda*L))^2))^N;
 [double(obj) theoretical_expr]
 
 
