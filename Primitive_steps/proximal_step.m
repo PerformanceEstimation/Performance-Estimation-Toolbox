@@ -1,5 +1,5 @@
 function [x,gx,fx] = proximal_step(x0,func,gamma,tag)
-% [x] = proximal_step(x0,func,gamma)
+% [x,gx,fx] = proximal_step(x0,func,gamma)
 %
 % This routine performs a proximal step of step size gamma, starting from
 % x0, and on function func. That is, it performs:
@@ -11,7 +11,9 @@ function [x,gx,fx] = proximal_step(x0,func,gamma,tag)
 %        - step size gamma of the proximal step
 %        - optional tag
 %
-% Output: x=x0-gamma*g, where g is a (sub)gradient of func at x.
+% Output:   - x = x0-gamma*gx, where g is a (sub)gradient of func at x
+%           - gx is a subgradient of func at x
+%           - fx is func(x)
 %
 gx=Point('Point');
 x=x0-gamma*gx;
