@@ -46,9 +46,8 @@ for k = 1:n_test;
     [xsg,gs] = g.OptimalPoint();
     [xsfg,fgs] = fg.OptimalPoint();
      
-    % (5) Contraint on the minimizer (have to be declared as "initial
-    %condition")
-        P.InitialCondition((xsf-xsg)^2<=1);
+    % (5) Contraint on the minimizer (have to be declared as
+        P.AddConstraint((xsf-xsg)^2<=1);
     % note: the problem will naturally force (xsf-xsg)^2 = 1
     
     % (6) Criterion to be maximized
