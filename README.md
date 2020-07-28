@@ -19,9 +19,9 @@ The authors would like to thank [**Francois Gonze**](https://perso.uclouvain.be/
 
 Additional material was incorporated thanks to:
 - [**Ernest Ryu**](https://www.math.ucla.edu/~eryu/) (UCLA), [**Carolina Bergeling**](http://www.control.lth.se/personnel/carolina-bergeling.html) (Lund), and [**Pontus Giselsson**](http://www.control.lth.se/personnel/pontus-giselsson/) (Lund) (monotone operators and splitting methods),
-- [**Francis Bach**](https://www.di.ens.fr/~fbach/) (Inria & ENS Paris) (stochastic methods and potential functions),
+- [**Francis Bach**](https://www.di.ens.fr/~fbach/) (Inria & ENS Paris) (stochastic methods, potential functions, and inexact proximal operators),
 - [**Radu-Alexandru Dragomir**](https://www.di.ens.fr/radu-alexandru.dragomir/) (ENS Paris & TSE), [**Alexandre d’Aspremont**](https://www.di.ens.fr/~aspremon/) (CNRS & ENS Paris), and [**Jérôme Bolte**](https://www.tse-fr.eu/people/jerome-bolte) (TSE) (Bregman divergences and new notions of smoothness).
-- **Mathieu Barré** (Inria \& ENS Paris), and [**Alexandre d’Aspremont**](https://www.di.ens.fr/~aspremon/) (CNRS \& ENS Paris) (adaptive methods).
+- **Mathieu Barré** (Inria \& ENS Paris), and [**Alexandre d’Aspremont**](https://www.di.ens.fr/~aspremon/) (CNRS \& ENS Paris) (adaptive methods, and inexact proximal operators).
 
 Last but not least, we thank **Loic Estève** (Inria) for technical support.
 
