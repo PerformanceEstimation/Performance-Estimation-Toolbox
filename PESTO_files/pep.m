@@ -42,6 +42,8 @@ classdef pep < handle
         list_size_init;
         expr_list_others;
         list_size_others;
+        expr_list_tab_SDP;
+        list_size_tab_SDP;
         list_func;
         list_size_func;
         t_reset;
@@ -55,6 +57,8 @@ classdef pep < handle
             obj.list_size_init=0;
             obj.expr_list_others=cell(0,1);
             obj.list_size_others=0;
+            obj.expr_list_tab_SDP=cell(0,1);
+            obj.list_size_tab_SDP=0;
             obj.list_func=cell(0,1);
             obj.list_size_func=0;
             obj.t_reset=now;
@@ -84,6 +88,14 @@ classdef pep < handle
             assert(isa(expr,'Constraint'),'Invalid constraint');
             obj.list_size_others=obj.list_size_others+1;
             obj.expr_list_others{obj.list_size_others,1}=expr;
+        end
+        function obj=AddSDPConstraint(obj,expr)
+        % AddSDPConstraint allows to add an arbitrary SDP constraint to the PEP problem.
+        % Input: expr is cell of PEP expression that represents the matrix
+        % that should be constraint to be positive semi-definite.
+            assert(iscell(expr),'SDP constraint should be given as a cell of expressions');
+            obj.list_size_tab_SDP=obj.list_size_tab_SDP+1;
+            obj.expr_list_tab_SDP{obj.list_size_tab_SDP,1} = expr;
         end
         function obj=PerformanceMetric(obj,expr)
             assert(isa(expr,'Evaluable'),'Perfomance measures should be scalar values');
@@ -237,8 +249,29 @@ classdef pep < handle
                     cons=cons+obj.expr_list_others{i,1}.Eval();
                     names{end+1} = sprintf('Other%d',i);
                 end
+                other_size=length(cons)-count;
+                if verbose_pet>1, fprintf(' (done, %d constraint(s) added) \n',other_size), end;
             end
-            
+            count=length(cons);
+            % new SDP constraints
+            if obj.list_size_tab_SDP>0
+                if verbose_pet>1, fprintf(' PESTO: Setting up the problem: SDP constraints'), end;
+                for i=1:obj.list_size_tab_SDP
+                    sdpexpr = obj.expr_list_tab_SDP{i,1};
+                    len = length(sdpexpr);
+                    SDP = sdpvar(len);
+                    for i1=1:len
+                        for i2=1:len
+                            cons = cons + ( SDP(i1,i2) == sdpexpr{i1,i2}.Eval() );
+                            names{end+1} = sprintf('SDP%d_build%d',i,(i1-1)*len+i2);
+                        end
+                    end
+                    cons = cons + ( SDP >= 0 );
+                    names{end+1} = sprintf('SDP%d',i);
+                end
+                SDP_size = length(cons)-count;
+                if verbose_pet>1, fprintf(' (done, %d constraint(s) added (included %d matrix SDP constraint) \n',SDP_size, obj.list_size_tab_SDP), end;
+            end
             for i=1:obj.list_size_func
                 cons=cons+obj.list_func{i,1}.collect();
             end
@@ -288,13 +321,14 @@ classdef pep < handle
             
             out.solverDetails=optimize(cons,-obj_func,solver_opt);
             out.WCperformance=double(obj_func);
-            for i=2:length(cons)
-                out.dualvalues(i-1)=dual(cons(i));
+            
+            out.dualvalues = cell(1,length(cons));
+            for i=1:length(cons)
+                out.dualvalues{i}=dual(cons(i));
             end
             out.dualnames = names;
             
-            if verbose_pet, fprintf(' PESTO: Solver output: %7.5e, solution status: %s\n',out.WCperformance,out.solverDetails.info), end;
-            
+            if verbose_pet, fprintf(' PESTO: Solver output: %7.5e, solution status: %s\n',out.WCperformance,out.solverDetails.info), end; 
             
             if verbose_pet>1, fprintf(' PESTO: Post-processing\n'), end;
             
