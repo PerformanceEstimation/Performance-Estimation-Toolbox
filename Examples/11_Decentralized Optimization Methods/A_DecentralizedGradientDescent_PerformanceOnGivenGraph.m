@@ -8,7 +8,10 @@ clear all; clc;
 % This script calls the function DGD_exact_perf to compute the exact worst-case performance of DGD,
 % with repsect to the performance measure  F(xav)-F(xs) where xav the average of all the iterates (for each iteration and each agent).
 % The initial iterates satisfy ||x0 - x*||^2 <= IC^2, for all agents.
-
+%
+% For details, see
+%   Colla, Sebastien, and Julien M. Hendrickx. "Automated Worst-Case
+%   Performance Analysis of Decentralized Gradient Descent." (2021)
 
 K = 10;                 % Number of iterations of DGD
 alpha = 1./sqrt(K);     % Step-size used in DGD (constant)
