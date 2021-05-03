@@ -3,7 +3,7 @@ function [wc, Wh, out] = DGD_spectral_perf(K,alpha,N,lam,IC,equalStart,fctClass,
 %   Colla, Sebastien, and Julien M. Hendrickx. "Automated Worst-Case
 %   Performance Analysis of Decentralized Gradient Descent." (2021)
 % The function considers the Decentralized Gradient Descent (DGD) after K iterations with N agents
-% linked by any symmetric doubly-stochastic matrix with given range of eigenvalues
+% linked by any symmetric (generalized) doubly-stochastic matrix with a given range of eigenvalues
 % The performance measure considered is F(xav)-F(x*), where F is the global function, 
 % x* its minimizer and xav an average of different iterates (all or only the last ones)
 % INPUTS:
@@ -87,14 +87,15 @@ function [wc, Wh, out] = DGD_spectral_perf(K,alpha,N,lam,IC,equalStart,fctClass,
             else
                 xb{k} = xb{k} + X{i,k}/N;
                 yb{k} = yb{k} + Y{i,k}/N;
-            end
+            end      
             xav = xav + X{i,k+1};
         end
         
         % Constraints such that Y = WX
+        
         P.AddConstraint((xb{k}-yb{k})^2==0);
         
-        % Constraints over only 1 iteration
+        % Scalar constraints over only 1 iteration
         if single_iter_cons
             xc2 = (X{1,k} - xb{k})^2;
             yc2 = (Y{1,k} - yb{k})^2;
@@ -109,31 +110,31 @@ function [wc, Wh, out] = DGD_spectral_perf(K,alpha,N,lam,IC,equalStart,fctClass,
             P.AddConstraint(yc2 - (lam(1)+lam(2))*ytx <= -lam(1)*lam(2)*xc2);
         end        
     end
-    if ~single_iter_cons % SDP constraints linking all the iterations together
-        SP1 = cell(K,K);
-        SP2 = cell(K,K);
-        SP3 = cell(K,K);
+    if ~single_iter_cons % PSD constraints linking all the iterations together
+        PSD1 = cell(K,K);
+        PSD2 = cell(K,K);
+        PSD3 = cell(K,K);
         for k1 = 1:K
             for k2 = 1:K
                 xx = (X{1,k1}-xb{k1})*(X{1,k2}-xb{k2});
                 yy = (Y{1,k1}-yb{k1})*(Y{1,k2}-yb{k2});
                 xy = (X{1,k1}-xb{k1})*(Y{1,k2}-yb{k2});
-                SP1{k1,k2} = lam(2)*xx - xy;
-                SP2{k1,k2} = -lam(1)*xx + xy;
-                SP3{k1,k2} = -lam(2)*lam(1)*xx + (lam(1)+lam(2))*xy - yy;
+                PSD1{k1,k2} = lam(2)*xx - xy;
+                PSD2{k1,k2} = -lam(1)*xx + xy;
+                PSD3{k1,k2} = -lam(2)*lam(1)*xx + (lam(1)+lam(2))*xy - yy;
                 for i = 2:N
                     xx = (X{i,k1}-xb{k1})*(X{i,k2}-xb{k2});
                     yy = (Y{i,k1}-yb{k1})*(Y{i,k2}-yb{k2});
                     xy = (X{i,k1}-xb{k1})*(Y{i,k2}-yb{k2});
-                    SP1{k1,k2} = SP1{k1,k2} + lam(2)*xx - xy;
-                    SP2{k1,k2} = SP2{k1,k2} -lam(1)*xx + xy;
-                    SP3{k1,k2} = SP3{k1,k2} -lam(2)*lam(1)*xx + (lam(1)+lam(2))*xy - yy;
+                    PSD1{k1,k2} = PSD1{k1,k2} + lam(2)*xx - xy;
+                    PSD2{k1,k2} = PSD2{k1,k2} -lam(1)*xx + xy;
+                    PSD3{k1,k2} = PSD3{k1,k2} -lam(2)*lam(1)*xx + (lam(1)+lam(2))*xy - yy;
                 end
             end            
         end   
-      P.AddSDPConstraint(SP1); % SP1 is positive semi-definite
-      P.AddSDPConstraint(SP2); % SP2 is positive semi-definite
-      P.AddSDPConstraint(SP3); % SP3 is positive semi-definite
+      P.AddPSDConstraint(PSD1); % PSD1 is positive semi-definite
+      P.AddPSDConstraint(PSD2); % PSD2 is positive semi-definite
+      P.AddPSDConstraint(PSD3); % PSD3 is positive semi-definite
     end
 
 

@@ -43,7 +43,7 @@ function [wc, out] = DGD_exact_perf(K,alpha,N,W,IC,equalStart,fctClass,fctParam,
     xav = X{1,1};       % average value of x among all agents and all iterations
     
     P.InitialCondition((X{1,1}-xs)^2 <= IC^2); % Initial condition ||x_i^0-x*||^2<= IC^2; for all i
-
+    
     for i=2:N
         if equalStart   % All the agents have the same starting point
             X{i,1} = X{1,1}; 
