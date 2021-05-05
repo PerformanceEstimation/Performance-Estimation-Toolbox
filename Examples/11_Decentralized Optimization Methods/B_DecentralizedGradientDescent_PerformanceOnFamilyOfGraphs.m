@@ -20,7 +20,7 @@ alpha = 1/sqrt(K);      % Step-size used in DGD (constant)
 %alpha = 1./(1:K);       % Alternative: Step-sizes used in DGD (diminishing)
 N = 2;                  % Number of agents
 lam = [-0.5,0.5];       % Range of eigenvalues for the symmetric (generalized) doubly stochastic communication matrix
-IC = 1;                 % Initial condition constant : ||x0 - x*||^2 <= IC^2
+IC = 1;                 % Constant for the initial condition: ||x0 - xs||^2 <= IC^2
 equalStart = 1;         % All agents starts with the same iterate x0
 fctClass = 'ConvexBoundedGradient'; % Class of functions to consider for the worst-case
 fctParam.R = 1;         % Bounded Gradient constant ||g||^2 <= R^2.

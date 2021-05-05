@@ -9,7 +9,7 @@ function [wc, out] = DGD_exact_perf(K,alpha,N,W,IC,equalStart,fctClass,fctParam,
 %               If alpha is a single number, the step-size is considered as constant.
 %   N:          Number of agents in DGD.
 %   W:          Adjacency matrix (N x N) of the communication network between the agent.
-%   IC:         Constant for initial condition: ||x_i^0 - x*||^2 <= IC.
+%   IC:         Constant for the initial condition: ||x_i^0 - x*||^2 <= IC.
 %   equalStart: Boolean for deciding if all the agents start with the same initial point (1) or not (0).
 %   fctClass:   Name of a PEP functional class. For example 'ConvexBoundedGradient'.
 %   fctParam:   Struct containing the parameters of the functional class. For example fctParam.R = 1.

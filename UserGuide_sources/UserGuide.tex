@@ -113,9 +113,9 @@
 
 	\section*{Recent updates}
 	\begin{itemize}
-		\item[04/2021] {\bf{}[New]} Possibility of adding PSD constraints for imposing a matrix to be positive semi-definite, using the new command \verb?AddPSDConstraint?.
-		\item[04/2021] {\bf{}[New]} The routine \verb?solve? output all the dual values of the problem (associated to scalar and PSD constraints) in the form of a cell array.
-		\item[04/2021] {\bf{}[New]} Example section extended with the Decentralized Gradient Descent, for two different cases: when the communication matrix is a priori given and when it is not, in which case we consider entire classes of possible matrices.
+		\item[04/2021] {\bf{}[New]} New type of constraints: the linear matrix inequalities (LMIs) for imposing a matrix to be positive semi-definite, using the new command \verb?AddLMIConstraint?.
+		\item[04/2021] {\bf{}[New]} The routine \verb?solve? output the dual values of these new constraints in the form of a cell array \verb?dualvalues_LMIs?.
+		\item[04/2021] {\bf{}[New]} Example section extended with the Decentralized Gradient Descent (DGD), for two different cases: when the communication matrix is a priori given and when it is not, in which case we consider entire classes of possible matrices.
 		\item[05/2020] {\bf{}[New]} New primitives and examples: inexact proximal operations.
 		\item[02/2020] {\bf{}[New]} Example section extended with two adaptive methods (variants of Polyak steps).
 		\item[11/2019] {\bf{}[New]} The example section was largely extended and now contain about {\bf 50~examples}. Newcomers include:  stochastic methods, non-Euclidean methods (e.g., NoLips), nonconvex applications and monotone inclusions. We also show how to use the toolbox to verify potential functions.
@@ -671,11 +671,11 @@
 					\begin{lstlisting}
 					P.AddConstraint((x0-xs)^2<=1);% Add an initial condition ||x0-xs||^2<= 1
 					\end{lstlisting}
-					It is also possible to add a PSD constraint to impose a matrix $M$ to be positive semi-definite $M \succeq 0$, using the routine \verb?AddPSDConstraint?. This routine takes a cell array as input, allowing to define the matrix $M$ element by element. \\[-1cm] %  containing the expressions defining the matrix that should be positive semi-definite.
+					It is also possible to add linear matrix inequalities (LMIs) to impose a matrix $M$ to be positive semi-definite $M \succeq 0$, using the routine \verb?AddLMIConstraint?. This routine takes a cell array as input, allowing to define the matrix $M$ element by element. \\[-1cm] %  containing the expressions defining the matrix that should be positive semi-definite.
 					\begin{lstlisting}
 					M = cell(10);
 					... 	% Defining the elements of M
-					P.AddPSDConstraint(M);% Add a PSD constraint for M (Matrix M has non-negative eigenvalues)
+					P.AddLMIConstraint(M);% Add an LMI constraint for M (Matrix M has non-negative eigenvalues)
 					\end{lstlisting}
 
 					\subsection{Adding points to be interpolated}

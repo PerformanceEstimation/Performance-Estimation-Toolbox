@@ -42,8 +42,8 @@ classdef pep < handle
         list_size_init;
         expr_list_others;
         list_size_others;
-        expr_list_tab_PSD;
-        list_size_tab_PSD;
+        expr_list_tab_LMIs;
+        list_size_tab_LMIs;
         list_func;
         list_size_func;
         t_reset;
@@ -57,8 +57,8 @@ classdef pep < handle
             obj.list_size_init=0;
             obj.expr_list_others=cell(0,1);
             obj.list_size_others=0;
-            obj.expr_list_tab_PSD=cell(0,1);
-            obj.list_size_tab_PSD=0;
+            obj.expr_list_tab_LMIs=cell(0,1);
+            obj.list_size_tab_LMIs=0;
             obj.list_func=cell(0,1);
             obj.list_size_func=0;
             obj.t_reset=now;
@@ -89,13 +89,13 @@ classdef pep < handle
             obj.list_size_others=obj.list_size_others+1;
             obj.expr_list_others{obj.list_size_others,1}=expr;
         end
-        function obj=AddPSDConstraint(obj,expr)
-        % AddPSDConstraint allows to add an arbitrary PSD constraint to the PEP problem.
+        function obj=AddLMIConstraint(obj,expr)
+        % AddLMIConstraint allows to add an arbitrary Linear Matrix Inequality (LMI) constraint to the PEP problem.
         % Input: expr is a cell array of PEP expressions that represents the matrix
         % that should be positive semi-definite.
-            assert(iscell(expr),'PSD constraint should be given as a cell of expressions');
-            obj.list_size_tab_PSD=obj.list_size_tab_PSD+1;
-            obj.expr_list_tab_PSD{obj.list_size_tab_PSD,1} = expr;
+            assert(iscell(expr),'LMI constraint should be given as a cell of expressions');
+            obj.list_size_tab_LMIs=obj.list_size_tab_LMIs+1;
+            obj.expr_list_tab_LMIs{obj.list_size_tab_LMIs,1} = expr;
         end
         function obj=PerformanceMetric(obj,expr)
             assert(isa(expr,'Evaluable'),'Perfomance measures should be scalar values');
@@ -253,24 +253,24 @@ classdef pep < handle
                 if verbose_pet>1, fprintf(' (done, %d constraint(s) added) \n',other_size), end;
             end
             count=length(cons);
-            % new PSD constraints
-            if obj.list_size_tab_PSD>0
-                if verbose_pet>1, fprintf(' PESTO: Setting up the problem: PSD constraints'), end;
-                for i=1:obj.list_size_tab_PSD
-                    sdpexpr = obj.expr_list_tab_PSD{i,1};
+            % new LMIs
+            if obj.list_size_tab_LMIs>0
+                if verbose_pet>1, fprintf(' PESTO: Setting up the problem: LMIs constraints'), end;
+                for i=1:obj.list_size_tab_LMIs
+                    sdpexpr = obj.expr_list_tab_LMIs{i,1};
                     len = length(sdpexpr);
-                    PSD = sdpvar(len);
+                    LMI = sdpvar(len);
                     for i1=1:len
                         for i2=1:len
-                            cons = cons + ( PSD(i1,i2) == sdpexpr{i1,i2}.Eval() );
-                            names{end+1} = sprintf('PSD%d_build%d',i,(i1-1)*len+i2);
+                            cons = cons + ( LMI(i1,i2) == sdpexpr{i1,i2}.Eval() );
+                            names{end+1} = sprintf('LMI%d_build%d',i,(i1-1)*len+i2);
                         end
                     end
-                    cons = cons + ( PSD >= 0 );
-                    names{end+1} = sprintf('PSD%d',i);
+                    cons = cons + ( LMI >= 0 );
+                    names{end+1} = sprintf('LMI%d',i);
                 end
-                PSD_size = length(cons)-count;
-                if verbose_pet>1, fprintf(' (done, %d constraint(s) added (included %d matrix PSD constraint) \n',PSD_size, obj.list_size_tab_PSD), end;
+                LMI_size = length(cons)-count;
+                if verbose_pet>1, fprintf(' (done, %d constraint(s) added (included %d LMIs) \n',LMI_size, obj.list_size_tab_LMIs), end;
             end
             for i=1:obj.list_size_func
                 cons=cons+obj.list_func{i,1}.collect();
@@ -296,7 +296,8 @@ classdef pep < handle
             F=sdpvar(dim2,1);
             tau=sdpvar(1,1);
             obj_func=tau;
-            cons=(G>=0); names = {'Gram Matrix PSD'};
+            cons=(G>=0); 
+            names = {'Gram Matrix PSD'};
             Evaluable.SetGetFunc(F);Evaluable.SetGetGram(G);
             msg = sprintf(' PESTO: Setting up the problem: interpolation constraints (component %d out of %d done)\n', 0,obj.list_size_func);
             if verbose_pet>1, fprintf(msg), end;
@@ -322,11 +323,20 @@ classdef pep < handle
             out.solverDetails=optimize(cons,-obj_func,solver_opt);
             out.WCperformance=double(obj_func);
             
-            out.dualvalues = cell(1,length(cons));
+            % output dual informations
+            k1 = 1; k2 = 1;
             for i=1:length(cons)
-                out.dualvalues{i}=dual(cons(i));
-            end
-            out.dualnames = names;
+                d = dual(cons(i));
+                if length(d) == 1
+                    out.dualvalues(k1) = d;
+                    out.dualnames{k1} = names(i);
+                    k1 = k1 + 1;
+                else
+                    out.dualvalues_LMIs{k2} = d;
+                    out.dualnames_LMIs{k2} = names(i);
+                    k2 = k2 + 1;
+                end
+            end            
             
             if verbose_pet, fprintf(' PESTO: Solver output: %7.5e, solution status: %s\n',out.WCperformance,out.solverDetails.info), end; 
             
@@ -362,4 +372,3 @@ classdef pep < handle
         end
     end
 end
-

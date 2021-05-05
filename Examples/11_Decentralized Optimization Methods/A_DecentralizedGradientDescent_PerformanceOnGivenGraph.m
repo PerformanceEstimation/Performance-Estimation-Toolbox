@@ -18,7 +18,7 @@ alpha = 1./sqrt(K);     % Step-size used in DGD (constant)
 %alpha = 1./(1:K);       % Alternative: Step-sizes used in DGD (diminishing)
 N = 3;                  % Number of agents
 W = 1/N*ones(N,N);      % Communication matrix
-IC = 1;                 % Initial condition constant : ||x0 - xs||^2 <= IC^2
+IC = 1;                 % Constant for the initial condition: ||x0 - xs||^2 <= IC^2
 equalStart = 1;         % All agents starts with the same iterate x0
 fctClass = 'ConvexBoundedGradient'; % Class of functions to consider for the worst-case
 fctParam.R = 1;         % Bounded subgradient constant ||g||^2 <= R^2.

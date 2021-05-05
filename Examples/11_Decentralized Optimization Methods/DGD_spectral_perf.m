@@ -13,7 +13,7 @@ function [wc, Wh, out] = DGD_spectral_perf(K,alpha,N,lam,IC,equalStart,fctClass,
 %   N:          Number of agents in DGD.
 %   lam:        Array 1 x 2 describing the range of eigenvalues of the communication matrix W used in DGD: 
 %               lam(1) <= lam_i(W) <= lam(2) for i=2,...,N (lam_1(W) = 1).
-%   IC:         Constant for initial condition: ||x_i^0 - x*||^2 <= IC.
+%   IC:         Constant for the initial condition: ||x_i^0 - x*||^2 <= IC.
 %   equalStart: Boolean for deciding if all the agents start with the same initial point (1) or not (0).
 %   fctClass:   Name of a PEP functional class. For example 'ConvexBoundedGradient'.
 %   fctParam:   Struct containing the parameters of the functional class. For example fctParam.R = 1.
@@ -110,31 +110,31 @@ function [wc, Wh, out] = DGD_spectral_perf(K,alpha,N,lam,IC,equalStart,fctClass,
             P.AddConstraint(yc2 - (lam(1)+lam(2))*ytx <= -lam(1)*lam(2)*xc2);
         end        
     end
-    if ~single_iter_cons % PSD constraints linking all the iterations together
-        PSD1 = cell(K,K);
-        PSD2 = cell(K,K);
-        PSD3 = cell(K,K);
+    if ~single_iter_cons % LMIs constraints linking all the iterations together
+        LMI1 = cell(K,K);
+        LMI2 = cell(K,K);
+        LMI3 = cell(K,K);
         for k1 = 1:K
             for k2 = 1:K
                 xx = (X{1,k1}-xb{k1})*(X{1,k2}-xb{k2});
                 yy = (Y{1,k1}-yb{k1})*(Y{1,k2}-yb{k2});
                 xy = (X{1,k1}-xb{k1})*(Y{1,k2}-yb{k2});
-                PSD1{k1,k2} = lam(2)*xx - xy;
-                PSD2{k1,k2} = -lam(1)*xx + xy;
-                PSD3{k1,k2} = -lam(2)*lam(1)*xx + (lam(1)+lam(2))*xy - yy;
+                LMI1{k1,k2} = lam(2)*xx - xy;
+                LMI2{k1,k2} = -lam(1)*xx + xy;
+                LMI3{k1,k2} = -lam(2)*lam(1)*xx + (lam(1)+lam(2))*xy - yy;
                 for i = 2:N
                     xx = (X{i,k1}-xb{k1})*(X{i,k2}-xb{k2});
                     yy = (Y{i,k1}-yb{k1})*(Y{i,k2}-yb{k2});
                     xy = (X{i,k1}-xb{k1})*(Y{i,k2}-yb{k2});
-                    PSD1{k1,k2} = PSD1{k1,k2} + lam(2)*xx - xy;
-                    PSD2{k1,k2} = PSD2{k1,k2} -lam(1)*xx + xy;
-                    PSD3{k1,k2} = PSD3{k1,k2} -lam(2)*lam(1)*xx + (lam(1)+lam(2))*xy - yy;
+                    LMI1{k1,k2} = LMI1{k1,k2} + lam(2)*xx - xy;
+                    LMI2{k1,k2} = LMI2{k1,k2} -lam(1)*xx + xy;
+                    LMI3{k1,k2} = LMI3{k1,k2} -lam(2)*lam(1)*xx + (lam(1)+lam(2))*xy - yy;
                 end
             end            
         end   
-      P.AddPSDConstraint(PSD1); % PSD1 is positive semi-definite
-      P.AddPSDConstraint(PSD2); % PSD2 is positive semi-definite
-      P.AddPSDConstraint(PSD3); % PSD3 is positive semi-definite
+      P.AddLMIConstraint(LMI1); % LMI1 is positive semi-definite
+      P.AddLMIConstraint(LMI2); % LMI2 is positive semi-definite
+      P.AddLMIConstraint(LMI3); % LMI3 is positive semi-definite
     end
 
 
