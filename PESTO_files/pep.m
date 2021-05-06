@@ -326,14 +326,19 @@ classdef pep < handle
             % output dual informations
             k1 = 1; k2 = 1;
             for i=1:length(cons)
-                d = dual(cons(i));
-                if length(d) == 1
-                    out.dualvalues(k1) = d;
-                    out.dualnames{k1} = names(i);
-                    k1 = k1 + 1;
+                dual_i = dual(cons(i));
+                if i <= length(names)
+                    name_i = names{i};
                 else
-                    out.dualvalues_LMIs{k2} = d;
-                    out.dualnames_LMIs{k2} = names(i);
+                    name_i = 'Unnamed constraint';
+                end
+                if length(dual_i) == 1  % scalar constraint
+                    out.dualvalues(k1) = dual_i;
+                    out.dualnames{k1} = name_i;
+                    k1 = k1 + 1;
+                else                    % LMI
+                    out.dualvalues_LMIs{k2} = dual_i;
+                    out.dualnames_LMIs{k2} = name_i;  
                     k2 = k2 + 1;
                 end
             end            
