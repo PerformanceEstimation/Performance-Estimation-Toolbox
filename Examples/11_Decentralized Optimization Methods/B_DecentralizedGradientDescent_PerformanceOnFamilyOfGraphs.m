@@ -12,7 +12,7 @@ clear all; clc;
 % The initial iterates satisfy ||x0 - x*||^2 <= IC^2, for all agents.
 %
 % For details, see
-%   Colla, Sebastien, and Julien M. Hendrickx. "Automated Worst-Case
+%   [1] Colla, Sebastien, and Julien M. Hendrickx. "Automated Worst-Case
 %   Performance Analysis of Decentralized Gradient Descent." (2021)
 
 K = 10;                 % Number of iterations of DGD
@@ -29,3 +29,11 @@ avgAll = 1;             % The performance bound considers the average iterates '
 verbose = 1;            % Print the problem and the results
 
 [wc, Wh, out] = DGD_spectral_perf(K,alpha,N,lam,IC,equalStart,fctClass,fctParam,single_iter_cons,avgAll,verbose);
+
+% Theoretical performance guarantee, valid for avgAll = 1, equalStart = 1. (Thm 5 from [1])
+lam2 = max(abs(lam));
+wc_theo = (IC^2 + fctParam.R^2)./(2*sqrt(K)) + 2*fctParam.R^2./(sqrt(K)*(1-lam2));
+if verbose
+    fprintf("Performance guarantee obtained with PESTO (valid for any symmetric doubly stochastic matrix such that lam_2=%1.1f): %1.2f\n",lam2,wc);
+    fprintf("Theoretical performance guarantee (valid for any symmetric doubly stochastic matrix such that lam_2=%1.1f): %1.2f\n",lam2,wc_theo);
+end

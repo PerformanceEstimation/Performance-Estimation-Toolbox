@@ -243,18 +243,7 @@ classdef pep < handle
                 if verbose_pet>1, fprintf(' (done, %d constraint(s) added) \n',init_size), end;
             end
             count=length(cons);
-            if verbose_pet>1, fprintf(' PESTO: Setting up the problem: other scalar constraints'), end;
-            if obj.list_size_others>0
-                for i=1:obj.list_size_others
-                    cons=cons+obj.expr_list_others{i,1}.Eval();
-                    names{end+1} = sprintf('Other%d',i);
-                end
-                other_size=length(cons)-count;
-                if verbose_pet>1, fprintf(' (done, %d constraint(s) added) \n',other_size), end;
-            end
-            count=length(cons);
-            % new LMIs
-            if obj.list_size_tab_LMIs>0
+            if obj.list_size_tab_LMIs>0 % new LMIs
                 if verbose_pet>1, fprintf(' PESTO: Setting up the problem: LMIs constraints'), end;
                 for i=1:obj.list_size_tab_LMIs
                     sdpexpr = obj.expr_list_tab_LMIs{i,1};
@@ -272,6 +261,15 @@ classdef pep < handle
                 LMI_size = length(cons)-count;
                 if verbose_pet>1, fprintf(' (done, %d constraint(s) added (included %d LMIs) \n',LMI_size, obj.list_size_tab_LMIs), end;
             end
+            count=length(cons);
+            if verbose_pet>1, fprintf(' PESTO: Setting up the problem: other scalar constraints'), end;
+            if obj.list_size_others>0
+                for i=1:obj.list_size_others
+                    cons=cons+obj.expr_list_others{i,1}.Eval();
+                    names{end+1} = sprintf('Other%d',i);
+                end
+            end
+           
             for i=1:obj.list_size_func
                 cons=cons+obj.list_func{i,1}.collect();
             end
