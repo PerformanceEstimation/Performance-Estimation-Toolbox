@@ -90,18 +90,31 @@ classdef pep < handle
             obj.expr_list_others{obj.list_size_others,1}=expr;
         end
         function obj=AddLMIConstraint(obj,expr)
-        % AddLMIConstraint allows to add an arbitrary Linear Matrix Inequality (LMI) constraint to the PEP problem.
-        % Input: expr is a cell array of PEP expressions that represents the matrix
-        % that should be positive semi-definite.
+            % AddLMIConstraint allows to add an arbitrary Linear Matrix Inequality (LMI) constraint to the PEP problem.
+            % Input: expr is a cell array of PEP expressions that represents the matrix
+            % that should be positive semi-definite.
             assert(iscell(expr),'LMI constraint should be given as a cell of expressions');
             obj.list_size_tab_LMIs=obj.list_size_tab_LMIs+1;
             obj.expr_list_tab_LMIs{obj.list_size_tab_LMIs,1} = expr;
         end
-        function obj=PerformanceMetric(obj,expr)
+        function obj=PerformanceMetric(obj,expr,status)
             assert(isa(expr,'Evaluable'),'Perfomance measures should be scalar values');
             assert(strcmp(expr.getType(),'Function value'),'Perfomance measures should be scalar values');
-            obj.list_size_perf=obj.list_size_perf+1;
-            obj.expr_list_perf{obj.list_size_perf,1}=expr;
+            if nargin == 2 % default is 'min'
+                obj.list_size_perf=obj.list_size_perf+1;
+                obj.expr_list_perf{obj.list_size_perf,1}=expr;
+            elseif nargin == 3
+                assert(strcmp(status,'min')||strcmp(status,'replace'),'Error in PerformanceMetric(): third input must be ''min'' or ''replace''');
+                switch status
+                    case 'min'
+                        obj.list_size_perf=obj.list_size_perf+1;
+                        obj.expr_list_perf{obj.list_size_perf,1}=expr;
+                    case 'replace'
+                        obj.list_size_perf=1;
+                        obj.expr_list_perf=cell(0,1);
+                        obj.expr_list_perf{obj.list_size_perf,1}=expr;
+                end
+            end
         end
         function obj=AddPerformanceConstraint(obj,expr)
             fprintf('AddPerformanceConstraint is deprecated, consider using PerformanceMetric instead\n');
@@ -229,7 +242,7 @@ classdef pep < handle
                     names{end+1} = sprintf('Perf%d',i);
                 end
                 perf_size=length(cons);
-                if verbose_pet>1, fprintf(' (done, %d constraint(s) added) \n',perf_size), end;
+                if verbose_pet>1, fprintf(' (done, performance measure is minimum of %d element(s)) \n',perf_size), end;
             end
             count=length(cons);
             if obj.list_size_init>0
@@ -269,9 +282,12 @@ classdef pep < handle
                     names{end+1} = sprintf('Other%d',i);
                 end
             end
-           
+            
             for i=1:obj.list_size_func
-                cons=cons+obj.list_func{i,1}.collect();
+                [cons_t,names_t] = obj.list_func{i,1}.collect();
+                cons  = cons+cons_t;
+                names = [names names_t'];
+                clear cons_t names_t;
             end
             others_size=length(cons)-count;
             if verbose_pet>1, fprintf(' (done, %d constraint(s) added) \n',others_size), end;
@@ -283,7 +299,7 @@ classdef pep < handle
                 verbose_solver=0;
                 solver_opt = sdpsettings('verbose',verbose_solver);
                 if nargin < 2
-                    verbose_pet = 1;
+                    verbose_pet = 2;
                 end
             end
             
@@ -294,7 +310,7 @@ classdef pep < handle
             F=sdpvar(dim2,1);
             tau=sdpvar(1,1);
             obj_func=tau;
-            cons=(G>=0); 
+            cons=(G>=0);
             names = {'Gram Matrix PSD'};
             Evaluable.SetGetFunc(F);Evaluable.SetGetGram(G);
             msg = sprintf(' PESTO: Setting up the problem: interpolation constraints (component %d out of %d done)\n', 0,obj.list_size_func);
@@ -336,12 +352,12 @@ classdef pep < handle
                     k1 = k1 + 1;
                 else                    % LMI
                     out.dualvalues_LMIs{k2} = dual_i;
-                    out.dualnames_LMIs{k2} = name_i;  
+                    out.dualnames_LMIs{k2} = name_i;
                     k2 = k2 + 1;
                 end
-            end            
+            end
             
-            if verbose_pet, fprintf(' PESTO: Solver output: %7.5e, solution status: %s\n',out.WCperformance,out.solverDetails.info), end; 
+            if verbose_pet, fprintf(' PESTO: Solver output: %7.5e, solution status: %s\n',out.WCperformance,out.solverDetails.info), end;
             
             if verbose_pet>1, fprintf(' PESTO: Post-processing\n'), end;
             

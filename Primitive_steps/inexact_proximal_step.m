@@ -76,7 +76,7 @@ switch opt.criterion
         eps_sub = fx - fw - v*(x-w);
         gap     = 1/2*e^2 + gamma*eps_sub;
         
-        func.AddConstraint(gap<=epsVar);     
+        func.AddConstraint(gap<=epsVar,'Approximate proximal step');     
     case 'PD_gapII'
         % Approximate proximal operator outputs x such that 
         % ||e|| <= epsVar
@@ -89,7 +89,7 @@ switch opt.criterion
         func.AddComponent(x,gx,fx);
         epsVar  = Point('Function value');
                 
-        func.AddConstraint(e^2<= epsVar); 
+        func.AddConstraint(e^2<= epsVar,'Approximate proximal step'); 
     case 'PD_gapIII'
         % Approximate proximal operator outputs x such that 
         % gamma * (fx - fw - v*(x-w))  <= epsVar
@@ -107,7 +107,7 @@ switch opt.criterion
                 
         eps_sub = fx - fw - v*(x-w);
         
-        func.AddConstraint(gamma*eps_sub<=epsVar);       
+        func.AddConstraint(gamma*eps_sub<=epsVar,'Approximate proximal step');       
         
     case 'Orip-style'
         % Approximate proximal operator outputs x such that 
@@ -130,7 +130,7 @@ switch opt.criterion
         eps_sub = fx - fw - v*(x-w);
         gap     = e*v + eps_sub/gamma;
         
-        func.AddConstraint(gap<=epsVar);        
+        func.AddConstraint(gap<=epsVar,'Approximate proximal step');        
     otherwise
         fprintf('No criterion chosen for inexact prox\n');
 end

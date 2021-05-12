@@ -40,16 +40,16 @@ f_saved = cell(N+1,1);
 for i=1:N
     [g,f]       = F.oracle(x);
     f_saved{i}  = f;
-    P.PerformanceMetric(f-fs);
+    P.PerformanceMetric(f-fs,'min');
     x = x - h(i) * g;
 end
 
 [g,f]        = F.oracle(x);
 f_saved{N+1} = f;
-P.PerformanceMetric(f-fs);
+P.PerformanceMetric(f-fs,'min');
 
 % (5) Solve the PEP
-P.solve()
+P.solve(3)
 
 % (6) Evaluate the output
 for i=1:N+1

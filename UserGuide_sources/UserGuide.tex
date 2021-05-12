@@ -113,6 +113,9 @@
 
 	\section*{Recent updates}
 	\begin{itemize}
+		\item[05/2021] {\bf{}[Update]} Default verbose setting is medium (``2''): PESTO in verbose mode, but solver not.
+		\item[05/2021] {\bf{}[Update]} Update in the \verb|PerformanceMetric| command, which allows replacing previous performance measure (instead of taking the $\min$, which it still does by default, see example in Section~\ref{sec:basicuse}).
+		\item[05/2021] {\bf{}[Update]} We can add names to additional (custom) constraints, which now appear in the corresponding list of dual variables (along with their names).
 		\item[05/2021] {\bf{}[New]} Possibility of using additional linear matrix inequalities (LMIs) using the new command \verb?AddLMIConstraint?.
 		\item[05/2021] {\bf{}[New]} Decentralized Gradient Descent (DGD) added to the examples.
 		\item[05/2020] {\bf{}[New]} New primitives and examples: inexact proximal operations.
@@ -418,9 +421,16 @@ P.InitialCondition(F0-Fs<=1);	% Add an initial condition F0-Fs<= 1
 		In PESTO, the performance measure is assumed to be of the form $\min_k \{m_k(G,\{f_i\}_i)\}$, where each $m_k(.)$ is a performance measure (e.g., in the previous subgradient example, we used $\min_{0\leq k \leq N} f_k-f_\star$). The command \verb?PerformanceMetric? allows to create new $m_k(.)$'s.\\[-1cm]
 		\begin{lstlisting}
 P.PerformanceMetric((x-xs)^2); 		% Add a performance measure ||x-xs||^2
-P.PerformanceMetric(F.value(x)-Fs);	% Add a performance measure F0-Fs
+P.PerformanceMetric(F.value(x)-Fs);	% Add a performance measure F(x)-Fs
 		\end{lstlisting}
-		Note that as in the example~\eqref{Intro:PEP3}, the performance metrics are encoded as new constraints involving the objective function $\tau$.
+		Note that as in the example~\eqref{Intro:PEP3}, the performance metrics are encoded as new constraints involving the objective function $\tau$. The default behavior of \verb?PerformanceMetric? can also be changed to replace the previous objectives, as follows.
+		\begin{lstlisting}
+P.PerformanceMetric((x-xs)^2); 	% Add a performance measure ||x-xs||^2
+P.PerformanceMetric((F.gradient(x))^2,'min'); % Add a performance measure ||F'(x)||^2, same behavior as P.PerformanceMetric((F.gradient(x))^2)
+% At this point, the performance measure is min{ ||x-xs||^2, ||F'(x)||^2}.
+% Let's change that to F(x)-Fs.
+P.PerformanceMetric(F.value(x)-Fs,'replace');	% Replace all previously defined performance measures by F(x)-Fs
+		\end{lstlisting}
 	\end{enumerate}
 	\newpage
 	\subsection{Functional classes} \label{sec:functions}

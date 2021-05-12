@@ -44,7 +44,7 @@ fN = F.value(x{N+1});         % fN=F(xN)
 P.PerformanceMetric(fN-fs);   % Worst-case evaluated as F(x)-F(xs)
 
 % (5) Solve the PEP
-P.solve()
+out=P.solve()
 
 % (6) Evaluate the output
 double(fN-fs)   % worst-case objective function accuracy
