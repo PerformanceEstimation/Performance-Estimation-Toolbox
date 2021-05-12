@@ -2,9 +2,9 @@ Authors: A. Taylor 		INRIA Paris,
          F. Glineur		Universite catholique de Louvain,
          J. Hendrickx		Universite catholique de Louvain.
 
-Date:   Feb 2020
+Date:   May 2021
 
-Version: Feb 2020
+Version: May 2021
 
 ----- Introduction
 
@@ -19,10 +19,7 @@ Taylor, Adrien B., Julien M. Hendrickx, and François Glineur. "Performance Esti
 
 ----- Setup
 
-In order to use the code, you should have YALMIP installed, along with some semidefinite solver (e.g. Mosek, Sedumi, SDPT3, ...).
-
-Once YALMIP and the SDP solver installed (type 'yalmiptest' for checking the installation went fine); the toolbox can simply be installed by executing the 'Install_PESTO' script (which only adds the required folders to your Matlab paths).
-You can now execute the demo files for a step by step introduction to the toolbox.
+See Readme.md
 
 ----- Links
 

@@ -50,7 +50,7 @@ The general purpose of the toolbox is to help the researchers producing worst-ca
 
 **Note:** This code requires [YALMIP](https://yalmip.github.io/) along with a suitable SDP solver (e.g., Sedumi, SDPT3, Mosek).
 
-**Setup with dependencies:** guidelines can be found on the [WIKI](https://github.com/AdrienTaylor/Performance-Estimation-Toolbox/wiki)
+**Setup with dependencies:** guidelines can be found on the [wiki](https://github.com/AdrienTaylor/Performance-Estimation-Toolbox/wiki/Toolbox-(and-dependencies)-installation)
 
 Once YALMIP and the SDP solver installed (type 'yalmiptest' for checking the installation went fine); the toolbox can simply be installed by typing
 ```Matlab
