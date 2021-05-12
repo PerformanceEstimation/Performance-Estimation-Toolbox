@@ -59,6 +59,8 @@ Install_PESTO
 in the Matlab prompt (which only adds the required folders to your Matlab path).
 You can now execute the demo files for a step by step introduction to the toolbox.
 
+**Numerical efficiency** Note that it is in general not reasonable to solve 'pure' PEPs (not involving any relaxation) with more than 300 iterations (in the base case: unconstrained minimization), see our numerical tests on the [wiki](https://github.com/AdrienTaylor/Performance-Estimation-Toolbox/wiki/Numerical-efficiency-of-PESTO).
+
 
 ## Example
 
