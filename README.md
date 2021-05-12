@@ -14,21 +14,9 @@ Version: May 2021
 - [**François Glineur**](https://perso.uclouvain.be/francois.glineur/)
 - [**Sébastien Colla**](https://perso.uclouvain.be/sebastien.colla/)
 
-#### Acknowledgments
-
-The authors would like to thank [**Francois Gonze**](https://perso.uclouvain.be/francois.gonze/) from UCLouvain and **Yoel Drori** from Google Inc. for their feedbacks on preliminary versions of the toolbox.
-
-Additional material was incorporated thanks to:
-- [**Ernest Ryu**](http://www.math.snu.ac.kr/~ernestryu/) (SNU), [**Carolina Bergeling**](http://www.control.lth.se/personnel/carolina-bergeling.html) (Lund), and [**Pontus Giselsson**](http://www.control.lth.se/personnel/pontus-giselsson/) (Lund) (monotone operators and splitting methods),
-- [**Francis Bach**](https://www.di.ens.fr/~fbach/) (Inria & ENS Paris) (stochastic methods, potential functions, and inexact proximal operators),
-- [**Radu-Alexandru Dragomir**](https://www.di.ens.fr/radu-alexandru.dragomir/) (ENS Paris & TSE), [**Alexandre d’Aspremont**](https://www.di.ens.fr/~aspremon/) (CNRS & ENS Paris), and [**Jérôme Bolte**](https://www.tse-fr.eu/people/jerome-bolte) (TSE) (Bregman divergences and new notions of smoothness).
-- [**Mathieu Barré**](https://mathbarre.github.io/) (Inria \& ENS Paris), and [**Alexandre d’Aspremont**](https://www.di.ens.fr/~aspremon/) (CNRS \& ENS Paris) (adaptive methods, and inexact proximal operators).
-
-Last but not least, we thank **Loic Estève** (Inria) for technical support.
-
 #### Performance Estimation Framework
 
-The toolbox implements the performance estimation approach as developped in the following articles:
+The toolbox implements the performance estimation approach as developped in the following works:
  > [2] Taylor, Adrien B., Julien M. Hendrickx, and François Glineur. "Smooth strongly convex interpolation and exact worst-case performance of first-order methods." Mathematical Programming 161.1-2 (2017): 307-345.
 
  > [3] Taylor, Adrien B., Julien M. Hendrickx, and François Glineur. "Exact worst-case performance of first-order methods for composite convex optimization." SIAM Journal on Optimization 27.3 (2017): 1283-1313
@@ -124,7 +112,17 @@ double(fN-fs)   % worst-case objective function accuracy
 
 ```
 
+#### Acknowledgments
 
+The authors would like to thank [**Francois Gonze**](https://perso.uclouvain.be/francois.gonze/) from UCLouvain and **Yoel Drori** from Google Inc. for their feedbacks on preliminary versions of the toolbox.
+
+Additional material was incorporated thanks to:
+- [**Ernest Ryu**](http://www.math.snu.ac.kr/~ernestryu/) (SNU), [**Carolina Bergeling**](http://www.control.lth.se/personnel/carolina-bergeling.html) (Lund), and [**Pontus Giselsson**](http://www.control.lth.se/personnel/pontus-giselsson/) (Lund) (monotone operators and splitting methods),
+- [**Francis Bach**](https://www.di.ens.fr/~fbach/) (Inria & ENS Paris) (stochastic methods, potential functions, and inexact proximal operators),
+- [**Radu-Alexandru Dragomir**](https://www.di.ens.fr/radu-alexandru.dragomir/) (ENS Paris & TSE), [**Alexandre d’Aspremont**](https://www.di.ens.fr/~aspremon/) (CNRS & ENS Paris), and [**Jérôme Bolte**](https://www.tse-fr.eu/people/jerome-bolte) (TSE) (Bregman divergences and new notions of smoothness).
+- [**Mathieu Barré**](https://mathbarre.github.io/) (Inria \& ENS Paris), and [**Alexandre d’Aspremont**](https://www.di.ens.fr/~aspremon/) (CNRS \& ENS Paris) (adaptive methods, and inexact proximal operators).
+
+Last but not least, we thank **Loic Estève** (Inria) for technical support.
 
  
 
