@@ -42,9 +42,9 @@ if nargin < 4 % relative accuracy
 end
 
 if abs==1 % absolute accuracy
-    f.AddConstraint((g-d)^2-eps^2<=0);
+    f.AddConstraint((g-d)^2-eps^2<=0,'Approximate gradient (absolute accuracy)');
 else
-    f.AddConstraint((g-d)^2-eps^2*g^2<=0);
+    f.AddConstraint((g-d)^2-eps^2*g^2<=0,'Approximate gradient (relative accuracy)');
 end
 
 

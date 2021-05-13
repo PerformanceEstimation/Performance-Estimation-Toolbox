@@ -3,20 +3,30 @@ classdef (Abstract) functionHandler < handle
         
         expr_list_others;
         list_size_others;
+        names_list_others;
     end
     methods
         function obj=functionHandler()
             obj.list_size_others=0;
             obj.expr_list_others=cell(0,1);
+            obj.names_list_others=cell(0,1);
             functionHandler.CountActive(1);
         end
         function delete(obj)
             functionHandler.CountActive(-1);
         end
-        function obj=AddConstraint(obj,expr)
-            assert(isa(expr,'Constraint'),'Invalid initial condition');
-            obj.list_size_others=obj.list_size_others+1;
-            obj.expr_list_others{obj.list_size_others,1}=expr;
+        function obj=AddConstraint(obj,expr,name)
+            assert(isa(expr,'Constraint'),'Invalid constraint');
+            if nargin < 3
+                obj.list_size_others=obj.list_size_others+1;
+                obj.expr_list_others{obj.list_size_others,1}=expr;
+                obj.names_list_others{obj.list_size_others,1}='Unnamed constraint';
+            elseif nargin == 3
+                assert(ischar(name),'Invalid name in constraint (must be array of characters; use single quotes)');
+                obj.list_size_others=obj.list_size_others+1;
+                obj.expr_list_others{obj.list_size_others,1}=expr;
+                obj.names_list_others{obj.list_size_others,1}=name;
+            end
         end
         function g=evaluate(obj,expr,tag) % SAME AS GRADIENT
             if nargin>=3
@@ -54,12 +64,13 @@ classdef (Abstract) functionHandler < handle
             end
             [~,f]=obj.oracle(expr,spec);
         end
-        function cons=collect(obj)
+        function [cons,names]=collect(obj)
             cons=[];
             for i=1:obj.list_size_others
                 lexpr=obj.expr_list_others{i,1}.Eval();
                 cons=cons+lexpr;
             end
+            names=obj.names_list_others;
         end
         function obj3=plus(obj1,obj2)
             assert(isa(obj1,'functionHandler') && isa(obj2,'functionHandler'));

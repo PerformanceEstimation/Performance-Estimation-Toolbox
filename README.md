@@ -4,30 +4,19 @@ This code comes jointly with the following [`reference`](PESTO_CDC2017_FINAL.pdf
 
 > [1] Taylor, Adrien B., Julien M. Hendrickx, and François Glineur. "Performance Estimation Toolbox (PESTO): automated worst-case analysis of first-order optimization methods." Proceedings of the 56th IEEE Conference on Decision and Control (CDC 2017).
 
-Date:    June 2020
+Date:    May 2021
 
-Version: June 2020
+Version: May 2021
 
-#### Authors
+#### Authors & Contributors
 - [**Adrien Taylor**](http://www.di.ens.fr/~ataylor/)
 - [**Julien Hendrickx**](https://perso.uclouvain.be/julien.hendrickx/index.html)
 - [**François Glineur**](https://perso.uclouvain.be/francois.glineur/)
-
-#### Acknowledgments
-
-The authors would like to thank [**Francois Gonze**](https://perso.uclouvain.be/francois.gonze/) from UCLouvain and **Yoel Drori** from Google Inc. for their feedbacks on preliminary versions of the toolbox.
-
-Additional material was incorporated thanks to:
-- [**Ernest Ryu**](https://www.math.ucla.edu/~eryu/) (UCLA), [**Carolina Bergeling**](http://www.control.lth.se/personnel/carolina-bergeling.html) (Lund), and [**Pontus Giselsson**](http://www.control.lth.se/personnel/pontus-giselsson/) (Lund) (monotone operators and splitting methods),
-- [**Francis Bach**](https://www.di.ens.fr/~fbach/) (Inria & ENS Paris) (stochastic methods, potential functions, and inexact proximal operators),
-- [**Radu-Alexandru Dragomir**](https://www.di.ens.fr/radu-alexandru.dragomir/) (ENS Paris & TSE), [**Alexandre d’Aspremont**](https://www.di.ens.fr/~aspremon/) (CNRS & ENS Paris), and [**Jérôme Bolte**](https://www.tse-fr.eu/people/jerome-bolte) (TSE) (Bregman divergences and new notions of smoothness).
-- **Mathieu Barré** (Inria \& ENS Paris), and [**Alexandre d’Aspremont**](https://www.di.ens.fr/~aspremon/) (CNRS \& ENS Paris) (adaptive methods, and inexact proximal operators).
-
-Last but not least, we thank **Loic Estève** (Inria) for technical support.
+- [**Sébastien Colla**](https://perso.uclouvain.be/sebastien.colla/)
 
 #### Performance Estimation Framework
 
-The toolbox implements the performance estimation approach as developped in the following articles:
+The toolbox implements the performance estimation approach as developped in the following works:
  > [2] Taylor, Adrien B., Julien M. Hendrickx, and François Glineur. "Smooth strongly convex interpolation and exact worst-case performance of first-order methods." Mathematical Programming 161.1-2 (2017): 307-345.
 
  > [3] Taylor, Adrien B., Julien M. Hendrickx, and François Glineur. "Exact worst-case performance of first-order methods for composite convex optimization." SIAM Journal on Optimization 27.3 (2017): 1283-1313
@@ -49,12 +38,16 @@ The general purpose of the toolbox is to help the researchers producing worst-ca
 
 **Note:** This code requires [YALMIP](https://yalmip.github.io/) along with a suitable SDP solver (e.g., Sedumi, SDPT3, Mosek).
 
+**Setup with dependencies:** guidelines can be found on the [wiki](https://github.com/AdrienTaylor/Performance-Estimation-Toolbox/wiki/Toolbox-(and-dependencies)-installation)
+
 Once YALMIP and the SDP solver installed (type 'yalmiptest' for checking the installation went fine); the toolbox can simply be installed by typing
 ```Matlab
 Install_PESTO
 ```
 in the Matlab prompt (which only adds the required folders to your Matlab path).
 You can now execute the demo files for a step by step introduction to the toolbox.
+
+**Numerical efficiency** Note that it is in general not reasonable to solve 'pure' PEPs (not involving any relaxation) with more than 300 iterations (in the base case: unconstrained minimization), see our numerical tests on the [wiki](https://github.com/AdrienTaylor/Performance-Estimation-Toolbox/wiki/Numerical-efficiency-of-PESTO).
 
 
 ## Example
@@ -119,7 +112,17 @@ double(fN-fs)   % worst-case objective function accuracy
 
 ```
 
+#### Acknowledgments
 
+The authors would like to thank [**Francois Gonze**](https://perso.uclouvain.be/francois.gonze/) from UCLouvain and **Yoel Drori** from Google Inc. for their feedbacks on preliminary versions of the toolbox.
+
+Additional material was incorporated thanks to:
+- [**Ernest Ryu**](http://www.math.snu.ac.kr/~ernestryu/) (SNU), [**Carolina Bergeling**](http://www.control.lth.se/personnel/carolina-bergeling.html) (Lund), and [**Pontus Giselsson**](http://www.control.lth.se/personnel/pontus-giselsson/) (Lund) (monotone operators and splitting methods),
+- [**Francis Bach**](https://www.di.ens.fr/~fbach/) (Inria & ENS Paris) (stochastic methods, potential functions, and inexact proximal operators),
+- [**Radu-Alexandru Dragomir**](https://www.di.ens.fr/radu-alexandru.dragomir/) (ENS Paris & TSE), [**Alexandre d’Aspremont**](https://www.di.ens.fr/~aspremon/) (CNRS & ENS Paris), and [**Jérôme Bolte**](https://www.tse-fr.eu/people/jerome-bolte) (TSE) (Bregman divergences and new notions of smoothness).
+- [**Mathieu Barré**](https://mathbarre.github.io/) (Inria \& ENS Paris), and [**Alexandre d’Aspremont**](https://www.di.ens.fr/~aspremon/) (CNRS \& ENS Paris) (adaptive methods, and inexact proximal operators).
+
+Last but not least, we thank **Loic Estève** (Inria) for technical support.
 
  
 

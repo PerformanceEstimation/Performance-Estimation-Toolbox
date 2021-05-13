@@ -24,7 +24,7 @@
 }
 @article{Article:sdpt3,
   title={SDPT3—a MATLAB software package for semidefinite programming, version 1.3},
-  author={Toh, Kim-Chuan and Todd, Michael J and T{\"u}t{\"u}nc{\"u}, Reha H},
+  author={Toh, K.-C. and Todd, M.J. and T{\"u}t{\"u}nc{\"u}, R.H.},
   journal={Optimization methods and software},
   volume={11},
   number={1-4},
@@ -49,7 +49,7 @@
 }
 @inproceedings{jaggi2013revisiting,
 	title={Revisiting Frank-Wolfe: Projection-Free Sparse Convex Optimization},
-	author={Jaggi, Martin},
+	author={Jaggi, M.},
 	booktitle={International Conference on Machine Learning (ICML)},
 	pages={427--435},
 	year={2013}
@@ -126,11 +126,9 @@ language={English}
 @InProceedings{pmlr-v99-taylor19a,
 	title = 	 {Stochastic first-order methods: non-asymptotic and computer-aided analyses via potential functions},
 	author = 	 {Taylor, A. and Bach, F.},
-	pages = 	 {2934--2992},
 	year = 	 {2019},
-	editor = 	 {Beygelzimer, Alina and Hsu, Daniel},
-	volume = 	 {99},
-	series = 	 {Proceedings of Machine Learning Research}}
+	booktitle={Conference on Learning Theory (COLT)}
+}
 
 @article{deKlerkELS2016,
 	title={On the worst-case complexity of the gradient method with exact line search for smooth strongly convex functions},
@@ -143,11 +141,16 @@ language={English}
 	publisher={Springer}
 }
 @article{de2017worst,
-	title={Worst-case convergence analysis of gradient and Newton methods through semidefinite programming performance estimation},
-	author={de Klerk, E. and Glineur, F. and Taylor, A.},
-	journal={preprint arXiv:1709.05191},
-	year={2017}
+	title={Worst-case convergence analysis of inexact gradient and Newton methods through semidefinite programming performance estimation},
+	author={De Klerk, E. and Glineur, F. and Taylor, A.B.},
+	journal={SIAM Journal on Optimization},
+	volume={30},
+	number={3},
+	pages={2053--2082},
+	year={2020},
+	publisher={SIAM}
 }
+
 
 @article{guler1992new,
 	title={New proximal point algorithms for convex minimization},
@@ -192,7 +195,7 @@ language={English}
 @Article{drori2014optimal,
 author="Drori, Y.
 and Teboulle, M.",
-title="An optimal variant of Kelley's cutting-plane method",
+title="An optimal variant of {K}elley's cutting-plane method",
 journal="Mathematical Programming",
 year="2016",
 volume="160",
@@ -258,11 +261,14 @@ pages="321--351"
 	publisher={Springer}
 }
 @article{kim2019accelerated,
-	title={Accelerated Proximal Point Method and Forward Method for Monotone Inclusions},
+	title={Accelerated proximal point method for maximally monotone operators},
 	author={Kim, D.},
-	journal={preprint arXiv:1905.05149},
-	year={2019}
+	journal={Mathematical Programming},
+	pages={1--31},
+	year={2021},
+	publisher={Springer}
 }
+
 
 @article{giselsson2016linear,
 	title={Linear convergence and metric selection for Douglas-Rachford splitting and ADMM},
@@ -355,18 +361,26 @@ pages="321--351"
 }
 @article{drori2018efficient,
 	title={Efficient first-order methods for convex minimization: a constructive approach},
-	author={Drori, Y. and Taylor, A. B.},
+	author={Drori, Y. and Taylor, A.B.},
 	journal={Mathematical Programming},
-	pages={1--38},
+	volume={184},
+	number={1},
+	pages={183--220},
+	year={2020},
 	publisher={Springer}
 }
 
 @article{kim2018optimizing,
-	title={Optimizing the Efficiency of First-order Methods for Decreasing the Gradient of Smooth Convex Functions},
-	author={Kim, D. and Fessler, J. A.},
-	journal={preprint arXiv:1803.06600},
-	year={2018}
+	title={Optimizing the efficiency of first-order methods for decreasing the gradient of smooth convex functions},
+	author={Kim, D. and Fessler, J.A.},
+	journal={Journal of Optimization Theory and Applications},
+	volume={188},
+	number={1},
+	pages={192--219},
+	year={2021},
+	publisher={Springer}
 }
+
 @book{Book:Nesterov2,
 	title = "Lectures on Convex Optimization",
 	author = "Nesterov, Y.",
@@ -384,23 +398,31 @@ pages="321--351"
 	year = {1983}
 }
 @article{ryu2018operator,
-	title={Operator Splitting Performance Estimation: Tight contraction factors and optimal parameter selection},
-	author={Ryu, E. K. and Taylor, A. B. and Bergeling, C. and Giselsson, P.},
-	journal={preprint arXiv:1812.00146},
-	year={2018}
+	title={Operator splitting performance estimation: Tight contraction factors and optimal parameter selection},
+	author={Ryu, E.K. and Taylor, A.B. and Bergeling, C. and Giselsson, P.},
+	journal={SIAM Journal on Optimization},
+	volume={30},
+	number={3},
+	pages={2251--2271},
+	year={2020},
+	publisher={SIAM}
 }
 @article{Dragomir2019optimal,
-	title={Optimal Complexity and Certification of Bregman First-Order Methods},
-	author={Dragomir, R.-A. and Taylor, A. and d'Aspremont, A., and Bolte, J.},
-	journal={preprint arXiv:1911.08510},
-	year={2019}
+	title={Optimal complexity and certification of Bregman first-order methods},
+	author={Dragomir, R.-A. and Taylor, A.B. and d’Aspremont, A. and Bolte, J.},
+	journal={Mathematical Programming},
+	pages={1--43},
+	year={2021},
+	publisher={Springer}
 }
-@article{Barre2020Polyak,
-	title={Complexity Guarantees for Polyak Steps with Momentum},
-	author={Barr\'e, M. and Taylor, A. and d'Aspremont, A.},
-	journal={preprint arXiv:2002.00915},
+
+@inproceedings{Barre2020Polyak,
+	title={Complexity guarantees for {P}olyak steps with momentum},
+	author={Barr{\'e}, M. and Taylor, A. and d’Aspremont, A.},
+	booktitle={Conference on Learning Theory (COLT)},
 	year={2020}
 }
+
 @article{Barre2020inexact,
 	title={Principled analyses and design of first-order methods with inexact proximal operators},
 	author={Barr\'e, M. and Taylor, A. and Bach, F.},
@@ -429,7 +451,7 @@ pages="321--351"
 }
 @article{moursi2019douglas,
 	title={Douglas--Rachford Splitting for the Sum of a Lipschitz Continuous and a Strongly Monotone Operator},
-	author={Moursi, Walaa M and Vandenberghe, Lieven},
+	author={Moursi, W.M. and Vandenberghe, L.},
 	journal={Journal of Optimization Theory and Applications},
 	volume={183},
 	number={1},
@@ -450,7 +472,7 @@ publisher={Springer}
 }
 @article{bansal2017potential,
 	title={Potential-Function Proofs for Gradient Methods},
-	author={Bansal, Nikhil and Gupta, Anupam},
+	author={Bansal, N. and Gupta, A.},
 	journal={Theory of Computing},
 	volume={15},
 	number={1},
@@ -536,10 +558,16 @@ publisher={Springer}
 	publisher={SIAM}
 }
 @article{lieder2017convergence,
-	title={On the Convergence Rate of the Halpern-Iteration},
+	title={On the convergence rate of the {H}alpern-iteration},
 	author={Lieder, F.},
-	year={2017}
+	journal={Optimization Letters},
+	volume={15},
+	number={2},
+	pages={405--418},
+	year={2021},
+	publisher={Springer}
 }
+
 @phdthesis{lieder2018,
 	title={Projection Based Methods for Conic Linear Programming Optimal First Order Complexities and Norm Constrained Quasi Newton Methods},
 	author={Lieder, F.},
@@ -584,7 +612,7 @@ publisher={Springer}
 }
 
 @article{Nedic2009Distrib,
-author = {Nedic, Angelia and Ozdaglar, Asuman},
+author = {Nedic, A. and Ozdaglar, A.},
 year = {2009},
 month = {02},
 pages = {48 - 61},

@@ -27,13 +27,13 @@ else
     [gx,fx]=f.oracle(x);
 end
 nb_orth=max(size(dirs));
-f.AddConstraint((x-x0)*gx==0);
+f.AddConstraint((x-x0)*gx==0,'Orthogonality condition (exact linesearch)');
 if isa(dirs,'cell')
     for i=1:nb_orth
-        f.AddConstraint(dirs{i}*gx==0);
+        f.AddConstraint(dirs{i}*gx==0,'Orthogonality condition (exact linesearch)');
     end
 else
-    f.AddConstraint(dirs*gx==0);
+    f.AddConstraint(dirs*gx==0,'Orthogonality condition (exact linesearch)');
 end
 end
 

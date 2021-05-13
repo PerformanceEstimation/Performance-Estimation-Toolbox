@@ -18,9 +18,12 @@ classdef Scaled_Function < functionHandler
             end
             obj.func.AddComponent(x,g1,f1,spec);
         end
-        function obj=AddConstraint(obj,expr)
-            assert(isa(expr,'Constraint'),'Invalid initial condition');
-            obj.func.AddConstraint(expr);
+        function obj=AddConstraint(obj,expr,name)
+            if nargin < 3
+                obj.func.AddConstraint(expr);
+            elseif nargin == 3
+                obj.func.AddConstraint(expr,name);
+            end
         end
         function cons=GetInterp(obj)
             cons=[];

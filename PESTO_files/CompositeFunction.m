@@ -21,9 +21,12 @@ classdef CompositeFunction < functionHandler
             obj.func1.AddComponent(x,g1,f1,spec);
             obj.func2.AddComponent(x,g2,f2,spec);
         end
-        function obj=AddConstraint(obj,expr)
-            assert(isa(expr,'Constraint'),'Invalid initial condition');
-            obj.func1.AddConstraint(expr);
+        function obj=AddConstraint(obj,expr,name)
+            if nargin < 3
+                obj.func1.AddConstraint(expr);
+            elseif nargin == 3
+                obj.func1.AddConstraint(expr,name);
+            end
         end
         function cons=GetInterp(obj)
             cons=[];
@@ -66,7 +69,7 @@ classdef CompositeFunction < functionHandler
         end
         function [f1, f2] = getFunctions(obj)
             f1 = obj.func1;
-            f2 = obj.func2; 
+            f2 = obj.func2;
         end
         function disp(obj)
             fprintf('Composite function\n');
