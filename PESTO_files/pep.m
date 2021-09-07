@@ -46,6 +46,8 @@ classdef pep < handle
         list_size_tab_LMIs;
         list_func;
         list_size_func;
+        list_cons_mat;
+        list_size_cons_mat;
         t_reset;
         pesto_opt_traceheuristic;
     end
@@ -61,6 +63,8 @@ classdef pep < handle
             obj.list_size_tab_LMIs=0;
             obj.list_func=cell(0,1);
             obj.list_size_func=0;
+            obj.list_cons_mat=cell(0,1);
+            obj.list_size_cons_mat=0;
             obj.t_reset=now;
             obj.pesto_opt_traceheuristic = 0;
             Point.Reset(obj.t_reset);
@@ -80,6 +84,19 @@ classdef pep < handle
         function pt=StartingPoint(obj)
             pt=Point('Point');
         end
+        function pts=MultiStartingPoints(obj,N,identical_pts)
+        % MultiStartingPoints generates a cell with N new Starting Points.
+        % identical_pts is a boolean to indicate if the points should be identical or not.
+            pts=cell(N,1);
+            pts{1}=obj.StartingPoint();
+            for i=2:N
+                if identical_pts
+                    pts{i}=pts{1};
+                else
+                    pts{i}=obj.StartingPoint();
+                end
+            end
+        end
         function pt=GenStartingPoint(obj)
             fprintf('GenStartingPoint is deprecated, consider using StartingPoint instead\n');
             pt=obj.StartingPoint();
@@ -89,13 +106,37 @@ classdef pep < handle
             obj.list_size_others=obj.list_size_others+1;
             obj.expr_list_others{obj.list_size_others,1}=expr;
         end
+        function obj=AddMultiConstraints(obj,func,varargin)
+        % AddMultiConstraints adds the same constraint expression, defined by func with different inputs, 
+        % e.g. a different input for each agent in decentralized optimization.
+        % Input :   - func is a matlab function
+        %           - varargin are the inputs to be used for func
+            all_cons = cellfun(func, varargin{:},'UniformOutput',false);
+            for i=1:length(all_cons)
+                obj.AddConstraint(all_cons{i});
+            end
+        end
         function obj=AddLMIConstraint(obj,expr)
-            % AddLMIConstraint allows to add an arbitrary Linear Matrix Inequality (LMI) constraint to the PEP problem.
-            % Input: expr is a cell array of PEP expressions that represents the matrix
-            % that should be positive semi-definite.
+        % AddLMIConstraint adds an arbitrary Linear Matrix Inequality (LMI) constraint to the PEP problem.
+        % Input: expr is a cell array of PEP expressions that represents the matrix
+        % that should be positive semi-definite.
             assert(iscell(expr),'LMI constraint should be given as a cell of expressions');
             obj.list_size_tab_LMIs=obj.list_size_tab_LMIs+1;
             obj.expr_list_tab_LMIs{obj.list_size_tab_LMIs,1} = expr;
+        end
+        function out=DeclareConsensusMatrix(obj,type,mat,time_varying_mat)
+        % DeclareConsensusMatrix declares a matrix to use during the consensus step of a decentralized optimization algorithm.
+        % Input:    - type is either 'exact' or 'spectral_relaxed', depending on the type of description for the matrix
+        %           - mat describe the matrix with an NxN array if type='exact', or with a range of eigenvalues (2x1) if type='spectral_relaxed'
+        %           - time_varying is a boolean that indicates if the different consensus built with this object should use
+        %           the same matrix (time_varying = 0), or can use different ones (time_varying = 1)
+        %Output:    - the matrix object
+            if nargin < 4
+                time_varying_mat = 0;
+            end
+            out = matrix(type, mat, obj, time_varying_mat);
+            obj.list_size_cons_mat=obj.list_size_cons_mat+1;
+            obj.list_cons_mat{obj.list_size_cons_mat,1} = out;
         end
         function obj=PerformanceMetric(obj,expr,status)
             assert(isa(expr,'Evaluable'),'Perfomance measures should be scalar values');
@@ -138,6 +179,33 @@ classdef pep < handle
                 out=obj.AddObjective(InterpEval,param);
             else
                 out=obj.AddObjective(InterpEval);
+            end
+        end
+        function [Fi,Fav,xsi,Fsi]=DeclareMultiFunctions(obj,InterpEval,param,N,returnOpt)
+        % DeclareMultiFunctions declares N different objective functions
+        % from the same class of function (with the same parameters).
+        % Input :   - InterpEval : the class of function to be used
+        %           - param : parameter of the functional class       
+        %           - N : number of function to be created
+        %           - returnOpt : boolean to decide if the optimum of each
+        %           local functions are computed
+        % Output :  - Fi : cell with the N objective functions
+        %           - Fav : new objective function which is the average of the Fi
+        %           - xsi : cell with optimal points of each Fi
+        %           - Fsi : cell with the optimal value of each Fi
+            if nargin == 4
+                returnOpt=0;
+            end
+            Fi=cell(N,1); xsi=cell(N,1); Fsi=cell(N,1);
+            for i=1:N
+                Fi{i}=obj.DeclareFunction(InterpEval,param);
+                if returnOpt
+                    [xsi{i},Fsi{i}]=Fi{i}.OptimalPoint();
+                end
+            end
+            Fav=Fi{1}/N;
+            for i=2:N
+                Fav=Fav+Fi{i}/N;
             end
         end
         function out=AddObjective(obj,InterpEval,param)
@@ -301,6 +369,11 @@ classdef pep < handle
                 if nargin < 2
                     verbose_pet = 2;
                 end
+            end
+            
+            %Add consensus constraints from list of matrices
+            for i=1:obj.list_size_cons_mat
+                obj.list_cons_mat{i}.AddConsensusConstraints();
             end
             
             dim1=Point.GetSize('Point');
