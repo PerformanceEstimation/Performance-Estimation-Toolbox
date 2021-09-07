@@ -1,5 +1,5 @@
 classdef pep < handle
-
+    
     %
     %       Performance Estimation Toolbox (PESTO) version 20191130
     %
@@ -34,7 +34,7 @@ classdef pep < handle
     %           Help is available for all primitive evaluations (example:
     %           type 'help inexactsubgradient')
     %
-
+    
     properties (GetAccess=private)
         expr_list_perf;
         list_size_perf;
@@ -282,7 +282,7 @@ classdef pep < handle
                     names{end+1} = sprintf('Other%d',i);
                 end
             end
-
+            
             for i=1:obj.list_size_func
                 [cons_t,names_t] = obj.list_func{i,1}.collect();
                 cons  = cons+cons_t;
@@ -293,7 +293,7 @@ classdef pep < handle
             if verbose_pet>1, fprintf(' (done, %d constraint(s) added) \n',others_size), end;
         end
         function out=solve(obj,verbose_pet,solver_opt)
-
+            
             assert(obj.t_reset==Point.Reset(),'Another PEP environment has been initialized, re-generate this PEP before solving it')
             if nargin < 3
                 verbose_solver=0;
@@ -302,7 +302,7 @@ classdef pep < handle
                     verbose_pet = 2;
                 end
             end
-
+            
             dim1=Point.GetSize('Point');
             if verbose_pet, fprintf(' PESTO: Setting up the problem, size of the main PSD matrix: %d x %d\n',dim1,dim1), end
             G=sdpvar(dim1);
@@ -328,52 +328,72 @@ classdef pep < handle
             end
             interp_cons=length(cons)-1;
             if verbose_pet>1, fprintf('      Total interpolation constraints:  %d \n',interp_cons), end;
-
+            
             [addcons, addnames] = obj.collect(tau,verbose_pet);
             cons=cons+addcons; names = [names addnames];
-
-            if verbose_pet>1, fprintf(' PESTO: Calling SDP solver\n'), end;
-
-            out.solverDetails=optimize(cons,-obj_func,solver_opt);
-            out.WCperformance=double(obj_func);
-
-            % output dual informations
-            k1 = 1; k2 = 1;
-            for i=1:length(cons)
-                dual_i = dual(cons(i));
-                if i <= length(names)
-                    name_i = names{i};
+            
+            if obj.list_size_perf > 0
+                if verbose_pet>1, fprintf(' PESTO: Calling SDP solver\n'), end;
+                out.solverDetails=optimize(cons,-obj_func,solver_opt);
+                out.WCperformance=double(obj_func);
+            else
+                if obj.pesto_opt_traceheuristic == 0
+                    fprintf(' PESTO: !!WARNING!! No target performance measure. Cannot solve the problem without an objective. \n')
                 else
-                    name_i = 'Unnamed constraint';
+                    fprintf(' PESTO: !!WARNING!! No target performance measure. Applying trace heuristic. \n')
                 end
-                if length(dual_i) == 1  % scalar constraint
-                    out.dualvalues(k1) = dual_i;
-                    out.dualnames{k1} = name_i;
-                    k1 = k1 + 1;
-                else                    % LMI
-                    out.dualvalues_LMIs{k2} = dual_i;
-                    out.dualnames_LMIs{k2} = name_i;
-                    k2 = k2 + 1;
-                end
-            end          
-
-            if verbose_pet>1, fprintf(' PESTO: Post-processing\n'), end;
-
-            if obj.pesto_opt_traceheuristic % to obtain "low-dimensional" wc functions
-                if verbose_pet>1, fprintf(' PESTO: Applying resolve with trace heuristic\n'), end;
-                cons = cons + (obj_func >= out.WCperformance);
-                names = [names 'Fix'];
-                optimize(cons,trace(G),solver_opt);
             end
-
-            % Approximating P=[x0 ... gN] from G using Cholesky
-            % Decomposition
-            [V,D]=eig(double(G));%
-            tol=1e-5; %Throw away eigenvalues smaller that tol
-            eigenV=diag(D); eigenV(eigenV < tol)=0;
-            new_D=diag(eigenV); [~,P]=qr(sqrt(new_D)*V.');
-            P=P(1:sum(eigenV>0),:);
-            Evaluable.Solved(1,double(F),double(P));
+            
+            % output dual informations
+            
+            if obj.list_size_perf > 0
+                k1 = 1; k2 = 1;
+                for i=1:length(cons)
+                    dual_i = dual(cons(i));
+                    if i <= length(names)
+                        name_i = names{i};
+                    else
+                        name_i = 'Unnamed constraint';
+                    end
+                    if length(dual_i) == 1  % scalar constraint
+                        out.dualvalues(k1) = dual_i;
+                        out.dualnames{k1} = name_i;
+                        k1 = k1 + 1;
+                    else                    % LMI
+                        out.dualvalues_LMIs{k2} = dual_i;
+                        out.dualnames_LMIs{k2} = name_i;
+                        k2 = k2 + 1;
+                    end
+                end
+            end
+            
+            if obj.list_size_perf > 0
+                if verbose_pet, fprintf(' PESTO: Solver output: %7.5e, solution status: %s\n',out.WCperformance,out.solverDetails.info), end;
+                if verbose_pet>1, fprintf(' PESTO: Post-processing\n'), end;
+            end
+            if obj.pesto_opt_traceheuristic % to obtain "low-dimensional" wc functions
+                if obj.list_size_perf > 0
+                    if verbose_pet>1, fprintf(' PESTO: Applying resolve with trace heuristic\n'), end;
+                    cons = cons + (obj_func >= out.WCperformance);
+                    names = [names 'Fix'];
+                    optimize(cons,trace(G),solver_opt);
+                else
+                    out.solverDetails=optimize(cons,trace(G),solver_opt);
+                    out.TraceG=double(trace(G));
+                    out.Gram=double(G);
+                    if verbose_pet, fprintf(' PESTO: Solver output: %7.5e, solution status: %s\n',out.TraceG,out.solverDetails.info), end;
+                end
+            end
+            if obj.list_size_perf > 0 || obj.pesto_opt_traceheuristic > 0
+                % Approximating P=[x0 ... gN] from G using Cholesky
+                % Decomposition
+                [V,D]=eig(double(G));%
+                tol=1e-5; %Throw away eigenvalues smaller that tol
+                eigenV=diag(D); eigenV(eigenV < tol)=0;
+                new_D=diag(eigenV); [~,P]=qr(sqrt(new_D)*V.');
+                P=P(1:sum(eigenV>0),:);
+                Evaluable.Solved(1,double(F),double(P));
+            end
         end
     end
     methods (Static)
