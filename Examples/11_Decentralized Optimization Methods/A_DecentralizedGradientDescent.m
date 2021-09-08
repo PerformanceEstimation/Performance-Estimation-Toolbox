@@ -17,7 +17,7 @@ verbose = 1;            % Print the problem and the results
 % The system
 N = 3;                  % Number of agents
 type = 'spectral_relaxed'; % type of representation for the communication matrix
-mat = [-0.5,0.5];       % Range of eigenvalues for the symmetric(generalized) doubly stochastic communication matrix W
+mat = [-0.8,0.8];       % Range of eigenvalues for the symmetric(generalized) doubly stochastic communication matrix W
 
 %Alternative: fixed network W (exact results)
 %type = 'exact';
