@@ -108,7 +108,7 @@ classdef matrix < handle
             end
         end
         
-                function [Wh,r] = estimate(obj, time_varying_mat)
+        function [Wh,r] = estimate(obj, time_varying_mat)
         %ESTIMATE estimates the consensus matrix (or matrices) used for all the
         %consensus steps called on that instance. If time_varying_mat = 1, it
         %return a cell with a different matrix estimates for each consensus
@@ -208,7 +208,7 @@ classdef matrix < handle
                             obj.pep.AddConstraint(yc2 - (obj.lam(1)+obj.lam(2))*ytx <= -obj.lam(1)*obj.lam(2)*xc2);
                         end
                     end
-            otherwise
+                otherwise
                   % do nothing      
             end
         end
