@@ -2,10 +2,16 @@ clear all; clc;
 % In this example, we consider K iterations of the decentralized subgradient
 % descent with N agents that each holds a local convex function Fi with bounded subgradients
 % for solving the following decentralized problem:
-%   min_x F(x);     where F(x) is the sum of local functions Fi.
-% Agents communicate through an unknown symmetric (generealized) doubly
-% stochastic communication network with eigenvalues between -0.5 and 0.5,
-% except for the eigenvalue 1 that is always present due to double-stochasticity. 
+%   min_x F(x);     where F(x) is the average of local functions Fi.
+% Agents start all with the same iterate x0 such that ||x0 - xs||^2 <= 1.
+% This example shows how to obtain the worst-case performance of DGD with PESTO in that case.
+% We can do that for a fixed communication network which leads to exact
+% worst-case results, that are specific to the choosen matrix.
+% But in this example, we show how to obtain a worst-case valid for an
+% entire spectral class of communication networks: the ones represented by a symmetric 
+%(generealized) doubly stochastic matrix with eigenvalues between -0.5 and 0.5,
+% (except for the lam=1 which is always an eigenvalue of double-stochastic matrices).
+% This leads to a relaxation of PEP, providing accurate results.
 
 % For details, see
 %   [1] Colla, Sebastien, and Julien M. Hendrickx. "Automated Worst-Case
@@ -17,7 +23,7 @@ verbose = 1;            % Print the problem and the results
 % The system
 N = 3;                  % Number of agents
 type = 'spectral_relaxed'; % type of representation for the communication matrix
-mat = [-0.8,0.8];       % Range of eigenvalues for the symmetric(generalized) doubly stochastic communication matrix W
+mat = [-0.5,0.5];       % Range of eigenvalues for the symmetric(generalized) doubly stochastic communication matrix W
 
 %Alternative: fixed network W (exact results)
 %type = 'exact';
@@ -58,7 +64,7 @@ G_saved = cell(N,K+1);
 % (2) Set up the starting points and initial conditions
 X(:,1) = P.MultiStartingPoints(N,equalStart);
 [G_saved(:,1),F_saved(:,1)] = LocalOracles(Fi,X(:,1));
-P.AddMultiConstraints(@(xi) (xi-xs)^2 <= IC^2, X(:,1));
+P.AddMultiConstraints(@(xi) (xi-xs)^2 <= IC^2, X(:,1)); %initial condition: ||x0 - xs||^2 <= IC^2
 
 % (3) Algorithm (DGD)
 % Step-size 
@@ -70,7 +76,7 @@ end
 for k = 1:K    
     Y(:,k) = W.consensus(X(:,k));     % Consensus step
     X(:,k+1) = foreach(@(y,G) y-alpha(k)*G, Y(:,k), G_saved(:,k));     % Gradient step
-    %    for each agent: (expression for the update, variables to input in the expression) 
+    %          for each agent: (expression for the update, variables to input in the expression) 
     [G_saved(:,k+1),F_saved(:,k+1)] = LocalOracles(Fi,X(:,k+1)); % Eval F and G at k+1 (for all agents)
     % not always need for that point at K+1 (depending on the perf measure).
 end
