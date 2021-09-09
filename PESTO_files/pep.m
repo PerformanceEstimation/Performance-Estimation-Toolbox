@@ -340,7 +340,7 @@ classdef pep < handle
                     names{end+1} = sprintf('LMI%d',i);
                 end
                 LMI_size = length(cons)-count;
-                if verbose_pet>1, fprintf(' (done, %d constraint(s) added (included %d LMIs) \n',LMI_size, obj.list_size_tab_LMIs), end;
+                if verbose_pet>1, fprintf(' (done, %d constraint(s) added (including %d LMIs)) \n',LMI_size, obj.list_size_tab_LMIs), end;
             end
             count=length(cons);
             if verbose_pet>1, fprintf(' PESTO: Setting up the problem: other scalar constraints'), end;
