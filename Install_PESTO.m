@@ -3,3 +3,4 @@
 % (2) Execute this script
 curr=pwd;
 addpath(genpath(pwd));
+savepath;
