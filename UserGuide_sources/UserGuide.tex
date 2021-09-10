@@ -70,7 +70,7 @@
 \newcommand{\pesto}{{PESTO }}
 
 \begin{document}
-	\author{Adrien B. Taylor\footnote{INRIA, SIERRA project-team, and D.I. Ecole normale sup\'erieure, Paris, France. Email: adrien.taylor@inria.fr}, Julien M. Hendrickx\footnote{UCLouvain, ICTEAM Institute, Louvain-la-Neuve, Belgium. Email:
+	\author{Adrien B. Taylor\footnote{INRIA, SIERRA project-team, and D.I. Ecole normale sup\'erieure, Paris, France. Email: adrien.taylor@inria.fr}, Sebastien Colla\footnote{UCLouvain, ICTEAM Institute, Louvain-la-Neuve, Belgium. Email: sebastien.colla@uclouvain.be}, Julien M. Hendrickx\footnote{UCLouvain, ICTEAM Institute, Louvain-la-Neuve, Belgium. Email:
 			julien.hendrickx@uclouvain.be}, Fran\c{c}ois Glineur\footnote{UCLouvain, ICTEAM Institute/CORE, Louvain-la-Neuve, Belgium. Email: francois.glineur@uclouvain.be}}
 	\title{Performance Estimation Toolbox (PESTO): User Manual\thanks{This research is supported by the Belgian Network DYSCO (Dynamical Systems, Control, and Optimization), funded by the Interuniversity Attraction Poles Programme, initiated by the Belgian State, Science Policy Office, and of the Concerted Research Action (ARC) programme supported by the Federation Wallonia-Brussels (contract ARC 14/19-060). The scientific responsibility rests with its authors.}}
 	\date{Current version: \today}
@@ -92,14 +92,14 @@
 	%*********
 	\renewcommand*\contentsname{}
 	\setcounter{tocdepth}{2} \tableofcontents
-
+	
 	\clearpage
 	\section*{Foreword}
 	This toolbox was written with as only objective to ease the access to the performance estimation framework for performing automated worst-case analyses. The main underlying idea is to allow the user writing the algorithms nearly as he would have implemented them, instead of performing the potentially demanding SDP modelling steps required for using the methodology.
 
 	\section*{Contributions and feedbacks}
 	In case the toolbox and/or the methodology raises some interest to you, and that you would like to provide/suggest new functionalities or improvements, we would be very happy to hear from you (also if you find any kind of typo or error). In particular, if you want to provide a PESTO example involving new methods, we would be very happy to include them within the example section along with appropriate acknowledgements.
-	
+
 	\section*{Acknowledgements}
 	The authors would like to thank Fran\c{c}ois Gonze (UCLouvain), Yoel Drori (Google Inc.) and Th\'eo Golvet (ENSTA ParisTech) for their very constructive feedbacks on preliminary versions of the toolbox.
 	Additional material was incorporated thanks to:
@@ -113,7 +113,9 @@
 
 	\section*{Recent updates}
 	\begin{itemize}
-		\item[05/2021] {\bf{}[Update]} Default verbose setting is medium (``2''): PESTO in verbose mode, but solver not.
+		\item[09/2021] {\bf{}[New]} New auxiliary functions and methods in pep class helping to write easily many decentralized optimization algorithm with \verb|PESTO|. It allows to consider all agents at once in the operations, which makes the formulations more compact and clear. See an example in Examples/11/A.
+		\item[09/2021] {\bf{}[New]} Creation of the Matrix class for representing a consensus matrix in a PEP problem. This can be used for analyzing decentralized optimization methods.
+		\item[05/2021] {\bf{}[Update]} Default verbose setting is medium (``2''): \verb|PESTO| in verbose mode, but solver not.
 		\item[05/2021] {\bf{}[Update]} Update in the \verb|PerformanceMetric| command, which allows replacing previous performance measure (instead of taking the $\min$, which it still does by default, see example in Section~\ref{sec:basicuse}).
 		\item[05/2021] {\bf{}[Update]} We can add names to additional (custom) constraints, which now appear in the corresponding list of dual variables (along with their names).
 		\item[05/2021] {\bf{}[New]} Possibility of using additional linear matrix inequalities (LMIs) using the new command \verb?AddLMIConstraint?.
@@ -128,7 +130,7 @@
 		\item[12/2018] {\bf{}[New]} Maximally monotone, Lipschitz, cocoercive and strongly monotone operators were added (see Section~\ref{sec:operators}). Note that \verb|PESTO| was initially thought for handling performance of optimization algorithms. Internally, the toolbox handles operators exactly as it does with function, except that no function values are available for operators.
 		\item[12/2018] {\bf{}[New]} Example section completed with much more material. In particular, we added applications to operator splitting methods and fixed-point iterations.
 	\end{itemize}
-	
+
 	\section*{Contributors}
 	\begin{itemize}
 		\item Adrien Taylor (\href{http://www.di.ens.fr/~ataylor/}{personal page})
@@ -690,9 +692,9 @@ P.AddConstraint((x0-xs)^2<=1);% Add an initial condition ||x0-xs||^2<= 1
 					\end{lstlisting}
 					It is also possible to add linear matrix inequalities (LMIs) to impose a matrix $M$ to be positive semi-definite $M \succeq 0$, using the routine \verb?AddLMIConstraint?. This routine takes a cell array as input, allowing to define the matrix $M$ element by element. \\[-1cm] %  containing the expressions defining the matrix that should be positive semi-definite.
 					\begin{lstlisting}
-M = cell(10); 	
+M = cell(10);
 ... 					% Defining the elements of M
-P.AddLMIConstraint(M);	% Add an LMI constraint for M 
+P.AddLMIConstraint(M);	% Add an LMI constraint for M
 					\end{lstlisting}
 
 					\subsection{Adding points to be interpolated}
