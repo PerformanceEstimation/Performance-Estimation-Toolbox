@@ -325,7 +325,7 @@ classdef pep < handle
             end
             count=length(cons);
             if obj.list_size_tab_LMIs>0 % new LMIs
-                if verbose_pet>1, fprintf(' PESTO: Setting up the problem: LMIs constraints'), end;
+                if verbose_pet>1, fprintf(' PESTO: Setting up the problem: LMI constraints'), end;
                 for i=1:obj.list_size_tab_LMIs
                     sdpexpr = obj.expr_list_tab_LMIs{i,1};
                     len = length(sdpexpr);
