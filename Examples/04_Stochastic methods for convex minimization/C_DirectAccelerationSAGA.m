@@ -1,4 +1,4 @@
-clear all; clc;
+function C_DirectAccelerationSAGA
 % In this example, we use "SAGA with Sampled Negative Momentum (SSNM)"
 % for solving the finite sum minimization problem
 %   min_x {F(x)= 1/n (f1(x)+ ... + fn(x)) + h(x) }
@@ -111,5 +111,4 @@ P.solve()
 
 % PESTO output vs Theorem 1 of [1]
 [double(T1avg) 1/(1+eta*m)]
-
-
+end

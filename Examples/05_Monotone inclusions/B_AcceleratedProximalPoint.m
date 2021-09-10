@@ -1,4 +1,4 @@
-clear all; clc;
+function B_AcceleratedProximalPoint
 % In this example, we use an accelerated proximal point method for solving
 % a monotone inclusion problem
 %   find x st   0 \in Ax
@@ -49,4 +49,4 @@ P.solve()
 
 % (6) Evaluate the output: result should be: 1/N^2, see [1]
 [ double((x{N+1}-y{N+1})^2) 1/N^2]
-
+end

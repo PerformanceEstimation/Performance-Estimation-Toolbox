@@ -1,4 +1,4 @@
-function C_NoLips
+function B_NoLips
 % In this example, we use a Bregman gradient method for
 % solving the constrained nonconvex minimization problem
 %   min_x { F(x) = f_1(x) + f_2(x) }
@@ -15,11 +15,9 @@ function C_NoLips
 %     "First order methods beyond convexity and Lipschitz gradient
 %     continuity with applications to quadratic inverse problems."  (2018)
 %
-%J ́erˆome Bolte∗Shoham Sabach†Marc Teboulle‡Yakov Vaisbourd
 % [2] Radu-Alexandru Dragomir, Adrien B. Taylor, Alexandre d’Aspremont, and
 %     Jérôme Bolte. "Optimal Complexity and Certification of Bregman
 %     First-Order Methods". (2019)
-%
 %
 % DISCLAIMER: This examples requires some experience with PESTO and PEPs
 % (see Section 4 in [2]).
@@ -43,9 +41,10 @@ x0        = P.StartingPoint();        % x0 is some starting point
 [gf0, f0] = f1.oracle(x0,'x0');
 [~, F0]   = F.oracle(x0,'x0');
 
+
 % (3) Algorithm
-gamma = 1/L;    % stepsize
-N     = 3;     % number of iterations
+gamma = 1/L/2;      % stepsize
+N     = 5;          % number of iterations
 
 x   = cell(N+1,1);   x{1} = x0;
 gfx = cell(N+1,1); gfx{1} = gf0;
@@ -59,7 +58,7 @@ for i = 1:N
     
     [gfx{i+1}, fx{i+1}] = f1.oracle(name);
     [ghx{i+1}, hx{i+1}] = h.oracle(name);
-    Dhi{i} = hx{i}-hx{i+1}-ghx{i+1}*(x{i}-x{i+1});
+    Dhi{i} = hx{i+1}-hx{i}-ghx{i}*(x{i+1}-x{i});
     P.PerformanceMetric(Dhi{i});
 end
 [~,FN] = F.oracle(x{N+1},'xN');
@@ -72,6 +71,6 @@ P.solve()
 for i = 1:N
     DhValues(i)=double(Dhi{i});
 end
-[min(DhValues) gamma/N ]
-% Result should match gamma/N
+[min(DhValues) gamma/(1-L*gamma)/N]
+% Result should match gamma/(1-L*gamma)/N (see [1])
 end

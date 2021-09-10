@@ -1,4 +1,4 @@
-clear all; clc;
+function L_NoLips_takeI
 % In this example, we use a Bregman gradient method for
 % solving the constrained smooth strongly convex minimization problem
 %   min_x { F(x) = f_1(x) + f_2(x) }
@@ -68,3 +68,4 @@ P.solve()
 double(ffx{N+1}-fs)   % worst-case objective function accuracy
 
 % Result should match 1/gamma/N (see [2])
+end

@@ -1,4 +1,4 @@
-clear all; clc;
+function C_ProximalGradientMethod
 % In this example, we use a proximal gradient method for
 % solving the composite convex minimization problem
 %   min_x {F(x) = f_1(x)+f_2(x) } 
@@ -48,6 +48,6 @@ double((xN-xs)^2)   % worst-case objective function accuracy
 
 % Result should be max((1-paramf1.mu*gamma)^2,(1-paramf1.L*gamma)^2)
 
-
+end
 
 

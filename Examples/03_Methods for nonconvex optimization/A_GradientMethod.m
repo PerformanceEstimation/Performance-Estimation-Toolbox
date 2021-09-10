@@ -1,4 +1,4 @@
-clear all; clc;
+function A_GradientMethod
 % In this example, we use a fixed-step gradient method for
 % solving the L-smooth minimization problem
 %   min_x F(x); for notational convenience we denote xs=argmin_x F(x).
@@ -44,4 +44,4 @@ P.solve()
 
 % (6) Evaluate the output
 double(g{N+1}^2)   % worst-case objective function accuracy
-
+end

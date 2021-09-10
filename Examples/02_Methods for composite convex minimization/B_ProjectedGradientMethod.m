@@ -1,4 +1,4 @@
-clear all; clc;
+function B_ProjectedGradientMethod
 % In this example, we use a projected gradient method for
 % solving the constrained smooth strongly convex minimization problem
 %   min_x { F(x) = f_1(x) + f_2(x) } 
@@ -48,3 +48,4 @@ P.solve()
 double(fN-fs)   % worst-case objective function accuracy
 
 % Result should be max((1-paramf1.mu*gamma)^2,(1-paramf1.L*gamma)^2)
+end

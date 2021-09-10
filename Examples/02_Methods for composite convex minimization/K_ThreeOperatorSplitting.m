@@ -1,4 +1,4 @@
-clear all; clc;
+function K_ThreeOperatorSplitting
 % In this example, we use the three operator splitting (TOS)
 % method for solving the composite convex minimization problem
 %   min_x { F(x) = f_1(x) + f_2(x) + f_3(x) }
@@ -78,7 +78,7 @@ P.solve()
 
 % (6) Evaluate the output
 double((w-wp)^2)   % worst-case distance to fixed point ws
-
+end
 
 
 

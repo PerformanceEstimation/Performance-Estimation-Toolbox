@@ -1,4 +1,4 @@
-clear all; clc;
+function F_PartiallyInexactDouglasRachfordSplitting
 % In this example, we use a partially inexact Douglas-Rachford splitting
 % for solving the non-smooth (strongly) convex minimization problem
 %   min_x {F(x) = f(x)+g(x)}; for notational convenience we denote
@@ -70,6 +70,4 @@ P.solve(2)
 theoretical_expr = (max( ((1-sigma+lambda*m*sigma)/(1-sigma+lambda*m))^2,...
     ((sigma+(1-sigma)*lambda*L)/(1+(1-sigma)*lambda*L))^2))^N;
 [double(obj) theoretical_expr]
-
-
-
+end

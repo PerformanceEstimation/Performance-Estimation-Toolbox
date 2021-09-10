@@ -1,4 +1,4 @@
-clear all; clc;
+function A_RelativelyInexactProximalPointAlgorithm
 % In this example, we use a relatively inexact proximal point algorithm
 % for solving the non-smooth convex minimization problem
 %   min_x F(x); for notational convenience we denote xs=argmin_x F(x);
@@ -54,3 +54,4 @@ P.solve(2)
 
 % (6) Evaluate the output
 double(fx{N+1}-fs)
+end

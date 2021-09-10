@@ -1,4 +1,4 @@
-clear all; clc;
+function F_GradientExactLineSearch
 % In this example, we use a gradient method with exact line search
 % for solving the L-smooth mu-strongly convex minimization problem
 %   min_x F(x); for notational convenience we denote xs=argmin_x F(x).
@@ -57,5 +57,4 @@ double(f-fs)   % worst-case objective function accuracy
 
 % The result should be
 %((param.L-param.mu)/(param.L+param.mu))^(2*N)
-
-
+end

@@ -1,4 +1,4 @@
-clear all; clc;
+function B_FastProximalPointMethod
 % In this example, we use the fast proximal point method of Guler [1] for
 % solving the non-smooth convex minimization problem
 %   min_x F(x); for notational convenience we denote xs=argmin_x F(x);
@@ -76,3 +76,4 @@ end
 theoretical_guarantee = 4/A{1}/accumulation^2;
 pesto_guarantee       = double(fN-fs);
 fprintf('Theoretical guarantee from [1]: f(xN)-f(xs)<= %6.5f * ( f0-fs+A{1}/2*(x0-xs)^2 )\n \t guarantee from pesto:  f(xN)-f(xs)<= %6.5f * ( f0-fs+A{1}/2*(x0-xs)^2 )\n',theoretical_guarantee,pesto_guarantee)
+end

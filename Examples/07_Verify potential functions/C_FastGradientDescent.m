@@ -1,4 +1,4 @@
-clear all; clc;
+function C_FastGradientDescent
 % In this example, we use a fast gradient method for solving the L-smooth
 % convex minimization problem
 %   min_x F(x); for notational convenience we denote xs=argmin_x F(x).
@@ -66,3 +66,4 @@ P.solve()
 double(objective)   % worst-case objective function accuracy
 
 % The result should be <= 0 (see [1])
+end

@@ -1,4 +1,4 @@
-clear all; clc;
+function G_HeavyBallMethod
 % In this example, we use the heavy ball method for solving the L-smooth 
 % convex minimization problem
 %   min_x F(x); 
@@ -49,3 +49,4 @@ P.solve()
 
 % (6) Evaluate the output
 double(f{N+1}-fs)   % worst-case objective function accuracy
+end

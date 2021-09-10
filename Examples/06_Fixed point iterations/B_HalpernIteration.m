@@ -1,4 +1,4 @@
-clear all; clc;
+function B_HalpernIteration
 % In this example, we use the Halpern iteration for finding a fixed point
 % to the non-expansive operator A :
 %   find x such that  x = Ax
@@ -38,3 +38,4 @@ P.solve()
 double((xN-AxN)^2)   % worst-case squared residual
 
 % The result should be (2/(N+1))^2 as in [1]
+end

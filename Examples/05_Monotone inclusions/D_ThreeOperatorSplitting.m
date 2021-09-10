@@ -1,4 +1,4 @@
-clear all; clc;
+function D_ThreeOperatorSplitting
 % In this example, we use a Three-Operator Splitting method for solving
 % a monotone inclusion problem
 %   find x st   0 \in Ax + Bx + Cx
@@ -52,4 +52,4 @@ P.solve()
 
 % (6) Evaluate the output
 double((z0-z1)^2)   % worst-case contraction factor
-
+end

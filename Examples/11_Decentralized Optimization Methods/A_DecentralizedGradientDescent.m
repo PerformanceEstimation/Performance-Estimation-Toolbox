@@ -1,4 +1,4 @@
-clear all; clc;
+function A_DecentralizedGradientDescent
 % In this example, we consider K iterations of the decentralized subgradient
 % descent with N agents that each holds a local convex function Fi with bounded subgradients
 % for solving the following decentralized problem:
@@ -139,4 +139,5 @@ if verbose
             fprintf("Performance guarantee obtained with PESTO: %1.2f  (only valid for the specific matrix W)\n",wc);
             fprintf("Theoretical performance guarantee: %1.2f \t\t (valid for any symmetric doubly stochastic matrix such that |lam_2|=%1.1f) \n",wc_theo,lam2);
     end
+end
 end

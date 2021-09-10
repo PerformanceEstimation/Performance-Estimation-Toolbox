@@ -1,4 +1,4 @@
-clear all; clc;
+function A_PolyakStepsTakeI
 % In this example, we use a variant of Polyak steps for solving the
 % L-smooth m-strongly convex minimization problem
 %   min_x F(x); for notational convenience we denote xs=argmin_x F(x).
@@ -47,3 +47,4 @@ P.solve()
 % (6) Evaluate the output; the result should be (see [1])
 % (gamma * L - 1) * (1 - gamma * m)/(gamma*(L+m)-1)
 [double(obj) (gamma * L - 1) * (1 - gamma * m)/(gamma*(L+m)-1)]
+end
