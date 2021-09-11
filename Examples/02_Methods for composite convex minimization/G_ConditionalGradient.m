@@ -1,4 +1,4 @@
-clear all; clc;
+function G_ConditionalGradient
 % In this example, we use a conditional gradient method for
 % solving the constrained smooth convex minimization problem
 %   min_x { F(x) = f_1(x) + f_2(x) } 
@@ -55,3 +55,4 @@ double(fN-fs)   % worst-case objective function accuracy
 % See Jaggi, Martin. "Revisiting Frank-Wolfe: Projection-free sparse 
 %     convex optimization." In: Proceedings of the 30th International
 %     Conference on Machine Learning (ICML-13), pp. 427–435 (2013)
+end

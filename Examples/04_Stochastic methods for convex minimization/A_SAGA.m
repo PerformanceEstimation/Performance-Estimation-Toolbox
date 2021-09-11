@@ -1,4 +1,4 @@
-clear all; clc;
+function A_SAGA
 % In this example, we use SAGA for solving the finite sum minimization
 % problem
 %   min_x {F(x)= 1/n (f1(x)+ ... + fn(x)) + h(x) }
@@ -91,5 +91,5 @@ P.solve()
 
 % PESTO output vs Theorem 1 of [1]
 [double(T1avg) (1-1/kappa)]
-
+end
 

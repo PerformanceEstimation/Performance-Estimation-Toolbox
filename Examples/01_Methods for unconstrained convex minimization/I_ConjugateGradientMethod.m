@@ -1,4 +1,4 @@
-clear all; clc;
+function I_ConjugateGradientMethod
 % In this example, we use a greedy first-order method (GFOM), or conjugate
 % gradient, for solving the L-smooth (possibly mu-strongly) 
 % convex minimization problem
@@ -58,3 +58,4 @@ for i = 1:N-1
 end
 theta{N+1}  = (1+sqrt(8*theta{N}^2+1))/2;
 1/theta{N+1}^2/2
+end

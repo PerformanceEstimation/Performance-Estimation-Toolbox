@@ -1,4 +1,4 @@
-clear all; clc;
+function J_AcceleratedDouglasRachfordSplitting
 % In this example, we use a fast Douglas-Rachford splitting 
 % method for solving the composite convex minimization problem
 %   min_x { F(x) = f_1(x) + f_2(x) }
@@ -91,11 +91,4 @@ double(F_final-Fs)
 %     0.1400 0.1289 0.1182  0.1081 0.0675 0.0413 0.0250 0.0147];
 % close all; loglog(N_list,pesto_output,'-r'); hold on;
 % loglog(N_list,2./(alpha*theta*(N_list+1).^2),'--b')
-
-
-
-
-
-
-
-
+end

@@ -1,4 +1,4 @@
-clear all; clc;
+function O_StronglyConvexRobustMomentumMethod
 % In this example, we use the robust momentum method for solving the 
 % L-smooth mu-strongly convex minimization problem
 %   min_x F(x); 
@@ -64,3 +64,4 @@ P.PerformanceMetric(finalLyapunovValue);        % (performance measure)
 P.solve(1);
 % the value of final should match rho^2 (see [1])
 [double(finalLyapunovValue) rho^2]
+end

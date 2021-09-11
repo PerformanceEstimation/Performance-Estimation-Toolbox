@@ -1,4 +1,4 @@
-clear all; clc;
+function C_OptimizedRelativelyInexactProximalPointAlgorithm
 % In this example, we use the optimized relatively inexact proximal point 
 % algorithm (ORIP) for solving the non-smooth convex minimization problem
 %   min_x F(x); for notational convenience we denote xs=argmin_x F(x);
@@ -55,4 +55,4 @@ P.solve()
 
 % (6) Evaluate the output and compare it with [1, Theorem 4.2]
 [double(fx{N+1}-fs) (1+sigma)/4/lambda/theta(N+1)^2]
-
+end

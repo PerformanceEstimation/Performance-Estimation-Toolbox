@@ -1,4 +1,4 @@
-clear all; clc;
+function C_DouglasRachfordSplitting
 % In this example, we use a Douglas-Rachford splitting (DRS) 
 % method for solving a monotone inclusion problem
 %   find x st   0 \in Ax + Bx 
@@ -81,3 +81,4 @@ else
         (theta*(1+2*mu-L^2)-2*(mu+1)*(1-L^2));
 end
 WC
+end

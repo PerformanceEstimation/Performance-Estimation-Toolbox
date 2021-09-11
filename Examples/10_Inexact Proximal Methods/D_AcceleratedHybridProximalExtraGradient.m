@@ -1,4 +1,4 @@
-clear all; clc;
+function D_AcceleratedHybridProximalExtraGradient
 % In this example, we use an accelerated hybrid proximal extragradient 
 % for solving the non-smooth (strongly) convex minimization problem
 %   min_x F(x); for notational convenience we denote xs=argmin_x F(x);
@@ -71,7 +71,4 @@ P.solve(2)
 % (6) Evaluate the output, should be <= 0 (up to numerical precision) to
 % verify the statement.Tolerance: 1e-7.
 fprintf('Potential inequality verified within prescribed tolerance?[0/1]: %d\n', double(obj)<=1e-7);
-
-
-
-
+end

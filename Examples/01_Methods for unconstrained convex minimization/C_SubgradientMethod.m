@@ -1,4 +1,4 @@
-clear all; clc;
+function C_SubgradientMethod
 % In this example, we use a subgradient method for
 % solving the non-smooth convex minimization problem
 %   min_x F(x); for notational convenience we denote xs=argmin_x F(x);
@@ -57,3 +57,4 @@ for i=1:N+1
 end
 f_saved
 % The result should be 1/sqrt(N+1).
+end

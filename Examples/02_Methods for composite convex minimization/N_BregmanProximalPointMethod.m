@@ -1,4 +1,4 @@
-clear all; clc;
+function N_BregmanProximalPointMethod
 % In this example, we use a Bregman proximal point method (with kernel h)
 % for solving the constrained smooth strongly convex minimization problem
 %   min_x { F(x) = f_1(x) + f_2(x) }
@@ -59,3 +59,4 @@ P.solve()
 double(Fx{N}-Fs)   % worst-case objective function accuracy
 
 % Result should match 1/gamma/N 
+end

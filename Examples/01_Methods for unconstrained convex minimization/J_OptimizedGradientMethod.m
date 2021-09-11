@@ -1,4 +1,4 @@
-clear all; clc;
+function J_OptimizedGradientMethod
 % In this example, we use the optimized gradient method (OGM) for
 % solving the L-smooth convex minimization problem
 %   min_x F(x); for notational convenience we denote xs=argmin_x F(x).
@@ -64,3 +64,4 @@ double(fN-fs)   % worst-case objective function accuracy
 % see: Kim, Donghwan, and Jeffrey A. Fessler.
 %      "Optimized first-order methods for smooth convex minimization."
 %      Mathematical programming 159.1-2 (2016): 81-107.
+end

@@ -1,11 +1,15 @@
-clear all; clc;
-
+function P_ImprovedInteriorGradientAlgorithm_noConstraint
 % In this example, we use the improved interior gradient algorithm (IGA) 
 % method for solving the composite convex minimization problem
 %   min_x {F(x) = f1(x) + f2(x)}  
 %   (for notational convenience we denote xs=argmin_x F(x);
 % where f1 is L-smooth and convex and f2 is a closed convex indicator.
 % We use a kernel h that is assumed to be smooth strongly convex (see [1])
+%
+% THIS CODE IS A SIMPLIFICATION OF
+%   "N_ImprovedInteriorGradientAlgorithm.m"
+% FOR WHEN f2 = 0 (i.e., no constraint). The computations are therefore 
+% slightly lighter.
 %
 % The method originates from:
 % [1] Alfred Auslender, and Marc Teboulle. "Interior gradient and proximal
@@ -23,10 +27,9 @@ paramh.L  = Inf;    % Smoothness of the kernel h
 paramh.mu = 1;      % strong convexity parameter of the kernel h
 
 f1 = P.DeclareFunction('SmoothStronglyConvex',paramf1); 
-f2 = P.DeclareFunction('ConvexIndicator');
 h  = P.DeclareFunction('SmoothStronglyConvex',paramh); 
 
-F  = f1 + f2;
+F  = f1;
 % (2) Set up the starting point and initial condition
 x0        = P.StartingPoint();             % x0 is some starting point
 [xs,fs]   = F.OptimalPoint();              % xs is an optimal point, and fs=F(xs)
@@ -56,7 +59,7 @@ for i=1:N
         [g{i},f{i}] = f1.oracle(y{i});
     end
     name    = sprintf('z%d',i);
-    z{i+1}  = mirror(g{i}, sz{i}, h+f2, alphak/ck, name); 
+    z{i+1}  = mirror(g{i}, sz{i}, h, alphak/ck, name); 
     x{i+1} = (1-alphak) * x{i} + alphak * z{i+1};
     
     [sz{i+1}, ~ ] = h.oracle(name); % this is for the next mirror step
@@ -73,3 +76,4 @@ P.solve()
 
 % (6) Evaluate the output
 [double(fN-fs) 4*L/N^2/c]  % worst-case objective function accuracy
+end

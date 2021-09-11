@@ -1,4 +1,4 @@
-clear all; clc;
+function B_ProximalPointMethod
 % In this example, we use a proximal point method for solving the 
 % non-smooth convex minimization problem
 %   min_x F(x); for notational convenience we denote xs=argmin_x F(x);
@@ -61,3 +61,4 @@ double(fN-fs)   % worst-case objective function accuracy
 %     Convex Optimization.", SIAM Journal on Optimization (2017)
 double(x0) % is this small-dimensional?
 % this should be a scalar value (i.e., there exists a 1-D example)
+end

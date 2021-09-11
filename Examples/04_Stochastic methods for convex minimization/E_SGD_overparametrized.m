@@ -1,4 +1,4 @@
-clear all; clc;
+function E_SGD_overparametrized
 % In this example, we use stochastic gradient descent for solving the
 % finite sum minimization problem
 %   min_x {F(x)= 1/n [f1(x)+ ... + fn(x)]  }
@@ -63,5 +63,4 @@ P.solve()
 
 % should be equal to
 [double(distavg) 1/2*(1-1/kappa)^2*R^2+1/2*(1-1/kappa)*R*sqrt((1-1/kappa)^2*R^2+4*v^2/L^2)+v^2/L^2]
-
-
+end
