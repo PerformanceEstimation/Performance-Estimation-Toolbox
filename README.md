@@ -49,7 +49,15 @@ You can now execute the demo files for a step by step introduction to the toolbo
 
 **Numerical efficiency** Note that it is in general not reasonable to solve 'pure' PEPs (not involving any relaxation) with more than 300 iterations (in the base case: unconstrained minimization), see our numerical tests on the [wiki](https://github.com/AdrienTaylor/Performance-Estimation-Toolbox/wiki/Numerical-efficiency-of-PESTO).
 
-
+**Run all examples** You can run all examples by typing
+```Matlab
+test_install
+```
+in the matlab prompt. Alternatively, the command
+```Matlab
+test_install(1)
+```
+allows to go a bit more quietly through them.
 ## Example
 
 The folder [Examples](/Examples) contains numerous introductory examples to the toolbox.
