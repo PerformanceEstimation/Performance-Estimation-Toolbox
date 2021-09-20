@@ -9,10 +9,10 @@ Date:    May 2021
 Version: May 2021
 
 #### Authors & Contributors
-- [**Adrien Taylor**](http://www.di.ens.fr/~ataylor/)
-- [**Julien Hendrickx**](https://perso.uclouvain.be/julien.hendrickx/index.html)
-- [**François Glineur**](https://perso.uclouvain.be/francois.glineur/)
-- [**Sébastien Colla**](https://perso.uclouvain.be/sebastien.colla/)
+- [**Adrien Taylor**](http://www.di.ens.fr/~ataylor/) (author)
+- [**Julien Hendrickx**](https://perso.uclouvain.be/julien.hendrickx/index.html) (author)
+- [**François Glineur**](https://perso.uclouvain.be/francois.glineur/) (author)
+- [**Sébastien Colla**](https://perso.uclouvain.be/sebastien.colla/) (contributor)
 
 #### Performance Estimation Framework
 
@@ -69,7 +69,7 @@ demo1
 in the prompt.
 
 
-Among the other examples, the following code (see [`GradientMethod`](/Examples/GradientMethod.m)) generates a worst-case scenario for the gradient method applied to a smooth (possibly strongly) convex function.
+Among the other examples, the following code (see [`GradientMethod`](Examples/01_Methods%20for%20unconstrained%20convex%20minimization/E_GradientMethod.m)) generates a worst-case scenario for the gradient method applied to a smooth (possibly strongly) convex function.
 
 ```Matlab
 % In this example, we use a fixed-step gradient method for
