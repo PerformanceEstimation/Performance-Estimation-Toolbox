@@ -1,4 +1,4 @@
-clear all; clc;
+function D_FastProjectedGradientMethod
 % In this example, we use a fast proximal gradient method
 % for solving the composite convex minimization problem
 %   min_x { F(x) = f_1(x) + f_2(x) } 
@@ -52,4 +52,4 @@ double(fN-fs)   % worst-case objective function accuracy
 % see Taylor, Adrien B., Julien M. Hendrickx, and François Glineur.
 %     "Exact Worst-case Performance of First-order Methods for Composite
 %     Convex Optimization." SIAM Journal on Optimization (2017)
-
+end

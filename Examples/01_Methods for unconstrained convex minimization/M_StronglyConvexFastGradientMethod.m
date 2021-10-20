@@ -1,5 +1,5 @@
-clear all; clc;
-% In this example, we use a fast gradient method for solving the L-smooth 
+function M_StronglyConvexFastGradientMethod
+% In this example, we use a fast gradient method for solving the L-smooth
 % mu-strongly convex minimization problem
 %   min_x F(x); 
 %   for notational convenience we denote xs=argmin_x F(x).
@@ -51,3 +51,4 @@ double(fN-fs)   % worst-case objective function accuracy
 
 % Should be better than the standard guarantee
 % f(xN)-f(xs)<= param.L*(1-1/sqrt(kappa))^N*double((x0-xs)^2)
+end

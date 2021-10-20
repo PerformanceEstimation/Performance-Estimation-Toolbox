@@ -1,4 +1,4 @@
-clear all; clc;
+function I_DouglasRachfordSplitting_takeII
 % In this example, we use a Douglas-Rachford splitting (DRS) 
 % method for solving the composite convex minimization problem
 %   min_x { F(x) = f_1(x) + f_2(x) }
@@ -70,9 +70,4 @@ double(F_final-Fs)
 % pesto_output = [1/4 0.1273 0.0838 0.0627 0.0501 0.0417...
 %     0.0357 0.0313 0.0278 0.0250];
 % close all; loglog(N_list,pesto_output,'-r'); 
-
-
-
-
-
-
+end

@@ -1,4 +1,4 @@
-clear all; clc;
+function L_OptimizedGradientMethodForGradient
 % In this example, we use the optimized gradient method for gradient norm
 % (OGM-G) for solving the L-smooth convex minimization problem
 %   min_x F(x); for notational convenience we denote xs=argmin_x F(x).
@@ -67,3 +67,4 @@ P.solve();
 double(g{N+1}^2)   % worst-case value of ||F'(xN)||^2
 
 % The result should be 2/theta{N+1}^2 (see [1])
+end

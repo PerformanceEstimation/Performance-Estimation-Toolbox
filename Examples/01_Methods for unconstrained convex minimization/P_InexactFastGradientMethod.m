@@ -1,4 +1,4 @@
-clear all; clc;
+function P_InexactFastGradientMethod
 % In this example, we use an inexact fast gradient method for solving the 
 % L-smooth convex minimization problem
 %   min_x F(x); 
@@ -58,7 +58,7 @@ double(f - fs)   % worst-case objective function accuracy
 %     "Exact Worst-case Performance of First-order Methods for Composite
 %     Convex Optimization." SIAM Journal on Optimization (2017)
 
-
+end
 
 
 

@@ -1,4 +1,4 @@
-clear all; clc;
+function A_ProximalPointMethod
 % In this example, we use a proximal point method for solving the 
 % non-smooth convex minimization problem
 %   min_x { F(x) = f1(x) + f2(x) };
@@ -46,3 +46,4 @@ double(fx-fs)   % worst-case objective function accuracy
 % see Taylor, Adrien B., Julien M. Hendrickx, and François Glineur.
 %     "Exact Worst-case Performance of First-order Methods for Composite
 %     Convex Optimization." SIAM Journal on Optimization (2017)
+end

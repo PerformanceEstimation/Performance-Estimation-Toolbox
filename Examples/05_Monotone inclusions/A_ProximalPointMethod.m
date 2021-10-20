@@ -1,4 +1,4 @@
-clear all; clc;
+function A_ProximalPointMethod
 % In this example, we use a proximal point method for solving
 % a monotone inclusion problem
 %   find x st   0 \in Ax
@@ -45,4 +45,4 @@ P.solve()
 
 % (6) Evaluate the output: result should be: (1-1/N)^(N-1) / N, see [1]
 [ double((x{N+1}-x{N})^2) (1-1/N)^(N-1) / N]
-
+end

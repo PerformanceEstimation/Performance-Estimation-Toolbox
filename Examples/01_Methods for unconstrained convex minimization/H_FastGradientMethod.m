@@ -1,4 +1,4 @@
-clear all; clc;
+function H_FastGradientMethod
 % In this example, we use a fast gradient method for solving the L-smooth 
 % convex minimization problem
 %   min_x F(x); 
@@ -52,3 +52,4 @@ double(fN-fs)   % worst-case objective function accuracy
 %     "A fast iterative shrinkage-thresholding algorithm 
 %     for linear inverse problems." 
 %     SIAM journal on imaging sciences 2.1 (2009): 183-202.
+end

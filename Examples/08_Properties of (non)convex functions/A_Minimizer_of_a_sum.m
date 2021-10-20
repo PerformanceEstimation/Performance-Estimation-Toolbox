@@ -1,4 +1,4 @@
-clear all; clc;
+function A_Minimizer_of_a_sum
 % This example shows how the PESTO toolbox can also be used to explore
 % properties of (strongly) convex functions that are not directly related
 % to optimization algorithms:
@@ -83,3 +83,4 @@ disp('Computation ended')
 disp('The result should show the square distance is asymptotically')
 disp('linear in the condition number')
 disp('************************************************************')
+end

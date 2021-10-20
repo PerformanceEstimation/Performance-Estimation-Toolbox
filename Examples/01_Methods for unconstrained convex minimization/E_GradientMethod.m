@@ -1,4 +1,4 @@
-clear all; clc;
+function E_GradientMethod
 % In this example, we use a fixed-step gradient method for
 % solving the L-smooth convex minimization problem
 %   min_x F(x); for notational convenience we denote xs=argmin_x F(x).
@@ -47,3 +47,4 @@ double(fN-fs)   % worst-case objective function accuracy
 
 % The result should be (see [1])
 % param.L/2/(2*N+1)
+end

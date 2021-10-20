@@ -1,4 +1,4 @@
-clear all; clc;
+function H_DouglasRachfordSplitting_takeI
 % In this example, we use a Douglas-Rachford splitting (DRS) 
 % method for solving the composite convex minimization problem
 %   min_x { F(x) = f_1(x) + f_2(x) }
@@ -77,9 +77,4 @@ double((w-wp)^2)   % worst-case distance to fixed point ws
 
 % When theta = 1, the result should be (and is) (see [2])
 % max(1/(1+paramf1.mu*alpha),alpha*paramf1.L/(1+alpha*paramf1.L))^(2*N)
-
-
-
-
-
-
+end

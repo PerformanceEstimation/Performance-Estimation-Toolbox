@@ -1,4 +1,4 @@
-clear all; clc;
+function Q_InexactGradientExactLineSearch
 % In this example, we use an inexact gradient method with exact line search
 % for solving the L-smooth mu-strongly convex minimization problem
 %   min_x F(x); for notational convenience we denote xs=argmin_x F(x).
@@ -60,5 +60,4 @@ double(fN-fs)   % worst-case objective function accuracy
 
 % The result should be
 %((param.L*(1+eps)-param.mu*(1-eps))/(param.L*(1+eps)+param.mu*(1-eps)))^(2*N)
-
-
+end

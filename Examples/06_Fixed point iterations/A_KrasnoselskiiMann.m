@@ -1,4 +1,4 @@
-clear all; clc;
+function A_KrasnoselskiiMann
 % In this example, we use Krasnoselskii-Mann iterations for finding a 
 % fixed point to the non-expansive operator A :
 %   find x such that  x = Ax
@@ -38,4 +38,4 @@ P.solve()
 
 % (6) Evaluate the output
 double((xN-AxN)^2)   % worst-case squared residual
-
+end

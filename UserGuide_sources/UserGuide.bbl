@@ -1,0 +1,384 @@
+\begin{thebibliography}{10}
+
+\bibitem{Article:Drori}
+Y.~Drori and M.~Teboulle.
+\newblock Performance of first-order methods for smooth convex minimization: a
+  novel approach.
+\newblock {\em Mathematical Programming}, 145(1-2):451--482, 2014.
+
+\bibitem{drori2014contributions}
+Y.~Drori.
+\newblock {\em Contributions to the Complexity Analysis of Optimization
+  Algorithms}.
+\newblock PhD thesis, Tel-Aviv University, 2014.
+
+\bibitem{taylor2015smooth}
+A.~B. Taylor, J.~M. Hendrickx, and F.~Glineur.
+\newblock Smooth strongly convex interpolation and exact worst-case performance
+  of first-order methods.
+\newblock {\em Mathematical Programming}, 161(1-2):307--345, 2017.
+
+\bibitem{taylor2015exact}
+A.~B. Taylor, J.~M. Hendrickx, and F.~Glineur.
+\newblock Exact worst-case performance of first-order methods for composite
+  convex optimization.
+\newblock {\em SIAM Journal on Optimization}, 27(3):1283--1313, 2017.
+
+\bibitem{Taylor2017PEPs}
+A.~B. Taylor.
+\newblock {\em Convex Interpolation and Performance Estimation of First-order
+  Methods for Convex Optimization}.
+\newblock PhD thesis, Universit\'e catholique de Louvain, 2017.
+
+\bibitem{Article:Yalmip}
+J.~L\"{o}fberg.
+\newblock {YALMIP} : A toolbox for modeling and optimization in {MATLAB}.
+\newblock In {\em Proceedings of the CACSD Conference}, 2004.
+
+\bibitem{Article:Sedumi}
+J.~F. Sturm.
+\newblock Using {S}e{D}u{M}i 1.02, a {MATLAB} toolbox for optimization over
+  symmetric cones.
+\newblock {\em Optimization Methods and Software}, 11--12:625--653, 1999.
+
+\bibitem{Article:Mosek}
+APS Mosek.
+\newblock The {MOSEK} optimization software.
+\newblock {\em Online at http://www.mosek.com}, 54, 2010.
+
+\bibitem{Article:sdpt3}
+K.-C. Toh, M.J. Todd, and R.H. T{\"u}t{\"u}nc{\"u}.
+\newblock Sdpt3—a matlab software package for semidefinite programming,
+  version 1.3.
+\newblock {\em Optimization methods and software}, 11(1-4):545--581, 1999.
+
+\bibitem{pesto2017}
+A.~Taylor, J.~Hendrickx, and F.~Glineur.
+\newblock Performance {E}stimation {T}oolbox ({PESTO}): automated worst-case
+  analysis of first-order optimization methods.
+\newblock In {\em Proceedings of the 56th IEEE Conference on Decision and
+  Control (CDC 2017)}, 2017.
+
+\bibitem{lessard2014analysis}
+L.~Lessard, B.~Recht, and A.~Packard.
+\newblock Analysis and design of optimization algorithms via integral quadratic
+  constraints.
+\newblock {\em SIAM Journal on Optimization}, 26(1):57--95, 2016.
+
+\bibitem{taylor2018lyapunov}
+A.~Taylor, B.~Van~Scoy, and L.~Lessard.
+\newblock Lyapunov functions for first-order methods: {T}ight automated
+  convergence guarantees.
+\newblock In {\em International Conference on Machine Learning (ICML)}, 2018.
+
+\bibitem{deKlerkELS2016}
+E.~de~Klerk, F.~Glineur, and A.~B. Taylor.
+\newblock On the worst-case complexity of the gradient method with exact line
+  search for smooth strongly convex functions.
+\newblock {\em Optimization Letters}, 11(7):1185--1199, 2017.
+
+\bibitem{drori2018efficient}
+Y.~Drori and A.B. Taylor.
+\newblock Efficient first-order methods for convex minimization: a constructive
+  approach.
+\newblock {\em Mathematical Programming}, 184(1):183--220, 2020.
+
+\bibitem{ryu2018operator}
+E.K. Ryu, A.B. Taylor, C.~Bergeling, and P.~Giselsson.
+\newblock Operator splitting performance estimation: Tight contraction factors
+  and optimal parameter selection.
+\newblock {\em SIAM Journal on Optimization}, 30(3):2251--2271, 2020.
+
+\bibitem{drori2014optimal}
+Y.~Drori and M.~Teboulle.
+\newblock An optimal variant of {K}elley's cutting-plane method.
+\newblock {\em Mathematical Programming}, 160(1):321--351, 2016.
+
+\bibitem{drori2017exact}
+Y.~Drori.
+\newblock The exact information-based complexity of smooth convex minimization.
+\newblock {\em Journal of Complexity}, 39:1--16, 2017.
+
+\bibitem{kim2014optimized}
+D.~Kim and J.~A. Fessler.
+\newblock Optimized first-order methods for smooth convex minimization.
+\newblock {\em Mathematical Programming}, 159(1-2):81--107, 2016.
+
+\bibitem{kim2018optimizing}
+D.~Kim and J.A. Fessler.
+\newblock Optimizing the efficiency of first-order methods for decreasing the
+  gradient of smooth convex functions.
+\newblock {\em Journal of Optimization Theory and Applications},
+  188(1):192--219, 2021.
+
+\bibitem{kim2015convergence}
+D.~Kim and J.~A. Fessler.
+\newblock On the convergence analysis of the optimized gradient method.
+\newblock {\em Journal of optimization theory and applications},
+  172(1):187--205, 2017.
+
+\bibitem{kim2019accelerated}
+D.~Kim.
+\newblock Accelerated proximal point method for maximally monotone operators.
+\newblock {\em Mathematical Programming}, pages 1--31, 2021.
+
+\bibitem{taylor2018exact}
+A.~B. Taylor, J.~M. Hendrickx, and F.~Glineur.
+\newblock Exact worst-case convergence rates of the proximal gradient method
+  for composite convex minimization.
+\newblock {\em Journal of Optimization Theory and Applications},
+  178(2):455--476, 2018.
+
+\bibitem{pmlr-v99-taylor19a}
+A.~Taylor and F.~Bach.
+\newblock Stochastic first-order methods: non-asymptotic and computer-aided
+  analyses via potential functions.
+\newblock In {\em Conference on Learning Theory (COLT)}, 2019.
+
+\bibitem{gu2019optimal}
+G.~Gu and J.~Yang.
+\newblock Optimal nonergodic sublinear convergence rate of proximal point
+  algorithm for maximal monotone inclusion problems.
+\newblock {\em preprint arXiv:1904.05495}, 2019.
+
+\bibitem{colla2021decentralized}
+S.~Colla and J.~M. Hendrickx.
+\newblock Automated worst-case performance analysis of decentralized gradient
+  descent.
+\newblock {\em preprint arXiv:2103.14396}, 2021.
+
+\bibitem{van2018fastest}
+B.~Van~Scoy, R.~A. Freeman, and K.~M. Lynch.
+\newblock The fastest known globally convergent first-order method for
+  minimizing strongly convex functions.
+\newblock {\em IEEE Control Systems Letters}, 2(1):49--54, 2018.
+
+\bibitem{cyrus2018robust}
+S.~Cyrus, B.~Hu, B.~Van~Scoy, and L.~Lessard.
+\newblock A robust accelerated optimization algorithm for strongly convex
+  functions.
+\newblock In {\em 2018 Annual American Control Conference (ACC)}, pages
+  1376--1381. IEEE, 2018.
+
+\bibitem{guler1991convergence}
+O.~G{\"u}ler.
+\newblock On the convergence of the proximal point algorithm for convex
+  minimization.
+\newblock {\em SIAM Journal on Control and Optimization}, 29(2):403--419, 1991.
+
+\bibitem{guler1992new}
+O.~G{\"u}ler.
+\newblock New proximal point algorithms for convex minimization.
+\newblock {\em SIAM Journal on Optimization}, 2(4):649--664, 1992.
+
+\bibitem{Shor:Subgradient}
+N.~Z. Shor, Krzysztof~C. Kiwiel, and Andrzej Ruszcay\`{n}ski.
+\newblock {\em Minimization methods for non-differentiable functions}.
+\newblock Springer-Verlag New York, Inc., New York, NY, USA, 1985.
+
+\bibitem{Book:Nesterov2}
+Y.~Nesterov.
+\newblock {\em Lectures on Convex Optimization}.
+\newblock Springer Optimization and Its Applications. Springer International
+  Publishing, 2018.
+
+\bibitem{Book:polyak1987}
+B.~T. Polyak.
+\newblock {\em Introduction to Optimization}.
+\newblock Optimization Software New York, 1987.
+
+\bibitem{de2017worst}
+E.~De~Klerk, F.~Glineur, and A.B. Taylor.
+\newblock Worst-case convergence analysis of inexact gradient and newton
+  methods through semidefinite programming performance estimation.
+\newblock {\em SIAM Journal on Optimization}, 30(3):2053--2082, 2020.
+
+\bibitem{polyak1964some}
+B.~T. Polyak.
+\newblock Some methods of speeding up the convergence of iteration methods.
+\newblock {\em USSR Computational Mathematics and Mathematical Physics},
+  4(5):1--17, 1964.
+
+\bibitem{Nesterov:1983wy}
+Y.~Nesterov.
+\newblock {A method of solving a convex programming problem with convergence
+  rate O($1/k^2$))}.
+\newblock {\em Soviet Mathematics Doklady}, 27:372--376, 1983.
+
+\bibitem{bansal2017potential}
+N.~Bansal and A.~Gupta.
+\newblock Potential-function proofs for gradient methods.
+\newblock {\em Theory of Computing}, 15(1):1--32, 2019.
+
+\bibitem{nesterov2013gradient}
+Y.~Nesterov.
+\newblock Gradient methods for minimizing composite functions.
+\newblock {\em Mathematical Programming}, 140(1):125--161, 2013.
+
+\bibitem{beck2009fast}
+A.~Beck and M.~Teboulle.
+\newblock A fast iterative shrinkage-thresholding algorithm for linear inverse
+  problems.
+\newblock {\em SIAM journal on imaging sciences}, 2(1):183--202, 2009.
+
+\bibitem{frank1956algorithm}
+M.~Frank and P.~Wolfe.
+\newblock An algorithm for quadratic programming.
+\newblock {\em Naval research logistics quarterly}, 3(1-2):95--110, 1956.
+
+\bibitem{jaggi2013revisiting}
+M.~Jaggi.
+\newblock Revisiting frank-wolfe: Projection-free sparse convex optimization.
+\newblock In {\em International Conference on Machine Learning (ICML)}, pages
+  427--435, 2013.
+
+\bibitem{douglas1956}
+J.~Douglas and H.~H. Rachford.
+\newblock On the numerical solution of heat conduction problems in two and
+  three space variables.
+\newblock {\em Transactions of the American Mathematical Society}, 82:421--439,
+  1956.
+
+\bibitem{bauschke2017douglas}
+H.~H. Bauschke and W.~M. Moursi.
+\newblock On the {D}ouglas--{R}achford algorithm.
+\newblock {\em Mathematical Programming}, 164(1-2):263--284, 2017.
+
+\bibitem{giselsson2016linear}
+P.~Giselsson and S.~Boyd.
+\newblock Linear convergence and metric selection for douglas-rachford
+  splitting and admm.
+\newblock {\em IEEE Transactions on Automatic Control}, 62(2):532--544, 2017.
+
+\bibitem{patrinos2014douglas}
+P.~Patrinos, L.~Stella, and A.~Bemporad.
+\newblock {D}ouglas--{R}achford splitting: Complexity estimates and accelerated
+  variants.
+\newblock In {\em 53rd IEEE Conference on Decision and Control}, pages
+  4234--4239. IEEE, 2014.
+
+\bibitem{davis2017three}
+D.~Davis and W.~Yin.
+\newblock A three-operator splitting scheme and its optimization applications.
+\newblock {\em Set-valued and variational analysis}, 25(4):829--858, 2017.
+
+\bibitem{bauschke2016descent}
+H.~H. Bauschke, J.~Bolte, and M.~Teboulle.
+\newblock A descent lemma beyond {L}ipschitz gradient continuity: first-order
+  methods revisited and applications.
+\newblock {\em Mathematics of Operations Research}, 42(2):330--348, 2016.
+
+\bibitem{lu2018relatively}
+H.~Lu, R.~M. Freund, and Y.~Nesterov.
+\newblock Relatively smooth convex optimization by first-order methods, and
+  applications.
+\newblock {\em SIAM Journal on Optimization}, 28(1):333--354, 2018.
+
+\bibitem{Dragomir2019optimal}
+R.-A. Dragomir, A.B. Taylor, A.~d’Aspremont, and J.~Bolte.
+\newblock Optimal complexity and certification of bregman first-order methods.
+\newblock {\em Mathematical Programming}, pages 1--43, 2021.
+
+\bibitem{eckstein1993nonlinear}
+J.~Eckstein.
+\newblock Nonlinear proximal point algorithms using bregman functions, with
+  applications to convex programming.
+\newblock {\em Mathematics of Operations Research}, 18(1):202--226, 1993.
+
+\bibitem{auslender2006interior}
+A.~Auslender and M.~Teboulle.
+\newblock Interior gradient and proximal methods for convex and conic
+  optimization.
+\newblock {\em SIAM Journal on Optimization}, 16(3):697--725, 2006.
+
+\bibitem{bolte2018first}
+J.~Bolte, S.~Sabach, M.~Teboulle, and Y.~Vaisbourd.
+\newblock First order methods beyond convexity and {L}ipschitz gradient
+  continuity with applications to quadratic inverse problems.
+\newblock {\em SIAM Journal on Optimization}, 28(3):2131--2151, 2018.
+
+\bibitem{defazio2014saga}
+A.~Defazio, F.~Bach, and S.~Lacoste-Julien.
+\newblock {SAGA}: A fast incremental gradient method with support for
+  non-strongly convex composite objectives.
+\newblock In {\em Advances in Neural Information Processing Systems (NIPS)},
+  pages 1646--1654, 2014.
+
+\bibitem{defazio2016simple}
+A.~Defazio.
+\newblock A simple practical accelerated method for finite sums.
+\newblock In {\em Advances in Neural Information Processing Systems (NIPS)},
+  pages 676--684, 2016.
+
+\bibitem{pmlr-v89-zhou19c}
+K.~Zhou, Q.~Ding, F.~Shang, J.~Cheng, D.~Li, and Z.-Q. Luo.
+\newblock Direct acceleration of saga using sampled negative momentum.
+\newblock In {\em Proceedings of Machine Learning Research}, volume~89, pages
+  1602--1610, 2019.
+
+\bibitem{moulines2011non}
+F.~R. Bach and E.~Moulines.
+\newblock Non-asymptotic analysis of stochastic approximation algorithms for
+  machine learning.
+\newblock In {\em Advances in Neural Information Processing Systems (NIPS)},
+  pages 451--459, 2011.
+
+\bibitem{bauschke2011convex}
+H.~H. Bauschke and P.~L. Combettes.
+\newblock {\em Convex analysis and monotone operator theory in Hilbert spaces},
+  volume 408.
+\newblock Springer, 2011.
+
+\bibitem{ryu2016primer}
+E.~K. Ryu and S.~Boyd.
+\newblock Primer on monotone operator methods.
+\newblock {\em Appl. Comput. Math}, 15(1):3--43, 2016.
+
+\bibitem{moursi2019douglas}
+W.M. Moursi and L.~Vandenberghe.
+\newblock Douglas--rachford splitting for the sum of a lipschitz continuous and
+  a strongly monotone operator.
+\newblock {\em Journal of Optimization Theory and Applications},
+  183(1):179--198, 2019.
+
+\bibitem{lieder2017convergence}
+F.~Lieder.
+\newblock On the convergence rate of the {H}alpern-iteration.
+\newblock {\em Optimization Letters}, 15(2):405--418, 2021.
+
+\bibitem{lieder2018}
+F.~Lieder.
+\newblock {\em Projection Based Methods for Conic Linear Programming Optimal
+  First Order Complexities and Norm Constrained Quasi Newton Methods}.
+\newblock PhD thesis, Universitats-und Landesbibliothek der
+  Heinrich-Heine-Universitat Dusseldorf, 2018.
+
+\bibitem{mann1953mean}
+W.~R. Mann.
+\newblock Mean value methods in iteration.
+\newblock {\em Proceedings of the American Mathematical Society},
+  4(3):506--510, 1953.
+
+\bibitem{halpern1967fixed}
+B.~Halpern.
+\newblock Fixed points of nonexpanding maps.
+\newblock {\em Bulletin of the American Mathematical Society}, 73(6):957--961,
+  1967.
+
+\bibitem{Barre2020Polyak}
+M.~Barr{\'e}, A.~Taylor, and A.~d’Aspremont.
+\newblock Complexity guarantees for {P}olyak steps with momentum.
+\newblock In {\em Conference on Learning Theory (COLT)}, 2020.
+
+\bibitem{Barre2020inexact}
+M.~Barr\'e, A.~Taylor, and F.~Bach.
+\newblock Principled analyses and design of first-order methods with inexact
+  proximal operators.
+\newblock {\em preprint arXiv:2006.06041}, 2020.
+
+\bibitem{Nedic2009Distrib}
+A.~Nedic and A.~Ozdaglar.
+\newblock Distributed subgradient methods for multi-agent optimization.
+\newblock {\em Automatic Control, IEEE Transactions on}, 54:48 -- 61, 02 2009.
+
+\end{thebibliography}

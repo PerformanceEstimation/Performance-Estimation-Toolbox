@@ -1,4 +1,4 @@
-clear all; clc;
+function N_StronglyConvexTripleMomentumMethod
 % In this example, we use the triple momentum method for solving the 
 % L-smooth mu-strongly convex minimization problem
 %   min_x F(x); 
@@ -65,3 +65,4 @@ double(fN-fs)   % worst-case objective function accuracy
 % Should at most match the guarantees from [1]
 % f(xN)-f(xs) <= (1-1/sqrt(kappa))^(2*N)*param.L/2*kappa*double((x0-xs)^2)
 % ||xN-xs||^2 <= (1-1/sqrt(kappa))^(2*N)*kappa*double((x0-xs)^2)
+end

@@ -1,4 +1,4 @@
-clear all; clc;
+function D_SubgradientMethod_ExactLineSearch
 % In this example, we use a subgradient method with exact line search for
 % solving the non-smooth convex minimization problem
 %   min_x F(x); for notational convenience we denote xs=argmin_x F(x);
@@ -51,3 +51,4 @@ out=P.solve()
 double(f{N+1}-fs)
 
 % The result should be 1/sqrt(N+1), see [1].
+end

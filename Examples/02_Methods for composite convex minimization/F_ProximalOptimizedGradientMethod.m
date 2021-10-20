@@ -1,4 +1,4 @@
-clear all; clc;
+function E_FastProximalGradientMethod
 % In this example, we use the optimized gradient method (OGM) for
 % solving the L-smooth convex minimization problem
 %   min_x {F(x) = f1(x) + f2(x) }
@@ -82,4 +82,4 @@ double(fN-fs)   % worst-case objective function accuracy
 
 % The result should be larger than 1/2/theta{N+1}^2, while decreasing
 % at the same speed, see [3].
-
+end
