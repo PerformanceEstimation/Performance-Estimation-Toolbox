@@ -108,7 +108,7 @@ classdef matrix < handle
             end
         end
         
-        function [Wh,r] = estimate(obj, time_varying_mat)
+        function [Wh,r,status] = estimate(obj, time_varying_mat)
         %ESTIMATE estimates the consensus matrix (or matrices) used for all the
         %consensus steps called on that instance. If time_varying_mat = 1, it
         %return a cell with a different matrix estimates for each consensus
@@ -123,6 +123,8 @@ classdef matrix < handle
         %           When obj.type='exact', Wh=obj.W and r=0.
         %           When time_varying_mat = 1, r is an array with the different residuals, 
         %           associated with the different matrix estimates, computed on different consensus steps.
+        %           - status is a string that gives information about the
+        %           status of the estimate.
             if nargin < 2
                 time_varying_mat = obj.time_varying;
             end
@@ -140,19 +142,51 @@ classdef matrix < handle
                         end
                     end
                     if ~time_varying_mat    % constant matrix for each consensus
-                        Wh = Y_fl*pinv(X_fl);       % pseudo inverse for estimate W
-                        r = norm(Wh*X_fl - Y_fl);   % residual norm
+                        [Wh,r,status] = obj.aux_estimate(X_fl,Y_fl,N);
                     else                    % time-varying matrix
-                        Wh = cell(1,K); % different estimate (and residual) for each consensus
+                        Wh = cell(1,K); % different estimates, residuals and status for each consensus
                         r = zeros(1,K);
+                        status = cell(1,K);
                         for k = 1:K
-                            Wh{k} = Y_fl(:,(k-1)*d+1:k*d)*pinv(X_fl(:,(k-1)*d+1:k*d));          % pseudo inverse for estimate W^k
-                            r(k) = norm(Wh{k}*X_fl(:,(k-1)*d+1:k*d) - Y_fl(:,(k-1)*d+1:k*d));   % residual norm
+                            [Wh{k},r(k),status{k}] = obj.aux_estimate(X_fl(:,(k-1)*d+1:k*d),Y_fl(:,(k-1)*d+1:k*d),N);
+                            status{k} = append('time varying: ',status{k});
                         end
                     end
                 case 'exact'
                     Wh = obj.W;
                     r = 0;
+                    status = 'exact';
+            end
+        end
+        
+        function [Wh,r,status] = aux_estimate(obj,X_fl,Y_fl,N)
+        %AUX_ESTIMATE is an auxiliary function used in the function ESTIMATE    
+            Wh = Y_fl*pinv(X_fl); % pseudo-inverse estimate
+            status = "pseudo-inverse estimate";
+            % check if Wh is feasible (with tolerance tol)
+            tol = 1e-3;
+            ev = eig(Wh); ev = ev(~(abs(ev-1)<= tol));
+            check_ev = all(obj.lam(2) - ev >= -tol) && all(obj.lam(1) - ev <= tol);
+            check_sym = all(abs(Wh - Wh') <= tol,'all');
+            check_dstoch = all(abs(ones(1,N)*Wh - ones(1,N)) <= tol);
+            if ~check_ev || ~check_sym || ~check_dstoch % Wh not feasible
+                 % Compute another estimate based on the following SDP
+                 I = eye(N,N); V = sdpvar(N); % symmetric by default
+                 objective = norm(Y_fl - V*X_fl,'fro');
+                 cons = [];
+                 cons = cons + (ones(1,N)*V == ones(1,N)); % stochasticity 
+                 cons = cons + (obj.lam(2)*I - (V-1/N*ones(N,N)) >= 0); % bound eigenvalues
+                 cons = cons + (obj.lam(1)*I - (V-1/N*ones(N,N)) <= 0); % bound eigenvalues
+                 solver_opt = sdpsettings('solver','mosek','verbose',0);
+                 optimize(cons,objective,solver_opt);
+                 Wh = double(V);
+                 status = "SDP estimate";
+            end
+            r = norm(Wh*X_fl - Y_fl)/sum(size(Y_fl));  % normalized residual norm of the estimate
+            if r <= 0.01
+                status = status + " - success";
+            else
+                status = "No worst-matrix";
             end
         end
         
