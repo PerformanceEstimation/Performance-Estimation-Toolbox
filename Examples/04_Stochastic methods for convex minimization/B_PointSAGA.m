@@ -82,3 +82,14 @@ P.solve()
 % PESTO output vs Theorem 5 of [1]
 [double(T1avg) (1-kappa)]
 end
+
+
+
+
+
+
+
+
+
+
+
