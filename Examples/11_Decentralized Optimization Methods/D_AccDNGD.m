@@ -1,14 +1,16 @@
-function B_DIGing
-% In this example, we consider K iterations of the DIGing algorithm [1]
-% with N agents, that each holds a local L-smooth mu-strongly convex
-% function Fi, for solving the following decentralized problem:
+function D_AccDNGD
+% In this example, we consider K iterations of the Accelerated Distributed 
+% Nesterov Gadrient Descent (AccDNGD) [1] with N agents, that each holds a
+% local L-smooth and convex function Fi, for solving the following
+% decentralized problem: 
 %   min_x F(x);     where F(x) is the average of local functions Fi.
-% For notational convenience we denote xs=argmin_x F(x).
-% Each agent i starts with its own iterates xi0, si0 such that 
-%   avg_i ||xi0 - xs||^2 <= 1, si0 = grad Fi(xi0) and avg_i ||si0 - avg_i(grad Fi(xi0))||^2 <= 1
+% For notational convenience we denote xs=argmin_x F(x), and Fs = F(xs).
+% Agents start all with x0 = v0 = y0 = 0, and s0 = avg_i grad F(0).
+% Additionnaly, we impose that: avg_i ||xi0 - xs||^2 <= 2
 %
-% This example shows how to obtain the worst-case performance of DIGing with PESTO in that case.
-% The performance criterion used is avg_i ||xiK - xs||^2.
+% This example shows how to obtain the worst-case performance of AccDNGD
+% with PESTO in that case. The performance criterion used is the
+% functionnal error at the average of the last iterate: F(avg_i(xiK)) - Fs. 
 % Communications between the agents can be formulated in two different ways
 % in the PEP problem, leading to different types of worst-case solution:
 %   (a) Using a fixed communication network, which leads to exact worst-case results 
@@ -20,9 +22,8 @@ function B_DIGing
 % Both formulations can be tested here but (b) is used by default.
 
 % For details, see
-%   [1] A. Nedic, A. Olshevsky, and W. Shi, “Achieving geometric convergence
-%   for distributed optimization over time-varying graphs,” SIAM Journal on
-%   Optimization, 2016.
+%   [1] G. Qu and N. Li, “Accelerated distributed nesterov gradient descent”,
+%   IEEE Transactions on Automatic Control, 2020.
 %   [2] Colla, Sebastien, and Julien M. Hendrickx. "Automatic Performance Estimation
 %   for Decentralized Optimization" (2022).
 
@@ -44,9 +45,12 @@ mat = [-lam,lam];           % Range of eigenvalues for the symmetric(generalized
 
 % The algorithm
 K = 10;                     % Number of iterations of DGD
-alpha = 0.44*(1-lam)^2;     % Step-size used in DIGing (constant)
-equalStart = 0;             % initial iterates are not necessarily equal for each agent
-D = 1; E = 1;               % Constants for the initial conditions
+beta = 0.5;                 % rate of decrease for the step-size
+eta = 0.5; k0 = 1; L = 1;        
+eta_t = eta./((0:K)+k0).^beta; % diminishing step-size
+alpha = sqrt(eta_t(1)*L)*ones(K+1,1); % other parameter of AccDNGD algorithm
+equalStart = 1;             % initial iterates are equal for each agent
+D = sqrt(2);                % Constants for the initial conditions
 time_varying_mat = 0;       % The same communication matrix is used at each iteration (if 1, no constraints for imposing that the same matrix is used at each iteration)
 
 % (0) Initialize an empty PEP
@@ -54,44 +58,51 @@ P = pep();
 
 % (1) Set up the local and global objective functions
 fctClass = 'SmoothStronglyConvex'; % Class of functions to consider for the worst-case
-fctParam.L  = 1;
-fctParam.mu = 0.1;
+fctParam.L  = L;
+fctParam.mu = 0;
 returnOpt = 0;
 [Fi,Fav,~,~] = P.DeclareMultiFunctions(fctClass,fctParam,N,returnOpt);
 [xs,Fs] = Fav.OptimalPoint(); 
-P.AddConstraint(xs^2 == 0); % we can set xs = 0, without loss of generality
 P.AddConstraint(Fs == 0);   % we can set Fs = 0, without loss of generality
 
 % Iterates cells
-X = cell(N, K+1);           % local iterates
+X  = cell(N,K+1);           % local iterates
+V  = cell(N,K+1);
+Y  = cell(N,K+1);           
 S = cell(N, K);             % S contains the local estimates of the global gradient
-F_saved = cell(N,K+1);
-G_saved = cell(N,K+1);
+F_saved = cell(N,K);
+G_saved = cell(N,K);
 
 % (2) Set up the starting points and initial conditions
 X(:,1) = P.MultiStartingPoints(N,equalStart);
+V(:,1) = X(:,1); 
+Y(:,1) = X(:,1);
+P.AddConstraint(X{1,1}^2 == 0);         % starting with x0 = v0 = y0 = 0, for all the agents
 [G_saved(:,1),F_saved(:,1)] = LocalOracles(Fi,X(:,1));
+S(:,1) = {1/N*sumcell(G_saved(:,1))};   % s0 = avg_i grad Fi(x0)
 P.AddConstraint(1/N*sumcell(foreach(@(xi) (xi-xs)^2,X(:,1))) <= D^2); % avg_i ||xi0 - xs||^2 <= D^2
-S(:,1) = G_saved(:,1);
-P.AddConstraint(1/N*sumcell(foreach(@(si) (si - 1/N*sumcell(G_saved(:,1)))^2,S(:,1))) <= E^2);
-                %avg_i ||si0 - avg_i(grad Fi(xi0))||^2 <= E^2
-                
+
 % (3) Set up the communication matrix
 W = P.DeclareConsensusMatrix(type,mat,time_varying_mat);
 
-% (4) Algorithm (DIGing)
+% (4) Algorithm (AccDNGD)
 % Iterations
 for k = 1:K
-    X(:,k+1) = foreach(@(Wx,S)Wx-alpha*S,W.consensus(X(:,k)),S(:,k));
-    [G_saved(:,k+1),F_saved(:,k+1)] = LocalOracles(Fi,X(:,k+1));
+    c = eta_t(k+1)/eta_t(k)*alpha(k)^2;
+    alpha(k+1) = (-c + sqrt(c^2+4*c))/2;
+    X(:,k+1) = foreach( @(Wy, S) Wy - eta_t(k)*S, W.consensus(Y(:,k)), S(:,k));
+    V(:,k+1) = foreach( @(Wv, S) Wv - eta_t(k)/alpha(k)*S, W.consensus(V(:,k)), S(:,k));
+    Y(:,k+1) = foreach( @(X, V) (1-alpha(k+1))*X + alpha(k+1)*V, X(:,k+1), V(:,k+1));
     if k<K
-        S(:,k+1) = foreach(@(Ws,G2,G1) Ws + G2-G1, W.consensus(S(:,k)), G_saved(:,k+1), G_saved(:,k)); 
+        [G_saved(:,k+1),F_saved(:,k+1)] = LocalOracles(Fi,Y(:,k+1));
+        S(:,k+1) = foreach(@(Ws,G2,G1) Ws + G2-G1, W.consensus(S(:,k)), G_saved(:,k+1), G_saved(:,k));
     end
 end
 
 % (5) Set up the performance measure
-metric = 1/N*sumcell(foreach(@(xiK)(xiK-xs)^2,X(:,K+1))); % average squared error: avg_i ||xiK - xs||^2
-P.PerformanceMetric(metric); 
+Xav = 1/N*sumcell(X(:,K+1));
+[~,FavK] = Fav.oracle(Xav);
+P.PerformanceMetric(FavK - Fs); % F(avg_i(xiK)) - Fs
 
 % Activate the trace heuristic for trying to reduce the solution dimension
 %P.TraceHeuristic(1);
@@ -100,10 +111,10 @@ P.PerformanceMetric(metric);
 if verbose
     switch type
         case 'spectral_relaxed'
-            fprintf("Spectral PEP formulation for DIGing after %d iterations, with %d agents \n",K,N);
+            fprintf("Spectral PEP formulation for AccDNGD after %d iterations, with %d agents \n",K,N);
             fprintf("Using the following spectral range for the communication matrix: [%1.2f, %1.2f] \n",mat)
         case 'exact'
-            fprintf("Exact PEP formulation for DIGing after %d iterations, with %d agents \n",K,N);
+            fprintf("Exact PEP formulation for AccDNGD after %d iterations, with %d agents \n",K,N);
             fprintf("The used communication matrix is\n")
             disp(mat);
     end
@@ -121,21 +132,14 @@ if verbose && strcmp(type,'spectral_relaxed')
     Wh.W
 end
 
-% Theoretical performance guarantee (Thm 3.14 from [1])
-wc_theo = (sqrt(alpha*2*fctParam.L*(1+4*sqrt(fctParam.L/fctParam.mu))) + lam)^K;
-msg_theo = '';
-if wc_theo >= 1
-    msg_theo = 'no convergence guarantee';
-end
+
 if verbose
     fprintf("--------------------------------------------------------------------------------------------\n");
     switch type
         case 'spectral_relaxed'
             fprintf("Performance guarantee obtained with PESTO: %1.2f  (valid for any symmetric doubly stochastic matrix such that |lam_2|<=%1.1f)\n",wc, lam);
-            fprintf("Theoretical performance guarantee: %s %1.2f \t\t (valid for any symmetric doubly stochastic matrix such that |lam_2|<=%1.1f)\n",msg_theo,wc_theo,lam);
         case 'exact'
             fprintf("Performance guarantee obtained with PESTO: %1.2f  (only valid for the specific matrix W)\n",wc);
-            fprintf("Theoretical performance guarantee: %s %1.2f \t (valid for any symmetric doubly stochastic matrix such that |lam_2|<=%1.1f) \n",msg_theo,wc_theo,lam);
     end
 end
 end

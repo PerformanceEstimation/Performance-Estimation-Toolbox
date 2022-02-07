@@ -1,19 +1,19 @@
 function A_DecentralizedGradientDescent
 % In this example, we consider K iterations of the decentralized subgradient
-% descent (DGD) with N agents that each holds a local convex function Fi with bounded subgradients
-% for solving the following decentralized problem:
-%   min_x F(x);     where F(x) is the average of local functions Fi.
-% For notational convenience we denote xs=argmin_x F(x), and Fs = F(xs).
-% Agents start all with the same iterate x0 such that ||x0 - xs||^2 <= 1.
+% descent (DGD) with N agents, that each holds a local convex function Fi 
+% with bounded subgradients, for solving the following decentralized problem:
+%   min_x F(x);     where F(x) is the average of local functions Fi. 
+% For notational convenience we denote xs=argmin_x F(x), and Fs = F(xs). 
+% Agents start all with the same iterate x0 such that ||x0 - xs||^2 <= 1. 
 %
-% This example shows how to obtain the worst-case performance of DGD with PESTO in that case.
-% The performance criterion used is F(xav) - Fs, where xav is the average
-% of the iterates over all the agents and all the iterations.
+% This example shows how to obtain the worst-case performance of DGD with
+% PESTO in that case. The performance criterion used is F(xav) - Fs, where
+% xav is the average of the iterates over all the agents and all the iterations.
 % Communications between the agents can be formulated in two different ways
-% in the PEP problem, leading to different types of worst-case solution:
-%   (a) Using a fixed communication network, which leads to exact worst-case results 
-%   that are specific to the choosen matrix.
-%   (b) Using an entire spectral class of communication networks: the ones represented by 
+% in the PEP problem, leading to different types of worst-case solution: 
+%   (a) Using a fixed communication network, which leads to exact
+%   worst-case results that are specific to the choosen matrix.
+%   (b) Using an entire spectral class of communication networks: the ones represented by       
 %   a symmetric (generealized) doubly stochastic matrix with a given range of eigenvalues
 %   This leads to a relaxation of PEP, providing worst-case valid for any 
 %   matrix of the spectral class.
@@ -21,7 +21,7 @@ function A_DecentralizedGradientDescent
 
 % For details, see
 %   [1] Colla, Sebastien, and Julien M. Hendrickx. "Automated Worst-Case
-%   Performance Analysis of Decentralized Gradient Descent." (2021)
+%   Performance Analysis of Decentralized Gradient Descent" (2021).
 
 verbose = 1;                % Print the problem set up and the results
 

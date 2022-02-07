@@ -1,14 +1,16 @@
 function C_DIGing_rate
-% In this example, we consider K iterations of the DIGing algorithm [1]
-% with N agents that each holds a local L-smooth mu-strongly convex function Fi
-% for solving the following decentralized problem:
+% In this example, we consider 1 iterations of the DIGing algorithm [1]
+% with N agents, that each holds a local L-smooth mu-strongly convex
+% function Fi, for solving the following decentralized problem:
 %   min_x F(x);     where F(x) is the average of local functions Fi.
-% For notational convenience we denote xs=argmin_x F(x), and Fs = F(xs).
-% Each agent i starts with its own iterates xi0, si0 such that 
-%   1/N sum_i ||xi0 - xs||^2 <= 1, si0 = grad Fi(xi0) and 1/N sum_i ||si0 - avg(grad Fi(xi0))||^2 <= 1
+% For notational convenience we denote xs=argmin_x F(x).
 %
-% This example shows how to obtain the worst-case performance of DIGing with PESTO in that case.
-% The performance criterion used is 1/N sum_i ||xiK - xs||^2.
+% This example shows how to obtain the worst-case convergence rate for DIGing with PESTO.
+% It is based on the following performance metric that is used both for the initial
+% condition and for the performance criterion we maximize:
+%   avg_i( ||xi - xs||^2 + gamma*||si - avg_i(grad_fi(xi))||^2 )
+% Another initial condition, preserved by DIGing is also needed:
+%   sum_i si0 = sum_i grad Fi(xi0)
 % Communications between the agents can be formulated in two different ways
 % in the PEP problem, leading to different types of worst-case solution:
 %   (a) Using a fixed communication network, which leads to exact worst-case results 
@@ -24,7 +26,7 @@ function C_DIGing_rate
 %   for distributed optimization over time-varying graphs,” SIAM Journal on
 %   Optimization, 2016.
 %   [2] Colla, Sebastien, and Julien M. Hendrickx. "Automatic Performance Estimation
-%   for Decentralized Optimization." (2022)
+%   for Decentralized Optimization" (2022).
 
 verbose = 1;                % Print the problem set up and the results
 
@@ -43,7 +45,6 @@ lam = 0.5;
 mat = [-lam,lam];           % Range of eigenvalues for the symmetric(generalized) doubly stochastic communication matrix W
 
 % The algorithm
-K = 1;                      % We solve PEP only for one iteration
 alpha = 0.44*(1-lam)^2;     % Step-size used in DIGing (constant)
 equalStart = 0;             % initial iterates are not necessarily equal for each agent
 M = 1;                      % Constants for the initial conditions
@@ -63,35 +64,34 @@ P.AddConstraint(xs^2 == 0); % we can set xs = 0, without loss of generality
 P.AddConstraint(Fs == 0);   % we can set Fs = 0, without loss of generality
 
 % Iterates cells
-X = cell(N, K+1);           % local iterates
-S = cell(N, K);             % S contains the local estimates of the global gradient
-F_saved = cell(N,K+1);
-G_saved = cell(N,K+1);
+X = cell(N, 2);           % local iterates
+S = cell(N, 2);             % S contains the local estimates of the global gradient
+F_saved = cell(N,2);
+G_saved = cell(N,2);
 
 % (2) Set up the starting points and initial conditions
 X(:,1) = P.MultiStartingPoints(N,equalStart);
 S(:,1) = P.MultiStartingPoints(N,equalStart);
 [G_saved(:,1),F_saved(:,1)] = LocalOracles(Fi,X(:,1));
-P.AddConstraint((sumcell(S(:,1)) - sumcell(G_saved(:,1)))^2 == 0); % remain valid for any other iteration (check DIGing updates)
-beta = alpha/fctParam.L;
-metric0 = 1/N*sumcell(foreach(@(x0, s0)(x0-xs)^2 + beta*(s0 - 1/N*sumcell(G_saved(:,1)))^2, X(:,1), S(:,1)));
-          % avg_i( ||xi0 - x*||^2 + beta*||si0 - avg_i(grad_fi(xi))||^2 )
+P.AddConstraint((sumcell(S(:,1)) - sumcell(G_saved(:,1)))^2 == 0); % sum_i si0 = sum_i grad Fi(xi0) 
+                                                                   % remain valid for any other iteration (check DIGing updates)
+gamma = alpha/fctParam.L;
+metric0 = 1/N*sumcell(foreach(@(x0, s0)(x0-xs)^2 + gamma*(s0 - 1/N*sumcell(G_saved(:,1)))^2, X(:,1), S(:,1)));
+          % avg_i( ||xi0 - xs||^2 + gamma*||si0 - avg_i(grad_fi(xi0))||^2 )
 P.AddConstraint(metric0 <= M);
 
 % (3) Set up the communication matrix
 W = P.DeclareConsensusMatrix(type,mat,time_varying_mat);
 
 % (4) Algorithm (DIGing)
-% Iterations
-for k = 1:K
-    X(:,k+1) = foreach(@(Wx,S)Wx-alpha*S,W.consensus(X(:,k)),S(:,k));
-    [G_saved(:,k+1),F_saved(:,k+1)] = LocalOracles(Fi,X(:,k+1));
-    S(:,k+1) = foreach(@(Ws,G2,G1) Ws + G2-G1, W.consensus(S(:,k)), G_saved(:,k+1), G_saved(:,k)); 
-end
+% For 1 iteration only
+X(:,2) = foreach(@(Wx,S)Wx-alpha*S,W.consensus(X(:,1)),S(:,1));
+[G_saved(:,2),F_saved(:,2)] = LocalOracles(Fi,X(:,2));
+S(:,2) = foreach(@(Ws,G2,G1) Ws + G2-G1, W.consensus(S(:,1)), G_saved(:,2), G_saved(:,1)); 
 
 % (5) Set up the performance measure
-metric = 1/N*sumcell(foreach(@(xiK, siK)(xiK-xs)^2 + beta*(siK - 1/N*sumcell(G_saved(:,K+1)))^2,X(:,K+1), S(:,K+1))); %(X{1,K+1} - xs)^2;
-        % avg_i( ||xiK - x*||^2 + beta*||siK - avg_i(grad_fi(xiK))||^2 )
+metric = 1/N*sumcell(foreach(@(xi, si)(xi-xs)^2 + gamma*(si - 1/N*sumcell(G_saved(:,2)))^2,X(:,2), S(:,2)));
+        % avg_i( ||xi1 - xs||^2 + gamma*||si1 - avg_i(grad_fi(xi1))||^2 )
 
 P.PerformanceMetric(metric); 
 
@@ -102,10 +102,10 @@ P.PerformanceMetric(metric);
 if verbose
     switch type
         case 'spectral_relaxed'
-            fprintf("Spectral PEP formulation for DIGing after %d iterations, with %d agents \n",K,N);
+            fprintf("Spectral PEP formulation for DIGing after %d iterations, with %d agents \n",1,N);
             fprintf("Using the following spectral range for the communication matrix: [%1.2f, %1.2f] \n",mat)
         case 'exact'
-            fprintf("Exact PEP formulation for DIGing after %d iterations, with %d agents \n",K,N);
+            fprintf("Exact PEP formulation for DIGing after %d iterations, with %d agents \n",1,N);
             fprintf("The used communication matrix is\n")
             disp(mat);
     end
@@ -124,7 +124,7 @@ if verbose && strcmp(type,'spectral_relaxed')
 end
 
 % Theoretical performance guarantee (Thm 3.14 from [1])
-wc_theo = (sqrt(alpha*2*fctParam.L*(1+4*sqrt(fctParam.L/fctParam.mu))) + lam)^K;
+wc_theo = (sqrt(alpha*2*fctParam.L*(1+4*sqrt(fctParam.L/fctParam.mu))) + lam);
 msg_theo = '';
 if wc_theo >= 1
     msg_theo = 'no convergence guarantee';
