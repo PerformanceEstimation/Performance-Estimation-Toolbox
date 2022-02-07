@@ -1,16 +1,15 @@
 function B_PointSAGA
-% In this example, we use SAGA for solving the finite sum minimization
+% In this example, we use point SAGA for solving the finite sum minimization
 % problem
 %   min_x {F(x)= 1/n(f1(x)+ ... + fn(x)) }
 % for notational convenience we denote xs=argmin_x F(x).
 % Functions f1,...,fn are assumed L-smooth and mu-strongly convex, and with
 % proximal operators available.
 %
-% This code compute the exact rate for the Lyapunov function from the
-% original SAGA paper:
-% [1] Aaron Defazio. "A Simple Practical Accelerated Method for Finite
-% Sums." (2014)
-% (Theorem 5 of [1])
+% This code compute the worst-case convergence rate for the Lyapunov function
+% from the original Point-SAGA paper: 
+% [1] Aaron Defazio. "A Simple Practical Accelerated Method for Finite Sums." (2014)
+% (i.e., PESTO vs. Theorem 5 of [1])
 
 % (0) Initialize an empty PEP
 P = pep();
@@ -83,15 +82,3 @@ P.solve()
 % PESTO output vs Theorem 5 of [1]
 [double(T1avg) (1-kappa)]
 end
-
-
-
-
-
-
-
-
-
-
-
-
