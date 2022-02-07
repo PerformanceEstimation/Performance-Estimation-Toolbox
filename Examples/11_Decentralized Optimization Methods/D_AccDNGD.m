@@ -141,6 +141,7 @@ if verbose
         case 'exact'
             fprintf("Performance guarantee obtained with PESTO: %1.2f  (only valid for the specific matrix W)\n",wc);
     end
+    wc
 end
 end
 

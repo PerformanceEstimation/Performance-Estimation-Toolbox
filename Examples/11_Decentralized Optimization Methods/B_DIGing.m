@@ -125,7 +125,7 @@ end
 wc_theo = (sqrt(alpha*2*fctParam.L*(1+4*sqrt(fctParam.L/fctParam.mu))) + lam)^K;
 msg_theo = '';
 if wc_theo >= 1
-    msg_theo = 'no convergence guarantee';
+    msg_theo = 'no convergence guarantee -';
 end
 if verbose
     fprintf("--------------------------------------------------------------------------------------------\n");
@@ -137,6 +137,6 @@ if verbose
             fprintf("Performance guarantee obtained with PESTO: %1.2f  (only valid for the specific matrix W)\n",wc);
             fprintf("Theoretical performance guarantee: %s %1.2f \t (valid for any symmetric doubly stochastic matrix such that |lam_2|<=%1.1f) \n",msg_theo,wc_theo,lam);
     end
+    [wc wc_theo]
 end
 end
-

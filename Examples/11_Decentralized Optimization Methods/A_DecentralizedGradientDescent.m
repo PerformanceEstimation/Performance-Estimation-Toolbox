@@ -139,5 +139,6 @@ if verbose
             fprintf("Performance guarantee obtained with PESTO: %1.2f  (only valid for the specific matrix W)\n",wc);
             fprintf("Theoretical performance guarantee: %1.2f \t\t (valid for any symmetric doubly stochastic matrix such that |lam_2|<=%1.1f) \n",wc_theo,lam2);
     end
+    [wc wc_theo]    
 end
 end
