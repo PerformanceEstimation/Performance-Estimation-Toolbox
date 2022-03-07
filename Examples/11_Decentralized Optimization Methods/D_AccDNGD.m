@@ -39,9 +39,9 @@ N = 2;                      % Number of agents
 % lam = max(abs(eig(mat-1/N*ones(N,N))));
 
 % (b) Spectral formulation
-type = 'spectral_relaxed';  % type of representation for the communication matrix
+type = 'spectral_relaxed';  % type of representation for the averaging matrix
 lam = 0.5;
-mat = [-lam,lam];           % Range of eigenvalues for the symmetric(generalized) doubly stochastic communication matrix W
+mat = [-lam,lam];           % Range of eigenvalues for the symmetric(generalized) doubly stochastic averaging matrix W
 
 % The algorithm
 K = 10;                     % Number of iterations of DGD
@@ -51,7 +51,7 @@ eta_t = eta./((0:K)+k0).^beta; % diminishing step-size
 alpha = sqrt(eta_t(1)*L)*ones(K+1,1); % other parameter of AccDNGD algorithm
 equalStart = 1;             % initial iterates are equal for each agent
 D = sqrt(2);                % Constants for the initial conditions
-time_varying_mat = 0;       % The same communication matrix is used at each iteration (if 1, no constraints for imposing that the same matrix is used at each iteration)
+time_varying_mat = 0;       % The same averaging matrix is used at each iteration (if 1, no constraints for imposing that the same matrix is used at each iteration)
 
 % (0) Initialize an empty PEP
 P = pep();   
@@ -82,7 +82,7 @@ P.AddConstraint(X{1,1}^2 == 0);         % starting with x0 = v0 = y0 = 0, for al
 S(:,1) = {1/N*sumcell(G_saved(:,1))};   % s0 = avg_i grad Fi(x0)
 P.AddConstraint(1/N*sumcell(foreach(@(xi) (xi-xs)^2,X(:,1))) <= D^2); % avg_i ||xi0 - xs||^2 <= D^2
 
-% (3) Set up the communication matrix
+% (3) Set up the averaging matrix
 W = P.DeclareConsensusMatrix(type,mat,time_varying_mat);
 
 % (4) Algorithm (AccDNGD)
@@ -112,10 +112,10 @@ if verbose
     switch type
         case 'spectral_relaxed'
             fprintf("Spectral PEP formulation for AccDNGD after %d iterations, with %d agents \n",K,N);
-            fprintf("Using the following spectral range for the communication matrix: [%1.2f, %1.2f] \n",mat)
+            fprintf("Using the following spectral range for the averaging matrix: [%1.2f, %1.2f] \n",mat)
         case 'exact'
             fprintf("Exact PEP formulation for AccDNGD after %d iterations, with %d agents \n",K,N);
-            fprintf("The used communication matrix is\n")
+            fprintf("The used averaging matrix is\n")
             disp(mat);
     end
 end
@@ -125,7 +125,7 @@ if verbose, out, end
 % (7) Evaluate the output
 wc = out.WCperformance;
 
-% (8) Construct an approximation of the worst communication matrix used
+% (8) Construct an approximation of the worst averaging matrix used
 [Wh.W,Wh.r,Wh.status] = W.estimate(0);
 if verbose && strcmp(type,'spectral_relaxed')
     fprintf("The estimate of the worst matrix is ")

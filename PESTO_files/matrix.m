@@ -224,8 +224,10 @@ classdef matrix < handle
                                 end
                             end
                         end
-                        obj.pep.AddLMIConstraint(PSD1); % PSD1 is positive semi-definite
-                        obj.pep.AddLMIConstraint(PSD2); % PSD2 is positive semi-definite
+                        if abs(obj.lam(2)) ~= abs(obj.lam(1))
+                            obj.pep.AddLMIConstraint(PSD1); % PSD1 is positive semi-definite
+                            obj.pep.AddLMIConstraint(PSD2); % PSD2 is positive semi-definite
+                        end
                         obj.pep.AddLMIConstraint(PSD3); % PSD3 is positive semi-definite
                     else                    % time-varying matrix
                         for k=1:K
@@ -237,8 +239,10 @@ classdef matrix < handle
                                 yc2 = yc2 + (obj.Y{i,k}-obj.Xb{k})^2;
                                 ytx = ytx + (obj.Y{i,k}-obj.Xb{k})*(obj.X{i,k}-obj.Xb{k});
                             end
-                            obj.pep.AddConstraint(ytx <= obj.lam(2)*xc2);
-                            obj.pep.AddConstraint(ytx >= obj.lam(1)*xc2);
+                            if abs(obj.lam(2)) ~= abs(obj.lam(1))
+                                obj.pep.AddConstraint(ytx <= obj.lam(2)*xc2);
+                                obj.pep.AddConstraint(ytx >= obj.lam(1)*xc2);
+                            end
                             obj.pep.AddConstraint(yc2 - (obj.lam(1)+obj.lam(2))*ytx <= -obj.lam(1)*obj.lam(2)*xc2);
                         end
                     end

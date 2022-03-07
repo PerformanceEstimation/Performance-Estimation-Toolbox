@@ -38,16 +38,16 @@ N = 2;                      % Number of agents
 % lam = max(abs(eig(mat-1/N*ones(N,N))));
 
 % (b) Spectral formulation
-type = 'spectral_relaxed';  % type of representation for the communication matrix
+type = 'spectral_relaxed';  % type of representation for the averaging matrix
 lam = 0.5;
-mat = [-lam,lam];           % Range of eigenvalues for the symmetric(generalized) doubly stochastic communication matrix W
+mat = [-lam,lam];           % Range of eigenvalues for the symmetric(generalized) doubly stochastic averaging matrix W
 
 % The algorithm
 K = 10;                     % Number of iterations of DGD
-alpha = 0.44*(1-lam)^2;     % Step-size used in DIGing (constant)
+alpha = 0.44*(1-lam)^2;     % Step-size used in DIGing (constant) (hand-tuned formula)
 equalStart = 0;             % initial iterates are not necessarily equal for each agent
 D = 1; E = 1;               % Constants for the initial conditions
-time_varying_mat = 0;       % The same communication matrix is used at each iteration (if 1, no constraints for imposing that the same matrix is used at each iteration)
+time_varying_mat = 0;       % The same averaging matrix is used at each iteration (if 1, no constraints for imposing that the same matrix is used at each iteration)
 
 % (0) Initialize an empty PEP
 P = pep();   
@@ -76,13 +76,13 @@ S(:,1) = G_saved(:,1);
 P.AddConstraint(1/N*sumcell(foreach(@(si) (si - 1/N*sumcell(G_saved(:,1)))^2,S(:,1))) <= E^2);
                 %avg_i ||si0 - avg_i(grad Fi(xi0))||^2 <= E^2
                 
-% (3) Set up the communication matrix
+% (3) Set up the averaging matrix
 W = P.DeclareConsensusMatrix(type,mat,time_varying_mat);
 
 % (4) Algorithm (DIGing)
 % Iterations
 for k = 1:K
-    X(:,k+1) = foreach(@(Wx,S)Wx-alpha*S,W.consensus(X(:,k)),S(:,k));
+    X(:,k+1) = foreach(@(Wx,S) Wx-alpha*S, W.consensus(X(:,k)), S(:,k));
     [G_saved(:,k+1),F_saved(:,k+1)] = LocalOracles(Fi,X(:,k+1));
     if k<K
         S(:,k+1) = foreach(@(Ws,G2,G1) Ws + G2-G1, W.consensus(S(:,k)), G_saved(:,k+1), G_saved(:,k)); 
@@ -101,10 +101,10 @@ if verbose
     switch type
         case 'spectral_relaxed'
             fprintf("Spectral PEP formulation for DIGing after %d iterations, with %d agents \n",K,N);
-            fprintf("Using the following spectral range for the communication matrix: [%1.2f, %1.2f] \n",mat)
+            fprintf("Using the following spectral range for the averaging matrix: [%1.2f, %1.2f] \n",mat)
         case 'exact'
             fprintf("Exact PEP formulation for DIGing after %d iterations, with %d agents \n",K,N);
-            fprintf("The used communication matrix is\n")
+            fprintf("The used averaging matrix is\n")
             disp(mat);
     end
 end
@@ -114,7 +114,7 @@ if verbose, out, end
 % (7) Evaluate the output
 wc = out.WCperformance;
 
-% (8) Construct an approximation of the worst communication matrix used
+% (8) Construct an approximation of the worst averaging matrix used
 [Wh.W,Wh.r,Wh.status] = W.estimate(0);
 if verbose && strcmp(type,'spectral_relaxed')
     fprintf("The estimate of the worst matrix is ")
@@ -125,7 +125,7 @@ end
 wc_theo = (sqrt(alpha*2*fctParam.L*(1+4*sqrt(fctParam.L/fctParam.mu))) + lam)^K;
 msg_theo = '';
 if wc_theo >= 1
-    msg_theo = 'no convergence guarantee -';
+    msg_theo = 'no convergence guarantee ';
 end
 if verbose
     fprintf("--------------------------------------------------------------------------------------------\n");

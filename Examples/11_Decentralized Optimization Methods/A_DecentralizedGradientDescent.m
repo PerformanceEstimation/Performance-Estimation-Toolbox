@@ -34,8 +34,8 @@ N = 3;                      % Number of agents
 %mat = [0,0.5,0.5;0.5,0,0.5;0.5,0.5,0]; 
 
 % (b) Spectral formulation
-type = 'spectral_relaxed';  % type of representation for the communication matrix
-mat = [-0.5,0.5];           % Range of eigenvalues for the symmetric(generalized) doubly stochastic communication matrix W
+type = 'spectral_relaxed';  % type of representation for the averaging matrix
+mat = [-0.5,0.5];           % Range of eigenvalues for the symmetric(generalized) doubly stochastic averaging matrix W
 
 % The algorithm
 K = 10;                     % Number of iterations of DGD
@@ -43,7 +43,7 @@ alpha = 1/sqrt(K);          % Step-size used in DGD (constant)
 %alpha = 1./(1:K);          % Alternative: Step-sizes used in DGD (diminishing)
 equalStart = 1;             % All agents starts with the same iterate x0
 D = 1;                      % Constant for the initial condition: ||x0 - xs||^2 <= D^2
-time_varying_mat = 0;       % The same communication matrix is used at each iteration (if 1, no constraints for imposing that the same matrix is used at each iteration)
+time_varying_mat = 0;       % The same averaging matrix is used at each iteration (if 1, no constraints for imposing that the same matrix is used at each iteration)
 
 % (0) Initialize an empty PEP
 P = pep();   
@@ -66,7 +66,7 @@ X(:,1) = P.MultiStartingPoints(N,equalStart);
 [G_saved(:,1),F_saved(:,1)] = LocalOracles(Fi,X(:,1));
 P.AddMultiConstraints(@(xi) (xi-xs)^2 <= D^2, X(:,1)); %initial condition: ||x0 - xs||^2 <= D^2
 
-% (3) Set up the communication matrix
+% (3) Set up the averaging matrix
 W = P.DeclareConsensusMatrix(type,mat,time_varying_mat);
 
 % (4) Algorithm (DGD)
@@ -100,10 +100,10 @@ if verbose
     switch type
         case 'spectral_relaxed'
             fprintf("Spectral PEP formulation for DGD after %d iterations, with %d agents \n",K,N);
-            fprintf("Using the following spectral range for the communication matrix: [%1.2f, %1.2f] \n",mat)
+            fprintf("Using the following spectral range for the averaging matrix: [%1.2f, %1.2f] \n",mat)
         case 'exact'
             fprintf("Exact PEP formulation for DGD after %d iterations, with %d agents \n",K,N);
-            fprintf("The used communication matrix is\n")
+            fprintf("The used averaging matrix is\n")
             disp(mat);
     end
 end
@@ -113,7 +113,7 @@ if verbose, out, end
 % (7) Evaluate the output
 wc = out.WCperformance;
 
-% (8) Construct an approximation of the worst communication matrix that links the solutions X and Y
+% (8) Construct an approximation of the worst averaging matrix that links the solutions X and Y
 [Wh.W,Wh.r,Wh.status] = W.estimate(0);
 if verbose && strcmp(type,'spectral_relaxed')
     fprintf("The estimate of the worst matrix is ")
