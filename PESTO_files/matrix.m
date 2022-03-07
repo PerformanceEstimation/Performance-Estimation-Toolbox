@@ -1,5 +1,5 @@
 classdef matrix < handle
-%MATRIX represents a communication matrix, used in PESTO for analyzing
+%MATRIX represents an averaging matrix, used in PESTO for analyzing
 %decentralized optimization algorithms.
 %Two different matrix description are possible with this class:
 %   * Exact description:    It provides the exact expression of the matrix W.
