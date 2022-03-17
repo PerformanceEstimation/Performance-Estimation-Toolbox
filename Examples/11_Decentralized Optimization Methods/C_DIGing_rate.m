@@ -41,7 +41,7 @@ N = 2;                      % Number of agents
 
 % (b) Spectral formulation
 type = 'spectral_relaxed';  % type of representation for the averaging matrix
-lam = 0.5;
+lam = 0.9;
 mat = [-lam,lam];           % Range of eigenvalues for the symmetric(generalized) doubly stochastic averaging matrix W
 
 % The algorithm
@@ -125,10 +125,10 @@ if verbose && strcmp(type,'spectral_relaxed')
 end
 
 % Theoretical performance guarantee (Thm 3.14 from [1])
-wc_theo = (sqrt(alpha*2*fctParam.L*(1+4*sqrt(fctParam.L/fctParam.mu))) + lam);
+wc_theo = max(sqrt(1-alpha*fctParam.mu/1.5),(sqrt(alpha*2*fctParam.L*(1+4*sqrt(N)*sqrt(fctParam.L/fctParam.mu))) + lam));
 msg_theo = '';
 if wc_theo >= 1
-    msg_theo = 'no convergence guarantee ';
+    msg_theo = 'no convergence guarantee: ';
 end
 if verbose
     fprintf("--------------------------------------------------------------------------------------------\n");
