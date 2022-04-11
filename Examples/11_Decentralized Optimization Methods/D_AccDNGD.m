@@ -63,7 +63,6 @@ fctParam.mu = 0;
 returnOpt = 0;
 [Fi,Fav,~,~] = P.DeclareMultiFunctions(fctClass,fctParam,N,returnOpt);
 [xs,Fs] = Fav.OptimalPoint(); 
-P.AddConstraint(Fs == 0);   % we can set Fs = 0, without loss of generality
 
 % Iterates cells
 X  = cell(N,K+1);           % local iterates
@@ -74,10 +73,13 @@ F_saved = cell(N,K);
 G_saved = cell(N,K);
 
 % (2) Set up the starting points and initial conditions
+% each agent start with identical x0 = v0 = y0.
 X(:,1) = P.MultiStartingPoints(N,equalStart);
 V(:,1) = X(:,1); 
 Y(:,1) = X(:,1);
-P.AddConstraint(X{1,1}^2 == 0);         % starting with x0 = v0 = y0 = 0, for all the agents
+%P.AddConstraint(X{1,1}^2 == 0); This is used in theoretical developments in [1] but it does not impact the convergence results.
+% We remove the constraint for numerical stability reasons.
+
 [G_saved(:,1),F_saved(:,1)] = LocalOracles(Fi,X(:,1));
 S(:,1) = {1/N*sumcell(G_saved(:,1))};   % s0 = avg_i grad Fi(x0)
 P.AddConstraint(1/N*sumcell(foreach(@(xi) (xi-xs)^2,X(:,1))) <= D^2); % avg_i ||xi0 - xs||^2 <= D^2
@@ -127,21 +129,10 @@ wc = out.WCperformance;
 
 % (8) Construct an approximation of the worst averaging matrix used
 [Wh.W,Wh.r,Wh.status] = W.estimate(0);
-if verbose && strcmp(type,'spectral_relaxed')
-    fprintf("The estimate of the worst matrix is ")
-    Wh.W
-end
-
 
 if verbose
-    fprintf("--------------------------------------------------------------------------------------------\n");
-    switch type
-        case 'spectral_relaxed'
-            fprintf("Performance guarantee obtained with PESTO: %1.2f  (valid for any symmetric doubly stochastic matrix such that |lam_2|<=%1.1f)\n",wc, lam);
-        case 'exact'
-            fprintf("Performance guarantee obtained with PESTO: %1.2f  (only valid for the specific matrix W)\n",wc);
-    end
-    wc
+    fprintf("Performance guarantee from PESTO: %1.4f \n\n",wc);
 end
+
 end
 

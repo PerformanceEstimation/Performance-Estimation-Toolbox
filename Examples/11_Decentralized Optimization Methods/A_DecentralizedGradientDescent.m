@@ -115,12 +115,10 @@ wc = out.WCperformance;
 
 % (8) Construct an approximation of the worst averaging matrix that links the solutions X and Y
 [Wh.W,Wh.r,Wh.status] = W.estimate(0);
-if verbose && strcmp(type,'spectral_relaxed')
-    fprintf("The estimate of the worst matrix is ")
-    Wh.W
-end
 
-% Theoretical performance guarantee, valid for avgAll = 1, equalStart = 1. (Thm 5 from [1])
+% (9) Comparison with theoretical guarantee [1, Theorem 5]
+% This guarantee is valid for avgAll = 1 and equalStart = 1.
+% It always applies to a spectral class of averaging matrices.
 switch type
     case 'spectral_relaxed'
         lam2 = max(abs(mat));
@@ -130,15 +128,7 @@ end
 wc_theo = (D^2 + fctParam.R^2)./(2*sqrt(K)) + 2*fctParam.R^2./(sqrt(K)*(1-lam2));
 
 if verbose
-    fprintf("--------------------------------------------------------------------------------------------\n");
-    switch type
-        case 'spectral_relaxed'
-            fprintf("Performance guarantee obtained with PESTO: %1.2f  (valid for any symmetric doubly stochastic matrix such that |lam_2|<=%1.1f)\n",wc, lam2);
-            fprintf("Theoretical performance guarantee: %1.2f \t\t (valid for any symmetric doubly stochastic matrix such that |lam_2|<=%1.1f)\n",wc_theo,lam2);
-        case 'exact'
-            fprintf("Performance guarantee obtained with PESTO: %1.2f  (only valid for the specific matrix W)\n",wc);
-            fprintf("Theoretical performance guarantee: %1.2f \t\t (valid for any symmetric doubly stochastic matrix such that |lam_2|<=%1.1f) \n",wc_theo,lam2);
-    end
-    [wc wc_theo]    
+    fprintf("Performance guarantee from PESTO: %1.4f \n",wc);
+    fprintf("Theoretical guarantee from [1]: %1.4f\n\n",wc_theo);
 end
 end

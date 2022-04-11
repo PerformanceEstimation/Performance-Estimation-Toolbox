@@ -58,9 +58,7 @@ fctParam.L  = 1;
 fctParam.mu = 0.1;
 returnOpt = 0;
 [Fi,Fav,~,~] = P.DeclareMultiFunctions(fctClass,fctParam,N,returnOpt);
-[xs,Fs] = Fav.OptimalPoint(); 
-P.AddConstraint(xs^2 == 0); % we can set xs = 0, without loss of generality
-P.AddConstraint(Fs == 0);   % we can set Fs = 0, without loss of generality
+[xs,~] = Fav.OptimalPoint(); 
 
 % Iterates cells
 X = cell(N, K+1);           % local iterates
@@ -116,27 +114,16 @@ wc = out.WCperformance;
 
 % (8) Construct an approximation of the worst averaging matrix used
 [Wh.W,Wh.r,Wh.status] = W.estimate(0);
-if verbose && strcmp(type,'spectral_relaxed')
-    fprintf("The estimate of the worst matrix is ")
-    Wh.W
-end
 
-% Theoretical performance guarantee (Thm 3.14 from [1])
+% (9) Comparison with theoretical guarantee [1, Theorem 3.14]
+% This guarantee always applies to a spectral class of averaging matrices.
 wc_theo = max(sqrt(1-alpha*fctParam.mu/1.5),(sqrt(alpha*2*fctParam.L*(1+4*sqrt(N)*sqrt(fctParam.L/fctParam.mu))) + lam))^K;
 msg_theo = '';
 if wc_theo >= 1
-    msg_theo = 'no convergence guarantee: ';
+    msg_theo = 'none,';
 end
 if verbose
-    fprintf("--------------------------------------------------------------------------------------------\n");
-    switch type
-        case 'spectral_relaxed'
-            fprintf("Performance guarantee obtained with PESTO: %1.2f  (valid for any symmetric doubly stochastic matrix such that |lam_2|<=%1.1f)\n",wc, lam);
-            fprintf("Theoretical performance guarantee: %s %1.2f \t\t (valid for any symmetric doubly stochastic matrix such that |lam_2|<=%1.1f)\n",msg_theo,wc_theo,lam);
-        case 'exact'
-            fprintf("Performance guarantee obtained with PESTO: %1.2f  (only valid for the specific matrix W)\n",wc);
-            fprintf("Theoretical performance guarantee: %s %1.2f \t (valid for any symmetric doubly stochastic matrix such that |lam_2|<=%1.1f) \n",msg_theo,wc_theo,lam);
-    end
-    [wc wc_theo]
+    fprintf("Performance guarantee from PESTO: %1.4f \n",wc);
+    fprintf("Theoretical guarantee from [1]: %s %1.4f\n\n",msg_theo,wc_theo);
 end
 end
