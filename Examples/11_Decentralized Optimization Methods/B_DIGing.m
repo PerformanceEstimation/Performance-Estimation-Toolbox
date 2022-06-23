@@ -43,7 +43,7 @@ lam = 0.9;
 mat = [-lam,lam];           % Range of eigenvalues for the symmetric(generalized) doubly stochastic averaging matrix W
 
 % The algorithm
-K = 10;                     % Number of iterations of DGD
+K = 10;                     % Number of iterations of DIGing
 alpha = 0.44*(1-lam)^2;     % Step-size used in DIGing (constant) (hand-tuned formula)
 equalStart = 0;             % initial iterates are not necessarily equal for each agent
 D = 1; E = 1;               % Constants for the initial conditions

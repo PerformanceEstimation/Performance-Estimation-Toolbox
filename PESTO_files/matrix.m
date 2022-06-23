@@ -224,10 +224,8 @@ classdef matrix < handle
                                 end
                             end
                         end
-                        if abs(obj.lam(2)) ~= abs(obj.lam(1))
-                            obj.pep.AddLMIConstraint(PSD1); % PSD1 is positive semi-definite
-                            obj.pep.AddLMIConstraint(PSD2); % PSD2 is positive semi-definite
-                        end
+                        obj.pep.AddLMIConstraint(PSD1); % PSD1 is positive semi-definite
+                        obj.pep.AddLMIConstraint(PSD2); % PSD2 is positive semi-definite
                         obj.pep.AddLMIConstraint(PSD3); % PSD3 is positive semi-definite
                     else                    % time-varying matrix
                         for k=1:K

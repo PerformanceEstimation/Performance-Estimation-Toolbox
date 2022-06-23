@@ -53,7 +53,7 @@ fctClass = 'ConvexBoundedGradient'; % Class of functions to consider for the wor
 fctParam.R = 1;                     % Bounded Gradient constant ||g||^2 <= R^2.
 returnOpt = 0;
 [Fi,Fav,~,~] = P.DeclareMultiFunctions(fctClass,fctParam,N,returnOpt);
-[xs,Fs] = Fav.OptimalPoint(); 
+[xs,Fs] = Fav.OptimalPoint();       % optimum of the global function
 
 % Iterates cells
 X = cell(N, K+1);                   % local iterates
@@ -63,8 +63,8 @@ G_saved = cell(N,K+1);
 
 % (2) Set up the starting points and initial conditions
 X(:,1) = P.MultiStartingPoints(N,equalStart);
-[G_saved(:,1),F_saved(:,1)] = LocalOracles(Fi,X(:,1));
-P.AddMultiConstraints(@(xi) (xi-xs)^2 <= D^2, X(:,1)); %initial condition: ||x0 - xs||^2 <= D^2
+[G_saved(:,1),F_saved(:,1)] = LocalOracles(Fi,X(:,1)); % F_1(X(1,1)), F_2(X(2,1)), ...
+P.AddMultiConstraints(@(xi) (xi-xs)^2 <= D^2, X(:,1)); %initial condition: ||xi0 - xs||^2 <= D^2
 
 % (3) Set up the averaging matrix
 W = P.DeclareConsensusMatrix(type,mat,time_varying_mat);
@@ -77,7 +77,7 @@ end
 
 % Iterations
 for k = 1:K    
-    Y(:,k) = W.consensus(X(:,k));                                       % Consensus step
+    Y(:,k) = W.consensus(X(:,k));                                       % Consensus step: Y = WX
     X(:,k+1) = foreach(@(y,G) y-alpha(k)*G, Y(:,k), G_saved(:,k));      % Gradient step
     %          for each agent: (expression for the update, variables to input in the expression) 
     [G_saved(:,k+1),F_saved(:,k+1)] = LocalOracles(Fi,X(:,k+1));        % Eval F and G at k+1 (for all agents)
@@ -88,12 +88,13 @@ end
 xav = sumcell(X)/((K+1)*N);             % Average over all agents, all iterations
 P.PerformanceMetric(Fav.value(xav)-Fs); % Worst-case evaluated as F(xav)-F(x*)
 
+
 % Alternative: Average only for the last iteration
 %xavLast = sumcell(X(:,K+1))/N; 
-%P.PerformanceMetric(Ftot.value(xavLast)-Fs); % OR P.PerformanceMetric((xavLast - xs)^2);
+%P.PerformanceMetric(Fav.value(xavLast)-Fs); % OR P.PerformanceMetric((xavLast - xs)^2);
 
 % Activate the trace heuristic for trying to reduce the solution dimension
-%P.TraceHeuristic(1);
+P.TraceHeuristic(1);
 
 % (6) Solve the PEP
 if verbose

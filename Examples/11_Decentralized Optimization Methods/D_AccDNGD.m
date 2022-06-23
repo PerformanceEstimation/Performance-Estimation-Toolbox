@@ -44,7 +44,7 @@ lam = 0.5;
 mat = [-lam,lam];           % Range of eigenvalues for the symmetric(generalized) doubly stochastic averaging matrix W
 
 % The algorithm
-K = 10;                     % Number of iterations of DGD
+K = 10;                     % Number of iterations
 beta = 0.5;                 % rate of decrease for the step-size
 eta = 0.5; k0 = 1; L = 1;        
 eta_t = eta./((0:K)+k0).^beta; % diminishing step-size
