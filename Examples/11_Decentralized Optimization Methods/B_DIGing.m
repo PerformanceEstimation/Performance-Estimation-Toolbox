@@ -33,17 +33,19 @@ verbose = 1;                % Print the problem set up and the results
 N = 2;                      % Number of agents
 
 % (a) Exact formulation (fixed network W)
+% Uncomment to use it in place of (b) Spectral formulation
 % type = 'exact';
 % mat = [0.25,0.75;0.75,0.25]; 
 % lam = max(abs(eig(mat-1/N*ones(N,N))));
 
 % (b) Spectral formulation
+% Comment if you use (a) Exact formulation
 type = 'spectral_relaxed';  % type of representation for the averaging matrix
 lam = 0.9;
 mat = [-lam,lam];           % Range of eigenvalues for the symmetric(generalized) doubly stochastic averaging matrix W
 
 % The algorithm
-K = 10;                     % Number of iterations of DGD
+K = 10;                     % Number of iterations of DIGing
 alpha = 0.44*(1-lam)^2;     % Step-size used in DIGing (constant) (hand-tuned formula)
 equalStart = 0;             % initial iterates are not necessarily equal for each agent
 D = 1; E = 1;               % Constants for the initial conditions
@@ -92,7 +94,7 @@ metric = 1/N*sumcell(foreach(@(xiK)(xiK-xs)^2,X(:,K+1))); % average squared erro
 P.PerformanceMetric(metric); 
 
 % Activate the trace heuristic for trying to reduce the solution dimension
-%P.TraceHeuristic(1);
+%P.TraceHeuristic(1); % uncomment to activate
 
 % (6) Solve the PEP
 if verbose
@@ -118,12 +120,12 @@ wc = out.WCperformance;
 % (9) Comparison with theoretical guarantee [1, Theorem 3.14]
 % This guarantee always applies to a spectral class of averaging matrices.
 wc_theo = max(sqrt(1-alpha*fctParam.mu/1.5),(sqrt(alpha*2*fctParam.L*(1+4*sqrt(N)*sqrt(fctParam.L/fctParam.mu))) + lam))^K;
-msg_theo = '';
-if wc_theo >= 1
-    msg_theo = 'none,';
+msg_theo = 'none in the given setting';
+if wc_theo <= 1
+    msg_theo = sprintf('%1.5f', wc_theo);
 end
 if verbose
-    fprintf("Performance guarantee from PESTO: %1.4f \n",wc);
-    fprintf("Theoretical guarantee from [1]: %s %1.4f\n\n",msg_theo,wc_theo);
+    fprintf("Performance guarantee from PESTO: %1.5f \n",wc);
+    fprintf("Theoretical guarantee from [1]: %s \n\n",msg_theo);
 end
 end

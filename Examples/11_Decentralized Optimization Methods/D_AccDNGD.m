@@ -34,17 +34,19 @@ verbose = 1;                % Print the problem set up and the results
 N = 2;                      % Number of agents
 
 % (a) Exact formulation (fixed network W)
+% Uncomment to use it in place of (b) Spectral formulation
 % type = 'exact';
 % mat = [0.25,0.75;0.75,0.25]; 
 % lam = max(abs(eig(mat-1/N*ones(N,N))));
 
 % (b) Spectral formulation
+% Comment if you use (a) Exact formulation
 type = 'spectral_relaxed';  % type of representation for the averaging matrix
 lam = 0.5;
 mat = [-lam,lam];           % Range of eigenvalues for the symmetric(generalized) doubly stochastic averaging matrix W
 
 % The algorithm
-K = 10;                     % Number of iterations of DGD
+K = 10;                     % Number of iterations
 beta = 0.5;                 % rate of decrease for the step-size
 eta = 0.5; k0 = 1; L = 1;        
 eta_t = eta./((0:K)+k0).^beta; % diminishing step-size
@@ -107,7 +109,7 @@ Xav = 1/N*sumcell(X(:,K+1));
 P.PerformanceMetric(FavK - Fs); % F(avg_i(xiK)) - Fs
 
 % Activate the trace heuristic for trying to reduce the solution dimension
-%P.TraceHeuristic(1);
+%P.TraceHeuristic(1); % uncomment to activate
 
 % (6) Solve the PEP
 if verbose
