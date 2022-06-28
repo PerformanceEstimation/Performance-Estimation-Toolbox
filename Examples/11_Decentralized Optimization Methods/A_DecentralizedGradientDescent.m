@@ -30,10 +30,12 @@ verbose = 1;                % Print the problem set up and the results
 N = 3;                      % Number of agents
 
 % (a) Exact formulation (fixed network W)
+% Uncomment to use it in place of (b) Spectral formulation
 %type = 'exact';
 %mat = [0,0.5,0.5;0.5,0,0.5;0.5,0.5,0]; 
 
 % (b) Spectral formulation
+% Comment if you use (a) Exact formulation
 type = 'spectral_relaxed';  % type of representation for the averaging matrix
 mat = [-0.5,0.5];           % Range of eigenvalues for the symmetric(generalized) doubly stochastic averaging matrix W
 
@@ -94,7 +96,7 @@ P.PerformanceMetric(Fav.value(xav)-Fs); % Worst-case evaluated as F(xav)-F(x*)
 %P.PerformanceMetric(Fav.value(xavLast)-Fs); % OR P.PerformanceMetric((xavLast - xs)^2);
 
 % Activate the trace heuristic for trying to reduce the solution dimension
-P.TraceHeuristic(1);
+%P.TraceHeuristic(1); % uncomment to activate
 
 % (6) Solve the PEP
 if verbose
