@@ -8,6 +8,8 @@ Date:    May 2021
 
 Version: May 2021
 
+A Python alternative to PESTO can be found in the [`PEPit`](https://github.com/PerformanceEstimation/PEPit) repository.
+
 #### Authors & Contributors
 - [**Adrien Taylor**](http://www.di.ens.fr/~ataylor/) (author)
 - [**Julien Hendrickx**](https://perso.uclouvain.be/julien.hendrickx/index.html) (author)
