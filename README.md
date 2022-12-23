@@ -9,6 +9,7 @@ Date:    May 2021
 Version: May 2021
 
 A Python alternative to PESTO can be found in the [`PEPit`](https://github.com/PerformanceEstimation/PEPit) repository.
+A more updated list of examples that can be studied through PEPs is available in the [`PEPit documentation`](https://pepit.readthedocs.io/en/0.2.1/examples.html). Please feel free to suggest new examples, or to add yours via pull requests! We are very happy to take feedback and suggestions!
 
 #### Authors & Contributors
 - [**Adrien Taylor**](http://www.di.ens.fr/~ataylor/) (author)
