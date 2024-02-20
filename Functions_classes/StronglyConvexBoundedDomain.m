@@ -30,7 +30,7 @@ function cons=StronglyConvexBoundedDomain(pt1,pt2,D,R,mu)
 %     Convex Optimization."to appear in SIAM Journal on Optimization (2017)
 %
 %
-assert(D>=0 & R>=0 & L>=0,'Constants provided to the functional class are not valid');
+assert(D>=0 & R>=0 & mu>=0,'Constants provided to the functional class are not valid');
 if ~(pt1.x.isEqual(pt2.x) && pt1.g.isEqual(pt2.g) && pt1.f.isEqual(pt2.f))
     cons=((pt1.f-pt2.f+pt1.g*(pt2.x-pt1.x)+mu/2*(pt1.x-pt2.x)^2)<=0);
     if D~=Inf && pt1.num<pt2.num
